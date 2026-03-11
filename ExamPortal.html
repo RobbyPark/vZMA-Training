@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZMA Exam Center</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #f4f7fb;
+    --white:    #ffffff;
+    --accent:   #0099bb;
+    --accent2:  #2ab8d4;
+    --text:     #1a2a3a;
+    --muted:    #5a7499;
+    --border:   rgba(0,153,187,0.3);
+    --input-bg: rgba(255,255,255,0.9);
+    --card-bg:  rgba(0,153,187,0.05);
+    --radius:   10px;
+    --green:    #00c98a;
+    --red:      #ff6b6b;
+    --gold:     #f4a825;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ─────────────────────────────────────── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 58px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,153,187,0.08);
+  }
+  .topbar-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px; font-weight: 600; color: var(--accent);
+    letter-spacing: 0.12em; display: flex; flex-direction: column;
+  }
+  .topbar-logo span { font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-top: 1px; }
+  .topbar-nav { display: flex; gap: 6px; }
+  .nav-btn {
+    padding: 7px 18px; border-radius: var(--radius);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: 1px solid transparent; background: none;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s; letter-spacing: 0.04em;
+  }
+  .nav-btn:hover { color: var(--accent); background: rgba(0,153,187,0.06); border-color: var(--border); }
+  .nav-btn.active { background: linear-gradient(135deg,#0077b6,var(--accent)); color: #fff; border-color: transparent; box-shadow: 0 3px 12px rgba(0,180,216,0.25); }
+
+  /* ── PAGES ───────────────────────────────────────── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── WRAP ────────────────────────────────────────── */
+  .page-wrap { max-width: 700px; margin: 0 auto; padding: 36px 20px 60px; }
+
+  /* ── WELCOME BOX ─────────────────────────────────── */
+  .welcome-box {
+    background: rgba(0,153,187,0.06);
+    border: 1px solid rgba(0,153,187,0.25);
+    border-radius: 12px; padding: 22px 26px; margin-bottom: 28px;
+  }
+  .welcome-box p { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 10px; }
+  .welcome-box p:last-child { margin-bottom: 0; }
+  .welcome-box strong { color: var(--accent); font-weight: 700; }
+
+  /* ── SECTION LABEL ───────────────────────────────── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── FIELD / INPUT ───────────────────────────────── */
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .field label, .modal-label {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text);
+  }
+  input, select, textarea {
+    width: 100%; background: var(--input-bg);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 13px 16px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; color: var(--text); outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  input::placeholder, textarea::placeholder { color: rgba(90,116,153,0.55); }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    background: rgba(0,180,216,0.05);
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.12);
+  }
+  select option { background: #fff; color: var(--text); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  /* ── ROW ─────────────────────────────────────────── */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row.full { grid-template-columns: 1fr; }
+
+  /* ── CID CARD ────────────────────────────────────── */
+  .cid-card {
+    background: rgba(0,153,187,0.06);
+    border: 1px solid rgba(0,153,187,0.25);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 28px;
+  }
+  .cid-card-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px;
+  }
+  .cid-row { display: flex; gap: 10px; }
+  .cid-status { font-size: 13px; color: var(--muted); margin-top: 8px; min-height: 18px; }
+  .cid-status.ok  { color: var(--green); }
+  .cid-status.err { color: var(--red); }
+  .cid-logged { display: flex; align-items: center; justify-content: space-between; }
+  .cid-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(0,201,138,0.08); border: 1px solid rgba(0,201,138,0.25);
+    border-radius: var(--radius); padding: 10px 16px;
+    font-size: 14px; font-weight: 600; color: var(--green);
+  }
+
+  /* ── BUTTONS ─────────────────────────────────────── */
+  .btn-primary {
+    background: linear-gradient(135deg,#0077b6,var(--accent));
+    color: #fff; border: none; border-radius: var(--radius);
+    padding: 13px 22px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.05em; transition: all 0.2s; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,180,216,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,180,216,0.35); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-ghost {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 11px 18px; font-size: 13px; color: var(--muted);
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-start {
+    background: linear-gradient(135deg,#0077b6,var(--accent));
+    color: #fff; border: none; border-radius: var(--radius);
+    padding: 8px 20px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s; box-shadow: 0 3px 10px rgba(0,180,216,0.2);
+    white-space: nowrap;
+  }
+  .btn-start:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(0,180,216,0.3); }
+
+  /* ── FILTER CHIPS ────────────────────────────────── */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+  .filter-chip {
+    padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 600;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em;
+    cursor: pointer; border: 1px solid var(--border);
+    background: #fff; color: var(--muted); transition: all 0.2s;
+  }
+  .filter-chip:hover { color: var(--accent); border-color: var(--accent); }
+  .filter-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ── EXAM CARDS ──────────────────────────────────── */
+  .exams-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(290px,1fr)); gap: 14px; margin-bottom: 36px; }
+  .exam-card {
+    background: #fff; border: 1px solid rgba(0,153,187,0.18);
+    border-radius: 12px; padding: 20px;
+    transition: all 0.2s; box-shadow: 0 1px 4px rgba(0,153,187,0.06);
+  }
+  .exam-card:hover { border-color: var(--accent); box-shadow: 0 4px 18px rgba(0,153,187,0.12); transform: translateY(-1px); }
+  .exam-card.locked { opacity: 0.7; }
+  .exam-card.locked:hover { transform: none; box-shadow: 0 1px 4px rgba(0,153,187,0.06); }
+  .exam-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .rating-pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 10px; border-radius: 6px;
+  }
+  .rp-s1      { background: rgba(0,153,187,0.1);  color: var(--accent);  border: 1px solid rgba(0,153,187,0.25); }
+  .rp-s2      { background: rgba(0,201,138,0.1);  color: #00a870;        border: 1px solid rgba(0,201,138,0.25); }
+  .rp-s3      { background: rgba(244,168,37,0.1); color: #c47d00;        border: 1px solid rgba(244,168,37,0.25); }
+  .rp-c1      { background: rgba(126,87,194,0.1); color: #7e57c2;        border: 1px solid rgba(126,87,194,0.25); }
+  .rp-t1      { background: rgba(239,83,80,0.1);  color: #c0392b;        border: 1px solid rgba(239,83,80,0.25); }
+  .rp-general { background: rgba(90,116,153,0.1); color: var(--muted);   border: 1px solid rgba(90,116,153,0.2); }
+  .exam-card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .exam-card-desc  { font-size: 13px; color: var(--muted); line-height: 1.55; margin-bottom: 14px; min-height: 36px; }
+  .exam-card-meta  { display: flex; gap: 14px; flex-wrap: wrap; }
+  .exam-meta-item  { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .exam-meta-item span { color: var(--text); font-weight: 600; }
+  .exam-card-footer { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(0,153,187,0.1); display: flex; align-items: center; justify-content: space-between; }
+  .already-passed { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); display: flex; align-items: center; gap: 5px; font-weight: 600; }
+  .locked-msg { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  /* ── PASS ANNOUNCEMENTS ──────────────────────────── */
+  .passes-section { margin-top: 8px; margin-bottom: 36px; }
+  .passes-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .passes-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .passes-scroll::-webkit-scrollbar { height: 3px; }
+  .passes-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .pass-chip {
+    flex-shrink: 0; background: #fff;
+    border: 1px solid rgba(0,201,138,0.25); border-radius: var(--radius);
+    padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 1px 4px rgba(0,153,187,0.06);
+  }
+  .pass-chip-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .pass-chip-exam { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green); }
+  .pass-chip-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  /* ── EXAM TAKING ─────────────────────────────────── */
+  .exam-page-wrap { max-width: 760px; margin: 0 auto; padding: 28px 20px 90px; }
+  .exam-header {
+    background: #fff; border: 1px solid rgba(0,153,187,0.2);
+    border-radius: 12px; padding: 18px 22px; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    box-shadow: 0 1px 6px rgba(0,153,187,0.08);
+  }
+  .exam-h-title { font-size: 17px; font-weight: 700; color: var(--text); }
+  .exam-h-meta  { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .exam-header-right { display: flex; align-items: center; gap: 14px; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-bar-outer { width: 120px; height: 5px; background: rgba(0,153,187,0.12); border-radius: 3px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+  .progress-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .timer-display {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    color: var(--text); background: rgba(0,153,187,0.07);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 5px 12px; min-width: 70px; text-align: center;
+  }
+  .timer-display.warning { color: var(--gold); border-color: rgba(244,168,37,0.4); background: rgba(244,168,37,0.06); }
+  .timer-display.danger  { color: var(--red);  border-color: rgba(239,83,80,0.4); background: rgba(239,83,80,0.06); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* ── FLAG BAR ────────────────────────────────────── */
+  .flag-bar { background: rgba(244,168,37,0.06); border: 1px solid rgba(244,168,37,0.25); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; display: none; }
+  .flag-bar.visible { display: block; }
+  .flag-bar-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .flag-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .flag-chip { background: rgba(244,168,37,0.1); border: 1px solid rgba(244,168,37,0.3); border-radius: 6px; padding: 3px 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #b37800; cursor: pointer; transition: background 0.15s; }
+  .flag-chip:hover { background: rgba(244,168,37,0.2); }
+
+  /* ── QUESTIONS ───────────────────────────────────── */
+  .section-divider { display: flex; align-items: center; gap: 12px; margin: 24px 0 14px; }
+  .section-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .section-divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+
+  .question-block {
+    background: #fff; border: 1px solid rgba(0,153,187,0.15);
+    border-radius: 12px; padding: 20px 22px; margin-bottom: 12px;
+    transition: border-color 0.2s; scroll-margin-top: 70px;
+    box-shadow: 0 1px 4px rgba(0,153,187,0.05);
+  }
+  .question-block.flagged  { border-color: rgba(244,168,37,0.45); background: rgba(244,168,37,0.02); }
+  .question-block.answered { border-color: rgba(0,201,138,0.35); background: rgba(0,201,138,0.02); }
+  .q-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .q-num  { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); min-width: 24px; padding-top: 2px; }
+  .q-text { flex: 1; font-size: 15px; color: var(--text); line-height: 1.65; font-weight: 500; }
+  .q-image { width: 100%; max-height: 260px; object-fit: contain; border-radius: var(--radius); margin-bottom: 12px; border: 1px solid var(--border); }
+  .q-flag-btn { background: none; border: 1px solid transparent; border-radius: 7px; padding: 4px 10px; font-size: 11px; color: var(--muted); cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+  .q-flag-btn:hover, .q-flag-btn.flagged { color: var(--gold); border-color: rgba(244,168,37,0.4); background: rgba(244,168,37,0.07); }
+  .q-pts { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 12px; }
+
+  /* Choices */
+  .choices-list { display: flex; flex-direction: column; gap: 7px; }
+  .choice-label {
+    display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px;
+    background: rgba(0,153,187,0.04); border: 2px solid rgba(0,153,187,0.15);
+    border-radius: var(--radius); cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .choice-label:hover { border-color: var(--accent); background: rgba(0,153,187,0.08); }
+  .choice-label input { accent-color: var(--accent); margin-top: 2px; flex-shrink: 0; width: 16px; height: 16px; }
+  .choice-label:has(input:checked) { border-color: var(--accent); background: rgba(0,153,187,0.12); }
+  .choice-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+  /* True/False */
+  .tf-row { display: flex; gap: 10px; }
+  .tf-btn { flex: 1; padding: 12px; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; border: 2px solid rgba(0,153,187,0.2); background: rgba(0,153,187,0.04); color: var(--muted); font-family: 'DM Sans', sans-serif; transition: all 0.2s; text-align: center; }
+  .tf-btn:hover   { border-color: var(--accent); color: var(--text); background: rgba(0,153,187,0.08); }
+  .tf-btn.selected { border-color: var(--accent); background: rgba(0,153,187,0.14); color: var(--accent); }
+
+  .text-answer { width: 100%; }
+
+  /* Matching */
+  .matching-grid { display: flex; flex-direction: column; gap: 8px; }
+  .matching-row { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 8px; align-items: center; }
+  .match-left-item { background: rgba(0,153,187,0.06); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 13px; font-size: 13px; color: var(--text); font-weight: 500; }
+  .match-arrow { text-align: center; color: var(--accent); font-size: 14px; }
+
+  /* ── SUBMIT BAR ──────────────────────────────────── */
+  .submit-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(255,255,255,0.97); border-top: 1px solid var(--border);
+    padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    box-shadow: 0 -4px 20px rgba(0,153,187,0.1);
+  }
+  .submit-bar-left { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  .submit-bar-left span { color: var(--text); font-weight: 600; }
+  .btn-submit {
+    background: linear-gradient(135deg,#009e6e,var(--green));
+    color: #fff; border: none; border-radius: var(--radius); padding: 12px 32px;
+    font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s; box-shadow: 0 4px 16px rgba(0,201,138,0.3);
+    letter-spacing: 0.04em;
+  }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,201,138,0.4); }
+  .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  /* ── RESULTS ─────────────────────────────────────── */
+  .results-wrap { max-width: 500px; margin: 0 auto; padding: 56px 20px; text-align: center; }
+  .result-ring-wrap { position: relative; width: 170px; height: 170px; margin: 0 auto 28px; }
+  .result-ring { transform: rotate(-90deg); }
+  .result-ring-bg   { fill: none; stroke: rgba(0,153,187,0.1); stroke-width: 12; }
+  .result-ring-fill { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 1.2s ease; }
+  .result-pct { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .result-pct-num   { font-size: 38px; font-weight: 700; color: var(--text); }
+  .result-pct-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.12em; margin-top: 2px; }
+  .result-verdict   { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+  .result-verdict.pass { color: var(--green); }
+  .result-verdict.fail { color: var(--red); }
+  .result-sub { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 26px; }
+  .result-detail-box { background: #fff; border: 1px solid rgba(0,153,187,0.2); border-radius: 12px; padding: 18px 22px; margin-bottom: 22px; text-align: left; box-shadow: 0 1px 6px rgba(0,153,187,0.07); }
+  .result-detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,153,187,0.08); font-size: 14px; }
+  .result-detail-row:last-child { border-bottom: none; }
+  .result-detail-row .label { color: var(--muted); }
+  .result-detail-row .val   { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text); }
+  .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── GRADEBOOK ───────────────────────────────────── */
+  .gradebook-wrap { max-width: 720px; margin: 0 auto; padding: 36px 20px 80px; }
+  .gb-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .gb-sub   { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+  .gb-lookup { display: flex; gap: 10px; margin-bottom: 24px; }
+  .gb-attempt-card { background: #fff; border: 1px solid rgba(0,153,187,0.18); border-radius: 12px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,153,187,0.06); }
+  .gb-attempt-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; transition: background 0.15s; }
+  .gb-attempt-header:hover { background: rgba(0,153,187,0.04); }
+  .gb-attempt-info { flex: 1; }
+  .gb-attempt-exam { font-size: 14px; font-weight: 600; color: var(--text); }
+  .gb-attempt-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .gb-attempt-right { display: flex; align-items: center; gap: 10px; }
+  .gb-score { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; }
+  .gb-score.pass { color: var(--green); }
+  .gb-score.fail { color: var(--red); }
+  .gb-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 9px; border-radius: 6px; }
+  .gb-badge.pass { background: rgba(0,201,138,0.1); color: var(--green); border: 1px solid rgba(0,201,138,0.25); }
+  .gb-badge.fail { background: rgba(239,83,80,0.1); color: var(--red);   border: 1px solid rgba(239,83,80,0.25); }
+  .gb-expand { color: var(--muted); font-size: 11px; transition: transform 0.2s; }
+  .gb-expand.open { transform: rotate(180deg); }
+  .gb-attempt-body { display: none; padding: 0 18px 18px; border-top: 1px solid rgba(0,153,187,0.1); }
+  .gb-attempt-body.open { display: block; }
+  .gb-review-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 14px 0 10px; }
+  .gb-q-row { padding: 10px 0; border-bottom: 1px solid rgba(0,153,187,0.08); }
+  .gb-q-row:last-child { border-bottom: none; }
+  .gb-q-text { font-size: 13px; color: var(--text); margin-bottom: 5px; line-height: 1.5; font-weight: 500; }
+  .gb-q-answer { font-size: 12px; color: var(--muted); }
+  .gb-q-answer .correct { color: var(--green); font-weight: 600; }
+  .gb-q-explanation { font-size: 11px; color: var(--accent); font-style: italic; margin-top: 4px; }
+
+  /* ── MODALS ──────────────────────────────────────── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10,20,40,0.55); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .modal-sub   { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.6; white-space: pre-wrap; }
+  .modal-field { margin-bottom: 14px; }
+  .modal-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); display: block; margin-bottom: 6px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+  .modal-status { font-size: 13px; color: var(--muted); margin-top: 8px; min-height: 18px; }
+  .modal-status.err { color: var(--red); }
+  .modal-status.ok  { color: var(--green); }
+
+  /* ── TOAST ───────────────────────────────────────── */
+  .toast { position: fixed; bottom: 76px; right: 24px; z-index: 500; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 18px; font-size: 14px; color: var(--text); transform: translateY(16px); opacity: 0; transition: all 0.3s; pointer-events: none; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: var(--green); }
+  .toast.error   { border-color: var(--red); }
+
+  /* ── MISC ────────────────────────────────────────── */
+  .empty-state { text-align: center; padding: 44px 20px; color: var(--muted); font-size: 13px; }
+  .empty-icon  { font-size: 32px; margin-bottom: 10px; }
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(0,153,187,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .topbar { padding: 0 16px; }
+    .row { grid-template-columns: 1fr; }
+    .cid-row { flex-direction: column; }
+    .submit-bar { padding: 10px 16px; }
+    .exam-page-wrap, .gradebook-wrap, .results-wrap { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    ZMA <span>EXAM CENTER</span>
+  </div>
+  <div class="topbar-nav">
+    <button class="nav-btn active" id="nav-home"      onclick="showPage('home')">Exams</button>
+    <button class="nav-btn"        id="nav-gradebook" onclick="showPage('gradebook')">My Grades</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE: HOME                                     -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <div class="page-wrap">
+  <div class="hero" style="padding:0;margin-bottom:24px;">
+    <div class="hero-eyebrow">Miami ARTCC · Exam Center</div>
+
+
+    <!-- CID Card -->
+    <div class="cid-card">
+      <div class="cid-card-title">Your VATSIM CID</div>
+      <div id="cid-entry-view">
+        <div class="cid-row">
+          <input class="field-input" id="cid-input" type="number" placeholder="Enter your CID…" onkeydown="if(event.key==='Enter')lookupCid()">
+          <button class="btn-primary" onclick="lookupCid()" id="cid-btn">Look Up</button>
+        </div>
+        <div class="cid-status" id="cid-status"></div>
+      </div>
+      <div id="cid-logged-view" style="display:none;">
+        <div class="cid-logged">
+          <div class="cid-pill">
+            <span>✓</span>
+            <div>
+              <div id="cid-name-display" style="font-size:14px;font-weight:700;"></div>
+              <div id="cid-num-display" style="font-size:11px;opacity:0.7;font-family:var(--font-mono);"></div>
+            </div>
+          </div>
+          <button class="btn-ghost" onclick="logoutCid()">Change</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-chip active" onclick="filterExams('all',this)">All</button>
+    <button class="filter-chip" onclick="filterExams('S1',this)">S1</button>
+    <button class="filter-chip" onclick="filterExams('S2',this)">S2</button>
+    <button class="filter-chip" onclick="filterExams('S3',this)">S3</button>
+    <button class="filter-chip" onclick="filterExams('C1',this)">C1</button>
+    <button class="filter-chip" onclick="filterExams('T1',this)">T1</button>
+    <button class="filter-chip" onclick="filterExams('General',this)">General</button>
+  </div>
+
+  <!-- Exams grid -->
+  <div id="exams-grid" class="exams-grid">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div>Loading exams…</div>
+      </div>
+  </div>
+
+  <!-- Recent passes -->
+  <div class="passes-section" id="passes-section" style="display:none;">
+    <div class="passes-title">🏆 Recent Passes</div>
+    <div class="passes-scroll" id="passes-scroll"></div>
+  </div>
+
+</div><!-- /page-home -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE: EXAM TAKING                              -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-exam">
+  <div class="exam-page-wrap">
+
+    <div class="exam-header">
+      <div class="exam-header-left">
+        <div class="exam-h-title" id="exam-h-title">Exam</div>
+        <div class="exam-h-meta" id="exam-h-meta"></div>
+      </div>
+      <div class="exam-header-right">
+        <div class="progress-wrap">
+          <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="exam-progress-bar" style="width:0%"></div>
+          </div>
+          <span class="progress-label" id="exam-progress-label">0 / 0 answered</span>
+        </div>
+        <div class="timer-display" id="exam-timer" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="flag-bar" id="flag-bar">
+      <div class="flag-bar-title">⚑ Flagged for Review</div>
+      <div class="flag-chips" id="flag-chips"></div>
+    </div>
+
+    <div id="exam-questions-body"></div>
+
+  </div>
+
+  <!-- Submit bar -->
+  <div class="submit-bar">
+    <div class="submit-bar-left">
+      <span id="submit-answered">0</span> of <span id="submit-total">0</span> answered
+      &nbsp;·&nbsp; <span id="submit-flagged-count" style="color:var(--gold);">0 flagged</span>
+    </div>
+    <button class="btn-submit" onclick="confirmSubmit()">Submit Exam</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE: RESULTS                                  -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-results">
+  <div class="results-wrap">
+
+    <div class="result-ring-wrap">
+      <svg class="result-ring" width="180" height="180" viewBox="0 0 180 180">
+        <circle class="result-ring-bg" cx="90" cy="90" r="80"/>
+        <circle class="result-ring-fill" id="result-ring-fill" cx="90" cy="90" r="80"
+          stroke-dasharray="502" stroke-dashoffset="502"/>
+      </svg>
+      <div class="result-pct">
+        <div class="result-pct-num" id="result-pct-num">—</div>
+        <div class="result-pct-label">SCORE</div>
+      </div>
+    </div>
+
+    <div class="result-verdict" id="result-verdict"></div>
+    <div class="result-sub" id="result-sub"></div>
+
+    <div class="result-detail-box">
+      <div class="result-detail-row"><span class="label">Your Score</span><span class="val" id="rd-score"></span></div>
+      <div class="result-detail-row"><span class="label">Passing Grade</span><span class="val" id="rd-passing"></span></div>
+      <div class="result-detail-row"><span class="label">Exam</span><span class="val" id="rd-exam"></span></div>
+      <div class="result-detail-row"><span class="label">Attempt</span><span class="val" id="rd-attempt"></span></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-ghost" onclick="showPage('home')">← Back to Exams</button>
+      <button class="btn-ghost" onclick="showPage('gradebook')">View My Grades</button>
+      <button class="btn-primary" id="result-retry-btn" onclick="retryExam()" style="display:none;">Try Again</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE: GRADEBOOK                                -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-gradebook">
+  <div class="gradebook-wrap">
+    <div class="gb-header">
+      <div class="gb-title">My Gradebook</div>
+      <div class="gb-sub">View your exam history. Passed exams show full question review.</div>
+    </div>
+    <div class="gb-lookup">
+      <input class="field-input" id="gb-cid-input" type="number" placeholder="Enter your CID…">
+      <button class="btn-primary" onclick="loadGradebook()">Load Grades</button>
+    </div>
+    <div id="gb-results">
+      <div class="empty-state"><div class="empty-icon">📚</div>Enter your CID to view your exam history.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- MODAL: Start Exam (password entry)             -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="start-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="start-modal-title">Start Exam</div>
+    <div class="modal-sub" id="start-modal-sub"></div>
+    <div class="modal-field">
+      <label class="modal-label">Exam Password</label>
+      <input class="field-input" id="start-password" type="password" placeholder="Enter exam password…" onkeydown="if(event.key==='Enter')beginExam()">
+    </div>
+    <div class="modal-status" id="start-modal-status"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('start-modal')">Cancel</button>
+      <button class="btn-primary" onclick="beginExam()" id="start-btn">Start Exam</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Confirm submit -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <div class="modal-title">Submit Exam?</div>
+    <div class="modal-sub" id="confirm-modal-sub">Are you sure you want to submit? You cannot change your answers after submission.</div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('confirm-modal')">Go Back</button>
+      <button class="btn-primary" onclick="submitExam()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  ZMA EXAM PORTAL — FRONTEND JS
+// ══════════════════════════════════════════════════════════
+
+var state = {
+  cid:         null,
+  cidName:     null,
+  exams:       [],
+  activeFilter:'all',
+  myAttempts:  [],   // loaded once CID known
+  // Current exam session
+  exam:        null,
+  sections:    [],
+  allQuestions:[],
+  answers:     {},   // questionId → answer
+  flagged:     {},   // questionId → true
+  startedAt:   null,
+  timerInterval: null,
+  secondsLeft:   null,
+  pendingExamId: null,
+  attemptNumber: null,
+};
+
+// ── PAGE ROUTING ─────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  var nb = document.getElementById('nav-' + name);
+  if (nb) nb.classList.add('active');
+  if (name === 'home') loadExams();
+  if (name === 'gradebook' && state.cid) {
+    document.getElementById('gb-cid-input').value = state.cid;
+    loadGradebook();
+  }
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + (type||'') + ' show';
+  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+}
+
+// ── CID LOOKUP ────────────────────────────────────────────
+function lookupCid() {
+  var cid = document.getElementById('cid-input').value.trim();
+  if (!cid) return;
+  var st = document.getElementById('cid-status');
+  st.textContent = 'Looking up…'; st.className = 'cid-status';
+  document.getElementById('cid-btn').disabled = true;
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      document.getElementById('cid-btn').disabled = false;
+      if (!res || !res.success) {
+        st.textContent = 'CID not found. Please check your CID and try again.';
+        st.className = 'cid-status err'; return;
+      }
+      state.cid     = String(cid);
+      state.cidName = res.name || ('CID ' + cid);
+      document.getElementById('cid-name-display').textContent = state.cidName;
+      document.getElementById('cid-num-display').textContent  = 'CID: ' + state.cid;
+      document.getElementById('cid-entry-view').style.display  = 'none';
+      document.getElementById('cid-logged-view').style.display = 'block';
+      st.textContent = '';
+      loadMyAttempts();
+      renderExams();
+    })
+    .withFailureHandler(function(e) {
+      document.getElementById('cid-btn').disabled = false;
+      st.textContent = 'Lookup failed. Try again.'; st.className = 'cid-status err';
+    })
+    .lookupVatsimMember(cid);
+}
+
+function logoutCid() {
+  state.cid = null; state.cidName = null; state.myAttempts = [];
+  document.getElementById('cid-entry-view').style.display  = 'block';
+  document.getElementById('cid-logged-view').style.display = 'none';
+  document.getElementById('cid-input').value = '';
+  renderExams();
+}
+
+// ── LOAD EXAMS ────────────────────────────────────────────
+function loadExams() {
+  google.script.run
+    .withSuccessHandler(function(res) {
+      state.exams = (res && res.exams) || [];
+      renderExams();
+      loadRecentPasses();
+    })
+    .withFailureHandler(function(e){
+      document.getElementById('exams-grid').innerHTML =
+        '<div class="empty-state"><div class="empty-icon">⚠️</div>Failed to load exams. Please refresh.</div>';
+    })
+    .getPublishedExams();
+}
+
+function loadMyAttempts() {
+  if (!state.cid) return;
+  google.script.run
+    .withSuccessHandler(function(res) {
+      state.myAttempts = (res && res.attempts) || [];
+      renderExams();
+    })
+    .withFailureHandler(function(){})
+    .getAttemptsByCidPublic(state.cid);
+}
+
+function loadRecentPasses() {
+  google.script.run
+    .withSuccessHandler(function(res) {
+      var passes = (res && res.passes) || [];
+      var sec = document.getElementById('passes-section');
+      if (!passes.length) { sec.style.display = 'none'; return; }
+      sec.style.display = 'block';
+      document.getElementById('passes-scroll').innerHTML = passes.map(function(p) {
+        return '<div class="pass-chip">' +
+          '<span class="pass-chip-icon">🏆</span>' +
+          '<div>' +
+            '<div class="pass-chip-name">' + p.name + '</div>' +
+            '<div class="pass-chip-exam">' + p.examTitle + '</div>' +
+            '<div class="pass-chip-date">' + p.date + '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    })
+    .withFailureHandler(function(){})
+    .getRecentPasses();
+}
+
+// ── RENDER EXAMS ──────────────────────────────────────────
+function filterExams(rating, el) {
+  state.activeFilter = rating;
+  document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  renderExams();
+}
+
+function hasPassed(examId) {
+  return state.myAttempts.some(function(a){ return a.examId === examId && a.passed; });
+}
+
+function getAttemptCount(examId) {
+  return state.myAttempts.filter(function(a){ return a.examId === examId && !a.isPreview; }).length;
+}
+
+function ratingClass(r) {
+  var m = { S1:'rp-s1', S2:'rp-s2', S3:'rp-s3', C1:'rp-c1', T1:'rp-t1' };
+  return m[r] || 'rp-general';
+}
+
+function renderExams() {
+  var grid = document.getElementById('exams-grid');
+  var exams = state.exams.filter(function(e){
+    return state.activeFilter === 'all' || e.rating === state.activeFilter;
+  });
+  if (!exams.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div>No exams available in this category.</div>';
+    return;
+  }
+  grid.innerHTML = exams.map(function(ex) {
+    var passed     = hasPassed(ex.examId);
+    var attempts   = getAttemptCount(ex.examId);
+    var maxReached = ex.maxAttempts && attempts >= ex.maxAttempts && !passed;
+    var locked     = !state.cid;
+    var meta = [];
+    if (ex.timeLimitMins) meta.push('⏱ <span>' + ex.timeLimitMins + ' min</span>');
+    meta.push('📊 <span>' + ex.passingPct + '% to pass</span>');
+    if (ex.maxAttempts) meta.push('🔁 <span>' + ex.maxAttempts + ' attempts</span>');
+    if (ex.password) meta.push('🔒 <span>Password required</span>');
+
+    var footerHtml = '';
+    if (locked) {
+      footerHtml = '<span class="locked-msg">↑ Enter your CID to start</span>';
+    } else if (maxReached) {
+      footerHtml = '<span class="locked-msg" style="color:var(--red);">Max attempts reached</span>';
+    } else if (passed) {
+      footerHtml = '<span class="already-passed">✓ Passed</span><button class="btn-start" style="background:var(--surface3);color:var(--accent);border:1px solid var(--border);" onclick="openStartModal(\'' + ex.examId + '\',event)">Retake</button>';
+    } else {
+      footerHtml = (attempts > 0 ? '<span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">Attempt ' + (attempts+1) + ' of ' + (ex.maxAttempts||'∞') + '</span>' : '<span></span>') +
+        '<button class="btn-start" onclick="openStartModal(\'' + ex.examId + '\',event)">Start Exam →</button>';
+    }
+
+    return '<div class="exam-card' + (locked || maxReached ? ' locked' : '') + '">' +
+      '<div class="exam-card-top">' +
+        '<span class="rating-pill ' + ratingClass(ex.rating) + '">' + (ex.rating || 'General') + '</span>' +
+        (passed ? '<span style="font-size:20px;">✅</span>' : (locked ? '<span class="lock-icon">🔒</span>' : '')) +
+      '</div>' +
+      '<div class="exam-card-title">' + ex.title + '</div>' +
+      '<div class="exam-card-desc">' + (ex.description || 'No description provided.') + '</div>' +
+      '<div class="exam-card-meta">' + meta.map(function(m){ return '<span class="exam-meta-item">' + m + '</span>'; }).join('') + '</div>' +
+      '<div class="exam-card-footer">' + footerHtml + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── START EXAM FLOW ───────────────────────────────────────
+function openStartModal(examId, e) {
+  if (e) e.stopPropagation();
+  if (!state.cid) { showToast('Please enter your CID first', 'error'); return; }
+  state.pendingExamId = examId;
+  var ex = state.exams.find(function(e){ return e.examId === examId; });
+  if (!ex) return;
+
+  // Check eligibility first
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (!res || !res.eligible) {
+        showToast(res ? res.reason : 'Not eligible', 'error'); return;
+      }
+      state.attemptNumber = res.attemptNumber;
+      var modal = document.getElementById('start-modal');
+      document.getElementById('start-modal-title').textContent = ex.title;
+      document.getElementById('start-modal-sub').textContent   =
+        (ex.description ? ex.description + '\n\n' : '') +
+        'Passing score: ' + ex.passingPct + '%' +
+        (ex.timeLimitMins ? ' · Time limit: ' + ex.timeLimitMins + ' minutes' : ' · No time limit') +
+        (ex.maxAttempts ? ' · Attempt ' + state.attemptNumber + ' of ' + ex.maxAttempts : '');
+      document.getElementById('start-password').value = '';
+      document.getElementById('start-modal-status').textContent = '';
+      document.getElementById('start-modal-status').className = 'modal-status';
+      // If no password required, skip modal and start
+      if (!ex.password) {
+        startExamSession(examId, '');
+      } else {
+        modal.classList.add('open');
+      }
+    })
+    .withFailureHandler(function(e){ showToast('Error: ' + e.message, 'error'); })
+    .checkAttemptEligibilityPublic(examId, state.cid);
+}
+
+function beginExam() {
+  var password = document.getElementById('start-password').value;
+  var st = document.getElementById('start-modal-status');
+  st.textContent = 'Verifying…'; st.className = 'modal-status';
+  document.getElementById('start-btn').disabled = true;
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      document.getElementById('start-btn').disabled = false;
+      if (!res || !res.success) {
+        st.textContent = res ? res.error : 'Incorrect password.';
+        st.className = 'modal-status err'; return;
+      }
+      closeModal('start-modal');
+      startExamSession(state.pendingExamId, password);
+    })
+    .withFailureHandler(function(e){
+      document.getElementById('start-btn').disabled = false;
+      st.textContent = 'Error verifying. Try again.'; st.className = 'modal-status err';
+    })
+    .verifyExamPasswordPublic(state.pendingExamId, password);
+}
+
+function startExamSession(examId, password) {
+  var st = document.getElementById('start-modal-status');
+  if (st) { st.textContent = 'Loading exam…'; st.className = 'modal-status'; }
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (!res || !res.success) { showToast('Failed to load exam', 'error'); return; }
+      closeModal('start-modal');
+      initExamSession(res);
+    })
+    .withFailureHandler(function(e){ showToast('Error loading exam: ' + e.message, 'error'); })
+    .buildExamPublic(examId);
+}
+
+// ── EXAM SESSION ──────────────────────────────────────────
+function initExamSession(res) {
+  state.exam        = res.exam;
+  state.sections    = res.sections || [];
+  state.answers     = {};
+  state.flagged     = {};
+  state.startedAt   = new Date().toISOString();
+  state.allQuestions= [];
+  state.sections.forEach(function(sec){
+    (sec.questions || []).forEach(function(q){ state.allQuestions.push(q); });
+  });
+
+  document.getElementById('exam-h-title').textContent = state.exam.title;
+  document.getElementById('exam-h-meta').textContent  =
+    (state.exam.rating || 'General') + ' · ' + state.exam.passingPct + '% to pass' +
+    (state.exam.timeLimitMins ? ' · ' + state.exam.timeLimitMins + ' min' : '');
+
+  renderExamQuestions();
+  updateProgress();
+
+  // Timer
+  var timerEl = document.getElementById('exam-timer');
+  if (state.exam.timeLimitMins) {
+    state.secondsLeft = state.exam.timeLimitMins * 60;
+    timerEl.style.display = 'block';
+    updateTimerDisplay();
+    state.timerInterval = setInterval(function(){
+      state.secondsLeft--;
+      updateTimerDisplay();
+      if (state.secondsLeft <= 0) { clearInterval(state.timerInterval); submitExam(); }
+    }, 1000);
+  } else {
+    timerEl.style.display = 'none';
+    clearInterval(state.timerInterval);
+  }
+
+  showPage('exam');
+  window.scrollTo(0, 0);
+}
+
+function updateTimerDisplay() {
+  var s = Math.max(0, state.secondsLeft);
+  var m = Math.floor(s / 60), sec = s % 60;
+  var display = (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  var el = document.getElementById('exam-timer');
+  el.textContent = display;
+  el.className = 'timer-display' + (s <= 60 ? ' danger' : s <= 300 ? ' warning' : '');
+}
+
+function renderExamQuestions() {
+  var body = document.getElementById('exam-questions-body');
+  var html = '';
+  var globalQNum = 0;
+  state.sections.forEach(function(sec) {
+    if (state.sections.length > 1) {
+      html += '<div class="section-divider">' +
+        '<div class="section-divider-line"></div>' +
+        '<div class="section-divider-label">' + sec.title + '</div>' +
+        '<div class="section-divider-line"></div>' +
+      '</div>';
+    }
+    (sec.questions || []).forEach(function(q) {
+      globalQNum++;
+      html += buildQuestionHtml(q, globalQNum);
+    });
+  });
+  body.innerHTML = html;
+  document.getElementById('submit-total').textContent = state.allQuestions.length;
+}
+
+function buildQuestionHtml(q, num) {
+  var inputsHtml = '';
+  if (q.type === 'mc-single') {
+    inputsHtml = '<div class="choices-list">' +
+      (q.choices || []).map(function(c, i) {
+        return '<label class="choice-label">' +
+          '<input type="radio" name="q_' + q.questionId + '" value="' + esc(c) + '" onchange="recordAnswer(\'' + q.questionId + '\',this.value)">' +
+          '<span class="choice-text">' + esc(c) + '</span>' +
+        '</label>';
+      }).join('') + '</div>';
+  } else if (q.type === 'mc-multi') {
+    inputsHtml = '<div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-bottom:8px;">Select all that apply</div>' +
+      '<div class="choices-list">' +
+      (q.choices || []).map(function(c) {
+        return '<label class="choice-label">' +
+          '<input type="checkbox" name="q_' + q.questionId + '" value="' + esc(c) + '" onchange="recordMultiAnswer(\'' + q.questionId + '\')">' +
+          '<span class="choice-text">' + esc(c) + '</span>' +
+        '</label>';
+      }).join('') + '</div>';
+  } else if (q.type === 'true-false') {
+    inputsHtml = '<div class="tf-row">' +
+      '<button class="tf-btn" id="tf_' + q.questionId + '_True"  onclick="recordTf(\'' + q.questionId + '\',\'True\')">True</button>' +
+      '<button class="tf-btn" id="tf_' + q.questionId + '_False" onclick="recordTf(\'' + q.questionId + '\',\'False\')">False</button>' +
+    '</div>';
+  } else if (q.type === 'short-answer') {
+    inputsHtml = '<input class="field-input text-answer" id="sa_' + q.questionId + '" type="text" placeholder="Type your answer…" oninput="recordAnswer(\'' + q.questionId + '\',this.value)">';
+  } else if (q.type === 'fill-blank') {
+    var blanks = (q.correctAnswer && Array.isArray(q.correctAnswer)) ? q.correctAnswer.length : 1;
+    inputsHtml = '<div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-bottom:8px;">Fill in each blank in order</div>';
+    for (var b = 0; b < blanks; b++) {
+      inputsHtml += '<input class="field-input text-answer" style="margin-bottom:8px;" placeholder="Blank ' + (b+1) + '" id="fb_' + q.questionId + '_' + b + '" oninput="recordFillBlank(\'' + q.questionId + '\','+blanks+')">';
+    }
+  } else if (q.type === 'matching') {
+    var pairs = q.matchingPairs || [];
+    var rights = pairs.map(function(p){ return p.right || ''; });
+    var shuffled = rights.slice().sort(function(){ return Math.random() - 0.5; });
+    inputsHtml = '<div class="matching-grid">';
+    pairs.forEach(function(p, i) {
+      inputsHtml += '<div class="matching-row">' +
+        '<div class="match-left-item">' + esc(p.left) + '</div>' +
+        '<div class="match-arrow">→</div>' +
+        '<select class="field-input match-right-select" id="match_' + q.questionId + '_' + i + '" onchange="recordMatching(\'' + q.questionId + '\',' + pairs.length + ')">' +
+        '<option value="">— Select —</option>' +
+        shuffled.map(function(r){ return '<option value="' + esc(r) + '">' + esc(r) + '</option>'; }).join('') +
+        '</select></div>';
+    });
+    inputsHtml += '</div>';
+  }
+
+  return '<div class="question-block" id="qblock_' + q.questionId + '">' +
+    '<div class="q-top">' +
+      '<span class="q-num">Q' + num + '</span>' +
+      '<div class="q-text">' + esc(q.questionText) + '</div>' +
+      '<button class="q-flag-btn" id="flagbtn_' + q.questionId + '" onclick="toggleFlag(\'' + q.questionId + '\',' + num + ')">⚑ Flag</button>' +
+    '</div>' +
+    (q.imageURL ? '<img class="q-image" src="' + q.imageURL + '" alt="Question image">' : '') +
+    '<div class="q-pts">' + q.points + ' point' + (q.points !== 1 ? 's' : '') + '</div>' +
+    inputsHtml +
+  '</div>';
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── ANSWER RECORDING ──────────────────────────────────────
+function recordAnswer(qId, val) {
+  state.answers[qId] = val;
+  updateProgress();
+  document.getElementById('qblock_' + qId).classList.add('answered');
+}
+
+function recordMultiAnswer(qId) {
+  var checked = [];
+  document.querySelectorAll('input[name="q_' + qId + '"]:checked').forEach(function(c){ checked.push(c.value); });
+  state.answers[qId] = checked.length ? checked : null;
+  updateProgress();
+  document.getElementById('qblock_' + qId).classList.toggle('answered', checked.length > 0);
+}
+
+function recordTf(qId, val) {
+  state.answers[qId] = val;
+  ['True','False'].forEach(function(opt){
+    var b = document.getElementById('tf_' + qId + '_' + opt);
+    if (b) b.classList.toggle('selected', opt === val);
+  });
+  updateProgress();
+  document.getElementById('qblock_' + qId).classList.add('answered');
+}
+
+function recordFillBlank(qId, blanks) {
+  var vals = [];
+  for (var i = 0; i < blanks; i++) {
+    var el = document.getElementById('fb_' + qId + '_' + i);
+    vals.push(el ? el.value.trim() : '');
+  }
+  state.answers[qId] = vals;
+  updateProgress();
+  document.getElementById('qblock_' + qId).classList.toggle('answered', vals.some(function(v){ return v; }));
+}
+
+function recordMatching(qId, pairs) {
+  var result = [];
+  for (var i = 0; i < pairs; i++) {
+    var sel = document.getElementById('match_' + qId + '_' + i);
+    if (sel && sel.value) result.push({ left: sel.parentNode.querySelector('.match-left-item').textContent, right: sel.value });
+  }
+  state.answers[qId] = result.length ? result : null;
+  updateProgress();
+  document.getElementById('qblock_' + qId).classList.toggle('answered', result.length === pairs);
+}
+
+// ── FLAG ──────────────────────────────────────────────────
+function toggleFlag(qId, num) {
+  state.flagged[qId] = !state.flagged[qId];
+  var block = document.getElementById('qblock_' + qId);
+  var btn   = document.getElementById('flagbtn_' + qId);
+  block.classList.toggle('flagged', state.flagged[qId]);
+  btn.classList.toggle('flagged', state.flagged[qId]);
+  btn.textContent = state.flagged[qId] ? '⚑ Flagged' : '⚑ Flag';
+  updateFlagBar();
+  updateProgress();
+}
+
+function updateFlagBar() {
+  var flagged = Object.keys(state.flagged).filter(function(k){ return state.flagged[k]; });
+  var bar = document.getElementById('flag-bar');
+  bar.classList.toggle('visible', flagged.length > 0);
+  document.getElementById('flag-chips').innerHTML = flagged.map(function(qId) {
+    var idx = state.allQuestions.findIndex(function(q){ return q.questionId === qId; });
+    return '<span class="flag-chip" onclick="scrollToQ(\'' + qId + '\')">Q' + (idx + 1) + '</span>';
+  }).join('');
+}
+
+function scrollToQ(qId) {
+  var el = document.getElementById('qblock_' + qId);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── PROGRESS ──────────────────────────────────────────────
+function updateProgress() {
+  var total    = state.allQuestions.length;
+  var answered = state.allQuestions.filter(function(q){ return state.answers[q.questionId] != null; }).length;
+  var flagged  = Object.values(state.flagged).filter(Boolean).length;
+  var pct = total ? Math.round(answered / total * 100) : 0;
+  document.getElementById('exam-progress-bar').style.width  = pct + '%';
+  document.getElementById('exam-progress-label').textContent = answered + ' / ' + total + ' answered';
+  document.getElementById('submit-answered').textContent     = answered;
+  document.getElementById('submit-total').textContent        = total;
+  document.getElementById('submit-flagged-count').textContent = flagged + ' flagged';
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+function confirmSubmit() {
+  var total    = state.allQuestions.length;
+  var answered = state.allQuestions.filter(function(q){ return state.answers[q.questionId] != null; }).length;
+  var flagged  = Object.values(state.flagged).filter(Boolean).length;
+  var unanswered = total - answered;
+  var msg = 'Are you sure you want to submit?';
+  if (unanswered > 0) msg += '\n\n⚠ ' + unanswered + ' question(s) unanswered.';
+  if (flagged > 0)    msg += '\n⚑ ' + flagged + ' question(s) still flagged for review.';
+  document.getElementById('confirm-modal-sub').textContent = msg;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+function submitExam() {
+  closeModal('confirm-modal');
+  clearInterval(state.timerInterval);
+  var answers = state.allQuestions.map(function(q){ return { questionId: q.questionId, answer: state.answers[q.questionId] || null }; });
+  var cidParts = (state.cidName || '').split(' ');
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (!res || !res.success) { showToast('Submission failed. Try again.', 'error'); return; }
+      showResults(res);
+      loadMyAttempts();
+    })
+    .withFailureHandler(function(e){ showToast('Error submitting: ' + e.message, 'error'); })
+    .submitExamAttemptPublic({
+      examId:    state.exam.examId,
+      cid:       state.cid,
+      firstName: cidParts[0] || '',
+      lastName:  cidParts.slice(1).join(' ') || '',
+      startedAt: state.startedAt,
+      answers:   answers,
+    });
+}
+
+// ── RESULTS ───────────────────────────────────────────────
+function showResults(res) {
+  var pct     = res.pct;
+  var passed  = res.passed;
+  var passing = res.passingPct;
+  var circumference = 502;
+  var offset = circumference - (pct / 100) * circumference;
+  var ring = document.getElementById('result-ring-fill');
+  ring.setAttribute('stroke', passed ? 'var(--green)' : 'var(--red)');
+  // Animate after paint
+  setTimeout(function(){ ring.style.strokeDashoffset = offset; }, 50);
+
+  document.getElementById('result-pct-num').textContent  = pct + '%';
+  document.getElementById('result-pct-num').style.color  = passed ? 'var(--green)' : 'var(--red)';
+  document.getElementById('result-verdict').textContent  = passed ? '🎉 Passed!' : 'Not Passed';
+  document.getElementById('result-verdict').className    = 'result-verdict ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-sub').textContent      = passed
+    ? 'Congratulations! Your result has been recorded. You can view the full exam review in your gradebook.'
+    : 'You needed ' + passing + '% to pass. Review the material and try again when eligible.';
+  document.getElementById('rd-score').textContent   = pct + '%';
+  document.getElementById('rd-passing').textContent = passing + '%';
+  document.getElementById('rd-exam').textContent    = state.exam.title;
+  document.getElementById('rd-attempt').textContent = '#' + (state.attemptNumber || '—');
+
+  // Show retry button only if attempts remain and not passed
+  var ex = state.exams.find(function(e){ return e.examId === state.exam.examId; });
+  var attempts = state.myAttempts.filter(function(a){ return a.examId === state.exam.examId; }).length;
+  var canRetry = !passed && ex && (!ex.maxAttempts || attempts < ex.maxAttempts);
+  document.getElementById('result-retry-btn').style.display = canRetry ? 'inline-block' : 'none';
+
+  showPage('results');
+}
+
+function retryExam() { openStartModal(state.exam.examId, null); }
+
+// ── GRADEBOOK ─────────────────────────────────────────────
+function loadGradebook() {
+  var cid = document.getElementById('gb-cid-input').value.trim() || state.cid;
+  if (!cid) { showToast('Enter a CID', 'error'); return; }
+  var el = document.getElementById('gb-results');
+  el.innerHTML = '<div class="empty-state"><div class="spinner"></div></div>';
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      var attempts = ((res && res.attempts) || []).filter(function(a){ return !a.isPreview; });
+      if (!attempts.length) {
+        el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>No exam attempts found for CID ' + cid + '.</div>';
+        return;
+      }
+      // Group by examId, keep all attempts
+      el.innerHTML = attempts.map(function(a, idx) {
+        var ex = state.exams.find(function(e){ return e.examId === a.examId; }) || {};
+        var date = a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
+        var canReview = a.passed;
+        return '<div class="gb-attempt-card">' +
+          '<div class="gb-attempt-header" onclick="toggleGbExpand(\'gb_' + idx + '\',' + canReview + ')">' +
+            '<span class="gb-attempt-icon">' + (a.passed ? '✅' : '❌') + '</span>' +
+            '<div class="gb-attempt-info">' +
+              '<div class="gb-attempt-exam">' + (ex.title || a.examId) + '</div>' +
+              '<div class="gb-attempt-date">' + date + ' · v' + a.examVersion + '</div>' +
+            '</div>' +
+            '<div class="gb-attempt-right">' +
+              '<span class="gb-score ' + (a.passed ? 'pass' : 'fail') + '">' + a.pct + '%</span>' +
+              '<span class="gb-badge ' + (a.passed ? 'pass' : 'fail') + '">' + (a.passed ? 'PASS' : 'FAIL') + '</span>' +
+              '<span class="gb-expand" id="gbexp_' + idx + '">▼</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="gb-attempt-body" id="gb_' + idx + '">' +
+            (canReview
+              ? renderGbReview(a)
+              : '<div style="padding:16px 0;font-size:13px;color:var(--muted);font-style:italic;">Full review is only available after passing this exam.</div>'
+            ) +
+          '</div>' +
+        '</div>';
+      }).join('');
+    })
+    .withFailureHandler(function(e){
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div>Error loading grades.</div>';
+    })
+    .getAttemptsByCidPublic(cid);
+}
+
+function toggleGbExpand(id, canReview) {
+  var body = document.getElementById(id);
+  var idx  = id.replace('gb_','');
+  var arrow= document.getElementById('gbexp_' + idx);
+  var open = body.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open', open);
+}
+
+function renderGbReview(a) {
+  if (!a.feedback || !a.feedback.length) {
+    return '<div style="padding:16px 0;font-size:13px;color:var(--muted);">No detailed feedback available.</div>';
+  }
+  var html = '<div class="gb-review-section">';
+  html += '<div class="gb-review-title">Question Review</div>';
+  a.feedback.forEach(function(f, i) {
+    html += '<div class="gb-q-row">' +
+      '<div class="gb-q-text">Q' + (i+1) + '. ' + esc(f.questionText) + '</div>' +
+      '<div class="gb-q-answer">' +
+        'Your answer: <strong>' + formatAnswer(f.studentAnswer) + '</strong>' +
+        (f.correctAnswer !== undefined
+          ? ' · Correct: <span class="correct">' + formatAnswer(f.correctAnswer) + '</span>'
+          : '') +
+        ' · <strong style="color:' + (f.correct ? 'var(--green)' : 'var(--red)') + ';">' + (f.correct ? '✓ Correct' : '✗ Incorrect') + '</strong>' +
+        ' · ' + f.earned + '/' + f.possible + 'pt' +
+      '</div>' +
+      (f.explanation ? '<div class="gb-q-explanation">💡 ' + esc(f.explanation) + '</div>' : '') +
+    '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function formatAnswer(ans) {
+  if (ans === null || ans === undefined) return '—';
+  if (Array.isArray(ans)) {
+    if (ans.length && typeof ans[0] === 'object') return ans.map(function(p){ return p.left + '→' + p.right; }).join(', ');
+    return ans.join(', ');
+  }
+  return esc(String(ans));
+}
+
+// ── INIT ──────────────────────────────────────────────────
+document.querySelectorAll('.modal-overlay').forEach(function(el){
+  el.addEventListener('click', function(e){ if (e.target === el) el.classList.remove('open'); });
+});
+
+loadExams();
+</script>
+</body>
+</html>
