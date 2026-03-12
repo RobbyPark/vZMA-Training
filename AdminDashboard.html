@@ -1750,19 +1750,19 @@
     if (mode === 'deny') {
       post({ action:'denyPending', id:_denyCtx.id, email:_denyCtx.email,
              firstName:_denyCtx.firstName, emailTemplate:template, customMessage:custom })
-        .then(function(){ showToast('Request denied','success'); loadPending(); loadDenied(); })
+        .then(function(){ showToast('Request denied','success'); loadAll(); })
         .catch(function(e){ showToast('Failed: '+e.message,'error'); });
       return;
     }
     post({ action:'removeEntry', id:pendingRow.id, tabName:pendingRow.tabName, emailTemplate:template, customMessage:custom })
-      .then(function(){ showToast('Person removed','success'); loadAll(); loadTab('removed','Removed'); })
+      .then(function(){ showToast('Person removed','success'); loadAll(); })
       .catch(function(){ showToast('Failed to remove','error'); });
   }
 
   function permanentDelete(id) {
     if (!confirm('Permanently delete this record? This cannot be undone.')) return;
     sbFetch('/rest/v1/removed_queue?id=eq.' + id, { method:'DELETE' })
-      .then(function(){ showToast('Permanently deleted','success'); loadTab('removed','Removed'); })
+      .then(function(){ showToast('Permanently deleted','success'); loadAll(); })
       .catch(function(){ showToast('Failed to delete','error'); });
   }
 
@@ -1807,6 +1807,7 @@
     post({action:'markComplete', id:id, tabName:tabName})
       .then(function(){
         showToast('Marked complete ✓','success');
+        loadAll();
         reloadTab(tabName);
         loadTab('archived','Completed');
       })
@@ -1884,7 +1885,7 @@
     var color = status==='Training' ? '#4caf82' : '#f4a825';
     if (el) { el.style.color = color; el.style.borderColor = color; }
     post({ action:'updateStatus', id:id, tabName:tabName, status:status })
-      .then(function(){ showToast('Status updated ✓','success'); })
+      .then(function(){ showToast('Status updated ✓','success'); loadAll(); })
       .catch(function(){ showToast('Failed to update status','error'); });
   }
 
@@ -2026,6 +2027,7 @@
         else if (sendStudent) msg = 'Trainer assigned & student notified ✓';
         else if (notifyTrainer) msg = 'Trainer assigned & trainer notified ✓';
         showToast(msg, 'success');
+        loadAll();
         reloadTab(pendingAssign.tabName);
       })
       .catch(function(){ showToast('Assignment saved but email(s) may have failed','error'); });
