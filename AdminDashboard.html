@@ -1850,7 +1850,7 @@
     setAddStatus('Looking up CID via VATUSA…','loading');
     // Determine queue type from rating
     var queueType = 'Home'; // simplified - could add visitor detection later
-    var entryId = 'TQ' + Date.now();
+    var entryId = crypto.randomUUID();
     sbFetch('/rest/v1/training_queue', { method:'POST', headers:{'Prefer':'return=minimal'},
       body: JSON.stringify({ id: entryId, first_name: firstName, last_name: lastName,
         cid: cid, rating: rating, status: 'Waiting', queue_type: queueType,
@@ -3022,7 +3022,7 @@
         });
       }
       if (examAction === 'createExam') {
-        var examId = 'EX' + Date.now();
+        var examId = crypto.randomUUID();
         return sbFetch('/rest/v1/exams', { method:'POST', headers:{'Prefer':'return=representation'},
           body: JSON.stringify({ exam_id: examId, title: payload.title, rating: payload.rating,
             description: payload.description, status: 'Draft', password: payload.password||null,
@@ -3065,7 +3065,7 @@
         });
       }
       if (examAction === 'createSection') {
-        var secId = 'SEC' + Date.now();
+        var secId = crypto.randomUUID();
         return sbFetch('/rest/v1/exam_sections', { method:'POST', headers:{'Prefer':'return=minimal'},
           body: JSON.stringify({ section_id: secId, exam_id: payload.examId, title: payload.title,
             section_order: payload.sectionOrder||1, mode: payload.mode||'fixed',
@@ -3090,7 +3090,7 @@
         });
       }
       if (examAction === 'createQuestion') {
-        var qId = 'Q' + Date.now();
+        var qId = crypto.randomUUID();
         return sbFetch('/rest/v1/questions', { method:'POST', headers:{'Prefer':'return=minimal'},
           body: JSON.stringify({ question_id: qId, exam_id: payload.examId||null,
             section_id: payload.sectionId||null, bank_id: payload.bankId||null,
@@ -3120,7 +3120,7 @@
         });
       }
       if (examAction === 'createBank') {
-        var bankId = 'BNK' + Date.now();
+        var bankId = crypto.randomUUID();
         return sbFetch('/rest/v1/question_banks', { method:'POST', headers:{'Prefer':'return=minimal'},
           body: JSON.stringify({ bank_id: bankId, name: payload.name, description: payload.description||'' })
         }).then(function(){ return { success:true, bankId: bankId }; });

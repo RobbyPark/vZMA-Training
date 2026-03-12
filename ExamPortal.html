@@ -1219,7 +1219,7 @@ function submitExam() {
         method: 'POST',
         headers: { 'Prefer': 'return=minimal' },
         body: JSON.stringify({
-          attempt_id:   'AT' + Date.now(),
+          attempt_id:   crypto.randomUUID(),
           exam_id:      state.exam.examId,
           exam_version: state.exam.version || 1,
           cid:          state.cid,
