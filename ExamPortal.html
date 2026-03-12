@@ -621,7 +621,7 @@ function sbFetch(path, options) {
   }, opts.headers || {});
   return fetch(SUPABASE_URL + path, opts).then(function(r) {
     if (!r.ok) return r.text().then(function(t){ throw new Error(t); });
-    if (r.status === 204) return null;
+    if (r.status === 204 || r.status === 201) return null;
     return r.json();
   });
 }
