@@ -1336,7 +1336,7 @@
     el.innerHTML = html;
   }
 
-  window.onload = function() { loadAll(); loadExamRequestsBadge(); };
+  window.onload = function() { loadAll(); loadExamRequestsBadge(); loadTrainers(); };
 
   function loadExamRequestsBadge() {
     sbFetch('/rest/v1/exam_requests?status=eq.Pending&select=id,first_name,last_name,cid,exams,status,created_at')
@@ -1417,12 +1417,26 @@
     wrap.style.display = 'block';
     document.getElementById('count-pending').textContent = data.pending.length;
     var rows = data.pending.map(function(row) {
-      return '<div style="display:grid;grid-template-columns:32px 1.5fr 0.8fr 1.5fr auto;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:12px;">' +
-        '<div style="font-size:11px;font-weight:700;color:var(--accent);background:var(--surface2);border-radius:4px;text-align:center;padding:2px 4px;">#'+row.position+'</div>' +
-        '<div><div style="font-size:14px;font-weight:600;color:var(--white);">'+row.firstName+' '+row.lastName+'</div>' +
-        '<div style="font-size:11px;color:var(--muted);margin-top:2px;">CID: '+row.cid+' &middot; <a href="https://stats.vatsim.net/stats/'+row.cid+'" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;">View Stats &#8599;</a></div></div>' +
-        '<div style="font-size:11px;color:var(--muted);">'+new Date(row.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div>' +
-        '<div style="font-size:13px;color:var(--accent2);">'+row.rating+'</div>' +
+      var date = row.timestamp ? new Date(row.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+      var trainingType = row.trainingType || row.rating || '—';
+      var queueType = row.queueType || 'Home';
+      var qtColor = queueType === 'Visitor' ? '#f4a825' : '#4caf82';
+      return '<div style="display:grid;grid-template-columns:32px 1.8fr 1.2fr 1.5fr auto;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px;">' +
+        '<div style="font-size:11px;font-weight:700;color:var(--accent);background:var(--surface2);border-radius:4px;text-align:center;padding:2px 4px;">#'+(row.position||'?')+'</div>' +
+        '<div>' +
+          '<div style="font-size:14px;font-weight:600;color:var(--white);">'+row.firstName+' '+row.lastName+'</div>' +
+          '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' +
+            'CID: '+row.cid+
+            ' &middot; <a href="https://stats.vatsim.net/stats/'+row.cid+'" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;">View Stats &#8599;</a>' +
+            (row.email ? ' &middot; <span style="color:var(--muted);">'+row.email+'</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div style="font-size:12px;color:var(--muted);">'+date+'</div>' +
+          '<div style="margin-top:3px;"><span style="font-size:11px;background:rgba(0,153,187,0.12);border:1px solid rgba(0,153,187,0.3);border-radius:5px;padding:2px 8px;color:var(--accent2);">'+row.rating+'</span>' +
+          ' <span style="font-size:11px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1);border-radius:5px;padding:2px 8px;color:'+qtColor+';">'+queueType+'</span></div>' +
+        '</div>' +
+        '<div style="font-size:12px;color:var(--accent2);font-weight:500;">'+trainingType+'</div>' +
         '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
           '<button class="btn btn-sm" style="background:#1a3a1a;color:#4caf82;border:1px solid #4caf82;" onclick="approvePending(&quot;'+row.id+'&quot;)">✓ Approve</button>' +
           '<button class="btn btn-sm btn-remove" onclick="openDenyModal(&quot;'+row.id+'&quot;)">Deny</button>' +
@@ -1504,7 +1518,8 @@
         data.pending = (rows||[]).map(function(r,i){
           return { id: r.id, rowIndex: i+2, position: r.position||i+1, status: r.status,
             firstName: r.first_name, lastName: r.last_name, cid: r.cid, rating: r.rating,
-            email: r.email, timestamp: r.created_at, queueType: r.queue_type };
+            email: r.email, timestamp: r.created_at, queueType: r.queue_type,
+            trainingType: r.training_type, notes: r.notes };
         });
         renderPendingPanel(); updateStats();
       })
@@ -1893,16 +1908,17 @@
     var panel = document.getElementById('panel-trainers');
     panel.innerHTML = '<div class="panel-empty"><div class="icon">⏳</div>Loading from VATUSA…</div>';
     loadTrainerRatingsFromSheet(function() {
-    fetch('https://api.vatusa.net/v2/facility/ZMA/staff')
+    fetch('https://api.vatusa.net/v2/facility/ZMA/roster/both?apikey=DSfNvnWR4CphFGGJ')
       .then(function(r){ return r.json(); })
       .then(function(json) {
-        var trainers = (json.data || []).filter(function(m){
-          return m.roles && m.roles.some(function(r){ return r.facility==='ZMA' && (r.role==='INS'||r.role==='MTR'); });
-        }).map(function(m){
-          var roles = m.roles.filter(function(r){ return r.facility==='ZMA' && (r.role==='INS'||r.role==='MTR'); });
-          var isIns = roles.some(function(r){ return r.role==='INS'; });
-          var isMtr = roles.some(function(r){ return r.role==='MTR'; });
-          return { cid: m.cid, firstName: m.fname, lastName: m.lname, rating: m.rating,
+        var roster = json.data || json || [];
+        if (!Array.isArray(roster)) { panel.innerHTML = '<div class="panel-empty"><div class="icon">⚠️</div>Unexpected API response</div>'; return; }
+        var trainers = roster.filter(function(m) {
+          return (m.roles||[]).some(function(r){ return (r.role==='INS'||r.role==='MTR') && (r.facility||'').toUpperCase()==='ZMA'; });
+        }).map(function(m) {
+          var zmRoles = (m.roles||[]).filter(function(r){ return (r.role==='INS'||r.role==='MTR') && (r.facility||'').toUpperCase()==='ZMA'; }).map(function(r){ return r.role; });
+          var isIns = zmRoles.indexOf('INS')!==-1, isMtr = zmRoles.indexOf('MTR')!==-1;
+          return { cid: m.cid, firstName: m.fname||'', lastName: m.lname||'', rating: m.rating_short||m.rating||'',
             role: (isIns&&isMtr)?'Instructor / Mentor':isIns?'Instructor':'Mentor' };
         });
         document.getElementById('count-trainers').textContent = trainers.length;
