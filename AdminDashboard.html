@@ -1094,6 +1094,23 @@
 </div>
 
 <script>
+  var SUPABASE_URL = 'https://rnfvvvxsesxcmejondyu.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuZnZ2dnhzZXN4Y21lam9uZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNTY1MjAsImV4cCI6MjA4ODgzMjUyMH0.Az7plNF6vX4aWho-hc7eqjQdP1TdCyYVfaIuxEPdr_8';
+
+  function sbFetch(path, options) {
+    var opts = options || {};
+    opts.headers = Object.assign({
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json'
+    }, opts.headers || {});
+    return fetch(SUPABASE_URL + path, opts).then(function(r) {
+      if (!r.ok) return r.text().then(function(t){ throw new Error(t); });
+      if (r.status === 204) return null;
+      return r.json();
+    });
+  }
+
   var data = { home:[], visitor:[], ineligible:[], pending:[], removed:[], denied:[], archived:[] };
   var pendingRow = null;
   var dragSrc = null, dragKey = null;
@@ -1388,7 +1405,7 @@
         '<div class="entry-rating">'+row.rating+'</div>' +
         '<div class="entry-meta">'+date+'</div>' +
         '<div class="entry-meta" style="color:#ef8a8a;">'+reason+'</div>' +
-        '<div class="entry-actions" style="justify-content:flex-end;"><button class="btn btn-sm btn-delete" onclick="deleteDenied(''+row.id+'')">Remove</button></div>' +
+        '<div class="entry-actions" style="justify-content:flex-end;"><button class="btn btn-sm btn-delete" onclick="deleteDenied(&quot;'+row.id+'&quot;)">Remove</button></div>' +
         '</div>';
     }).join('');
   }
@@ -1407,8 +1424,8 @@
         '<div style="font-size:11px;color:var(--muted);">'+new Date(row.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div>' +
         '<div style="font-size:13px;color:var(--accent2);">'+row.rating+'</div>' +
         '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
-          '<button class="btn btn-sm" style="background:#1a3a1a;color:#4caf82;border:1px solid #4caf82;" onclick="approvePending(\''+row.id+'\')">✓ Approve</button>' +
-          '<button class="btn btn-sm btn-remove" onclick="openDenyModal(\''+row.id+'\')">Deny</button>' +
+          '<button class="btn btn-sm" style="background:#1a3a1a;color:#4caf82;border:1px solid #4caf82;" onclick="approvePending(&quot;'+row.id+'&quot;)">✓ Approve</button>' +
+          '<button class="btn btn-sm btn-remove" onclick="openDenyModal(&quot;'+row.id+'&quot;)">Deny</button>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -1560,7 +1577,7 @@
           '<div class="entry-meta">'+updatedDate+'</div>' +
           '<div class="entry-meta">'+(row.removalReason||'—')+'</div>' +
           '<div><span class="'+badgeClass+'">'+(row.status||'Removed')+'</span></div>' +
-          '<div class="entry-actions"><button class="btn btn-sm btn-delete" onclick="permanentDelete(''+row.id+'')">Remove</button></div>';
+          '<div class="entry-actions"><button class="btn btn-sm btn-delete" onclick="permanentDelete(&quot;'+row.id+'&quot;)">Remove</button></div>';
         return '<div class="entry-card removed-row">'+cols+'</div>';
       } else if (isArchived) {
         var completedDate = row.updatedAt ? new Date(row.updatedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : date;
@@ -1573,7 +1590,7 @@
           '<div class="entry-meta">'+completedDate+'</div>' +
           '<div class="entry-meta" style="color:var(--accent2);font-weight:600;">'+trainerName+'</div>' +
           '<div><span class="'+badgeClass+'">'+(row.status||'Completed')+'</span></div>' +
-          '<div class="entry-actions" style="justify-content:flex-end;"><button class="btn btn-sm btn-delete" onclick="deleteCompleted(''+row.id+'')">Remove</button></div>';
+          '<div class="entry-actions" style="justify-content:flex-end;"><button class="btn btn-sm btn-delete" onclick="deleteCompleted(&quot;'+row.id+'&quot;)">Remove</button></div>';
         return '<div class="entry-card" style="grid-template-columns:32px 1.4fr 1.1fr 0.9fr 0.9fr 1fr 0.8fr 80px;">'+cols+'</div>';
       } else {
         var dragAttrs = 'draggable="true" data-idx="'+idx+'" data-key="'+key+'" data-rowindex="'+row.rowIndex+'" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,\''+key+'\')"';
@@ -1585,9 +1602,9 @@
             '<div class="entry-rating" title="'+row.rating+'">'+row.rating+'</div>' +
             '<div class="entry-meta">'+date+'</div>' +
             '<div class="entry-actions">' +
-              '<button class="btn btn-sm btn-remove" onclick="openRemoveModal(''+row.id+'',\''+tabName+'\',\''+row.firstName+'\')">Remove</button>' +
-              (row.email ? '<button class="btn btn-sm btn-email" style="overflow:hidden;width:32px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;" onclick="openEmailModal(''+row.id+'',\''+tabName+'\')"><span style="font-size:22px;line-height:1;">✉</span></button>' : '') +
-              '<button class="btn btn-sm btn-move" onclick="openMoveModal(''+row.id+'',\''+tabName+'\')">⇄</button>' +
+              '<button class="btn btn-sm btn-remove" onclick="openRemoveModal(&quot;'+row.id+'&quot;,\''+tabName+'\',\''+row.firstName+'\')">Remove</button>' +
+              (row.email ? '<button class="btn btn-sm btn-email" style="overflow:hidden;width:32px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;" onclick="openEmailModal(&quot;'+row.id+'&quot;,\''+tabName+'\')"><span style="font-size:22px;line-height:1;">✉</span></button>' : '') +
+              '<button class="btn btn-sm btn-move" onclick="openMoveModal(&quot;'+row.id+'&quot;,\''+tabName+'\')">⇄</button>' +
             '</div>';
           return '<div class="entry-card" style="grid-template-columns:20px 32px 1.5fr 1.2fr 0.9fr 2fr;" '+dragAttrs+'>'+cols+'</div>';
         }
@@ -1611,15 +1628,15 @@
           var l = zma.split(' / ').length>1?'ZMA '+(i+1)+':':'ZMA:';
           return mk(p.trim()==='— (0)'?'Not Taken':p.trim(), l);
         }).join('<span style="margin:0 4px;color:#1a2a3a;">|</span>');
-        var ref = '<span style="font-size:10px;color:var(--accent2);cursor:pointer;margin-left:6px;" onclick="refreshZmaGrade(''+row.id+'',\''+tabName+'\',\''+row.cid+'\',\''+encodeURIComponent(row.rating)+'\',this)">↻</span>';
+        var ref = '<span style="font-size:10px;color:var(--accent2);cursor:pointer;margin-left:6px;" onclick="refreshZmaGrade(&quot;'+row.id+'&quot;,\''+tabName+'\',\''+row.cid+'\',\''+encodeURIComponent(row.rating)+'\',this)">↻</span>';
         var examHtml = '<div style="display:flex;flex-direction:row;align-items:center;gap:8px;white-space:nowrap;">'+v+z+ref+'</div>';
 
         var assignedTrainer = getAssignedTrainer(row);
         var trainerCellHtml = '<div style="display:flex;flex-direction:column;gap:3px;">' +
           (assignedTrainer
             ? '<span style="font-size:12px;font-weight:600;color:var(--accent2);">'+assignedTrainer+'</span>' +
-              '<span style="font-size:10px;color:var(--muted);cursor:pointer;" onclick="openAssignTrainerModal(''+row.id+'',\''+tabName+'\',\''+encodeURIComponent(row.firstName+' '+row.lastName)+'\',\''+encodeURIComponent(row.email||'')+'\')">✎ change</span>'
-            : '<button class="btn btn-sm" style="background:#1a2a4a;color:var(--accent2);border:1px solid var(--border);font-size:11px;" onclick="openAssignTrainerModal(''+row.id+'',\''+tabName+'\',\''+encodeURIComponent(row.firstName+' '+row.lastName)+'\',\''+encodeURIComponent(row.email||'')+'\')">Assign Trainer</button>') +
+              '<span style="font-size:10px;color:var(--muted);cursor:pointer;" onclick="openAssignTrainerModal(&quot;'+row.id+'&quot;,\''+tabName+'\',\''+encodeURIComponent(row.firstName+' '+row.lastName)+'\',\''+encodeURIComponent(row.email||'')+'\')">✎ change</span>'
+            : '<button class="btn btn-sm" style="background:#1a2a4a;color:var(--accent2);border:1px solid var(--border);font-size:11px;" onclick="openAssignTrainerModal(&quot;'+row.id+'&quot;,\''+tabName+'\',\''+encodeURIComponent(row.firstName+' '+row.lastName)+'\',\''+encodeURIComponent(row.email||'')+'\')">Assign Trainer</button>') +
           '</div>';
         cols = '<div class="drag-handle">⠿</div>' +
           '<div class="pos">#'+row.position+'</div>' +
@@ -1630,11 +1647,11 @@
           examHtml +
           trainerCellHtml +
           '<div class="entry-actions">' +
-            '<button class="btn btn-sm btn-complete" onclick="markComplete(''+row.id+'',\''+tabName+'\')">✓ Training Complete</button>' +
-            '<button class="btn btn-sm btn-notes" onclick="openNotesModal(''+row.id+'',\''+tabName+'\',\''+encodeURIComponent(row.notes||'')+'\')">📝'+(row.notes?' <span style="display:inline-block;width:7px;height:7px;background:#4caf82;border-radius:50%;margin-left:2px;vertical-align:middle;"></span>':'' )+'</button>' +
-            (row.email ? '<button class="btn btn-sm btn-email" style="overflow:hidden;width:32px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;" onclick="openEmailModal(''+row.id+'',\''+tabName+'\')"><span style="font-size:22px;line-height:1;">✉</span></button>' : '') +
-            '<button class="btn btn-sm btn-move" onclick="openMoveModal(''+row.id+'',\''+tabName+'\')">⇄</button>' +
-            '<button class="btn btn-sm btn-remove" style="margin-left:auto;" onclick="openRemoveModal(''+row.id+'',\''+tabName+'\',\''+row.firstName+'\')">Remove</button>' +
+            '<button class="btn btn-sm btn-complete" onclick="markComplete(&quot;'+row.id+'&quot;,\''+tabName+'\')">✓ Training Complete</button>' +
+            '<button class="btn btn-sm btn-notes" onclick="openNotesModal(&quot;'+row.id+'&quot;,\''+tabName+'\',\''+encodeURIComponent(row.notes||'')+'\')">📝'+(row.notes?' <span style="display:inline-block;width:7px;height:7px;background:#4caf82;border-radius:50%;margin-left:2px;vertical-align:middle;"></span>':'' )+'</button>' +
+            (row.email ? '<button class="btn btn-sm btn-email" style="overflow:hidden;width:32px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;" onclick="openEmailModal(&quot;'+row.id+'&quot;,\''+tabName+'\')"><span style="font-size:22px;line-height:1;">✉</span></button>' : '') +
+            '<button class="btn btn-sm btn-move" onclick="openMoveModal(&quot;'+row.id+'&quot;,\''+tabName+'\')">⇄</button>' +
+            '<button class="btn btn-sm btn-remove" style="margin-left:auto;" onclick="openRemoveModal(&quot;'+row.id+'&quot;,\''+tabName+'\',\''+row.firstName+'\')">Remove</button>' +
           '</div>';
         return '<div class="entry-card" '+dragAttrs+'>'+cols+'</div>';
       }
@@ -2980,22 +2997,6 @@
     loadTab(key, tabName);
   }
   function closeModal(id){document.getElementById(id).classList.remove('open');}
-  var SUPABASE_URL = 'https://rnfvvvxsesxcmejondyu.supabase.co';
-  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuZnZ2dnhzZXN4Y21lam9uZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNTY1MjAsImV4cCI6MjA4ODgzMjUyMH0.Az7plNF6vX4aWho-hc7eqjQdP1TdCyYVfaIuxEPdr_8';
-
-  function sbFetch(path, options) {
-    var opts = options || {};
-    opts.headers = Object.assign({
-      'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
-      'Content-Type': 'application/json'
-    }, opts.headers || {});
-    return fetch(SUPABASE_URL + path, opts).then(function(r) {
-      if (!r.ok) return r.text().then(function(t){ throw new Error(t); });
-      if (r.status === 204) return null;
-      return r.json();
-    });
-  }
 
   // Map old google.script.run post() calls to Supabase
   function post(payload) {
