@@ -8,7 +8,6 @@
 <style>
   :root {
     --bg: #f4f7fb;
-    --card: #ffffff;
     --accent: #0099bb;
     --accent-dark: #007a96;
     --text: #1a2a3a;
@@ -86,6 +85,7 @@
   .error-msg { font-size: 12px; color: #ef4444; display: none; }
   .field.error .error-msg { display: block; }
 
+  /* Checkbox verify box - only for the agreement */
   .verify-box {
     background: #fff;
     border: 1px solid var(--border);
@@ -106,11 +106,21 @@
     cursor: pointer;
   }
   .verify-box span {
+    font-size: 14px; color: var(--text); line-height: 1.6;
+  }
+
+  /* Info-only box (no checkbox) */
+  .info-note {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 12px;
     font-size: 14px;
-    color: var(--text);
+    color: var(--muted);
     line-height: 1.6;
   }
-  .verify-box span .highlight { color: var(--accent); font-weight: 500; }
+  .info-note .highlight { color: var(--accent); font-weight: 500; }
 
   .submit-btn {
     width: 100%;
@@ -207,25 +217,31 @@
       <select id="training-type">
         <option value="">Select your training type...</option>
         <optgroup label="S1 Training">
-          <option value="S1 Training (Tier 1)">S1 Training (Tier 1) — MIA GND/DEL</option>
-          <option value="S1 Training (Tier 2)">S1 Training (Tier 2) — TPA GND/DEL</option>
+          <option value="S1 Training (Tier 2)">S1 Training (Tier 2)</option>
+          <option value="S1 Training (Unrestricted)">S1 Training (Unrestricted)</option>
         </optgroup>
         <optgroup label="S2 Training">
-          <option value="S2 Training (Tier 1)">S2 Training (Tier 1) — MIA TWR</option>
-          <option value="S2 Training (Tier 2)">S2 Training (Tier 2) — TPA TWR</option>
+          <option value="S2 Training (Tier 2)">S2 Training (Tier 2)</option>
+          <option value="S2 Training (Unrestricted)">S2 Training (Unrestricted)</option>
         </optgroup>
         <optgroup label="S3 Training">
-          <option value="S3 Training (Tier 1)">S3 Training (Tier 1) — MIA APP/DEP</option>
-          <option value="S3 Training (Tier 2)">S3 Training (Tier 2) — TPA TRACON</option>
+          <option value="S3 Training (Tier 2)">S3 Training (Tier 2)</option>
+          <option value="S3 Training (Unrestricted)">S3 Training (Unrestricted)</option>
         </optgroup>
         <optgroup label="C1 Training">
-          <option value="C1 Training">C1 Training — Miami Center (ZMA)</option>
+          <option value="C1 Training">C1 Training</option>
         </optgroup>
-        <optgroup label="Visiting Controller">
-          <option value="Visiting S1">Visiting Controller — S1</option>
-          <option value="Visiting S2">Visiting Controller — S2</option>
-          <option value="Visiting S3">Visiting Controller — S3</option>
-          <option value="Visiting C1">Visiting Controller — C1</option>
+        <optgroup label="Center &amp; Oceanic">
+          <option value="Miami Center Oceanic">Miami Center Oceanic</option>
+        </optgroup>
+        <optgroup label="Tier 1">
+          <option value="Tier 1 MIA GND/DEL">Tier 1 MIA GND/DEL</option>
+          <option value="Tier 1 MIA LCL">Tier 1 MIA LCL</option>
+          <option value="Tier 1 MIA TRACON">Tier 1 MIA TRACON</option>
+        </optgroup>
+        <optgroup label="Visitor / Transfer">
+          <option value="Visitor/Transfer — Miami Center Domestic">Visitor/Transfer — Miami Center Domestic</option>
+          <option value="Visitor/Transfer — Miami CAB">Visitor/Transfer — Miami CAB</option>
         </optgroup>
       </select>
       <span class="error-msg">Required</span>
@@ -238,9 +254,8 @@
       <span>I understand that all coursework must be completed within 30 days of entering the training queue. Failure to uphold this will result in removal from the queue/training assignment.</span>
     </div>
 
-    <div class="verify-box" id="verify-box-2">
-      <input type="checkbox" id="verify-2">
-      <span>A <span class="highlight">confirmation email</span> will be sent to your registered VATSIM email address once your request is received. Keep an eye on your inbox for further instructions from staff.</span>
+    <div class="info-note">
+      A <span class="highlight">confirmation email</span> will be sent to your registered VATSIM email address once your request is received. Keep an eye on your inbox for further instructions from staff.
     </div>
 
     <button class="submit-btn" id="submit-btn" onclick="submitForm()">
@@ -254,7 +269,7 @@
   <div class="success-screen" id="success-view">
     <div class="success-icon">✓</div>
     <h2>Request Submitted!</h2>
-    <p>Your training queue request has been received and is pending staff review. You'll be contacted at your registered VATSIM email once processed.</p>
+    <p>Your training queue request has been received and is pending staff review. You'll be contacted at your registered VATSIM email address once processed.</p>
     <div class="success-cid" id="success-info"></div>
     <p style="margin-top:8px;font-size:13px;">You can close this page.</p>
   </div>
@@ -263,6 +278,22 @@
 <script>
   var SUPABASE_URL = 'https://rnfvvvxsesxcmejondyu.supabase.co';
   var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuZnZ2dnhzZXN4Y21lam9uZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNTY1MjAsImV4cCI6MjA4ODgzMjUyMH0.Az7plNF6vX4aWho-hc7eqjQdP1TdCyYVfaIuxEPdr_8';
+
+  var ratingMap = {
+    'S1 Training (Tier 2)': 'OBS',
+    'S1 Training (Unrestricted)': 'OBS',
+    'S2 Training (Tier 2)': 'S1',
+    'S2 Training (Unrestricted)': 'S1',
+    'S3 Training (Tier 2)': 'S2',
+    'S3 Training (Unrestricted)': 'S2',
+    'C1 Training': 'S3',
+    'Miami Center Oceanic': 'C1',
+    'Tier 1 MIA GND/DEL': 'OBS',
+    'Tier 1 MIA LCL': 'S1',
+    'Tier 1 MIA TRACON': 'S2',
+    'Visitor/Transfer — Miami Center Domestic': 'Visitor',
+    'Visitor/Transfer — Miami CAB': 'Visitor'
+  };
 
   function validate() {
     var ok = true;
@@ -277,11 +308,9 @@
     var tt = document.getElementById('training-type').value;
     var ft = document.getElementById('field-training');
     if (!tt){ft.classList.add('error');ok=false;}else ft.classList.remove('error');
-    ['1','2'].forEach(function(n){
-      var checked = document.getElementById('verify-'+n).checked;
-      var box = document.getElementById('verify-box-'+n);
-      if (!checked){box.classList.add('error');ok=false;}else box.classList.remove('error');
-    });
+    var v1 = document.getElementById('verify-1').checked;
+    var b1 = document.getElementById('verify-box-1');
+    if (!v1){b1.classList.add('error');ok=false;}else b1.classList.remove('error');
     return ok;
   }
 
@@ -297,16 +326,9 @@
     var lastName     = document.getElementById('last-name').value.trim();
     var cid          = document.getElementById('cid').value.trim();
     var trainingType = document.getElementById('training-type').value;
-    var isVisitor    = trainingType.startsWith('Visiting');
+    var isVisitor    = trainingType.startsWith('Visitor');
     var queueType    = isVisitor ? 'Visitor' : 'Home';
-    var ratingMap    = {
-      'S1 Training (Tier 1)':'OBS','S1 Training (Tier 2)':'OBS',
-      'S2 Training (Tier 1)':'S1', 'S2 Training (Tier 2)':'S1',
-      'S3 Training (Tier 1)':'S2', 'S3 Training (Tier 2)':'S2',
-      'C1 Training':'S3',
-      'Visiting S1':'S1','Visiting S2':'S2','Visiting S3':'S3','Visiting C1':'C1'
-    };
-    var rating = ratingMap[trainingType] || 'OBS';
+    var rating       = ratingMap[trainingType] || 'OBS';
 
     fetch(SUPABASE_URL + '/rest/v1/pending_queue', {
       method: 'POST',
@@ -317,10 +339,15 @@
         'Prefer': 'return=minimal'
       },
       body: JSON.stringify({
-        first_name: firstName, last_name: lastName, cid: cid,
-        rating: rating, training_type: trainingType, queue_type: queueType,
-        status: 'Pending',
-        created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+        first_name:    firstName,
+        last_name:     lastName,
+        cid:           cid,
+        rating:        rating,
+        training_type: trainingType,
+        queue_type:    queueType,
+        status:        'Pending',
+        created_at:    new Date().toISOString(),
+        updated_at:    new Date().toISOString()
       })
     })
     .then(function(res) {
@@ -341,5 +368,3 @@
 </script>
 </body>
 </html>
-
- 
