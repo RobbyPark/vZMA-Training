@@ -185,7 +185,7 @@
       <p>Before submitting this form, please ensure you have read the <strong>Training Policy (T01)</strong> in its entirety, as it outlines the training queue, training structure, expectations, and additional important information. If you have questions about what training progression to choose, the T01 answers this!</p>
       <p>While in the training queue, consistent self-study is strongly encouraged. Arriving prepared for each training session is required and will help ensure efficient and steady progress through your training.</p>
       <p>Please also ensure that you regularly check your VATSIM email. Monthly currency checks will be conducted, and all related communications will be sent via email.</p>
-      <p>If you have any questions, feel free to ask them in the ZMA Discord under <strong>#training-questions</strong> (excluding test questions or requests for test answers). You may also reach out via email at <a href="/cdn-cgi/l/email-protection#fd898f9c949394939abd90949c9094d38b9c89888e9cd3939889">[email&#160;protected]</a> or contact the Training Administrator directly at <a href="/cdn-cgi/l/email-protection#760217361b1f171b1f5800170203051758181302">[email&#160;protected]</a>.</p>
+      <p>If you have any questions, feel free to ask them in the ZMA Discord under <strong>#training-questions</strong> (excluding test questions or requests for test answers). You may also reach out via email at <a href="mailto:training@miami.vatusa.net">[email&#160;protected]</a> or contact the Training Administrator directly at <a href="mailto:ta@miami.vatusa.net">[email&#160;protected]</a>.</p>
       <p>On behalf of the entire <strong>ZMA Training Staff</strong>, we look forward to getting to know you and supporting you throughout your training!</p>
     </div>
 
@@ -275,7 +275,7 @@
   </div>
 
 </div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   var SUPABASE_URL = 'https://rnfvvvxsesxcmejondyu.supabase.co';
   var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuZnZ2dnhzZXN4Y21lam9uZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNTY1MjAsImV4cCI6MjA4ODgzMjUyMH0.Az7plNF6vX4aWho-hc7eqjQdP1TdCyYVfaIuxEPdr_8';
 
@@ -328,23 +328,8 @@
     var trainingType = document.getElementById('training-type').value;
     var isVisitor    = trainingType.startsWith('Visitor');
     var queueType    = isVisitor ? 'Visitor' : 'Home';
+    var rating       = ratingMap[trainingType] || 'OBS';
 
-    // Look up actual VATSIM rating from VATUSA
-    fetch('https://api.vatusa.net/v2/user/' + cid + '?apikey=DSfNvnWR4CphFGGJ')
-      .then(function(r){ return r.json(); })
-      .then(function(json){
-        var rating = (json && json.data && json.data.rating_short) ? json.data.rating_short : (ratingMap[trainingType] || 'OBS');
-        if (json && json.data && json.data.fname) firstName = json.data.fname;
-        if (json && json.data && json.data.lname)  lastName  = json.data.lname;
-        doSubmit(firstName, lastName, cid, rating, trainingType, queueType);
-      })
-      .catch(function(){
-        doSubmit(firstName, lastName, cid, ratingMap[trainingType] || 'OBS', trainingType, queueType);
-      });
-  }
-
-  function doSubmit(firstName, lastName, cid, rating, trainingType, queueType) {
-    var btn = document.getElementById('submit-btn');
     fetch(SUPABASE_URL + '/rest/v1/pending_queue', {
       method: 'POST',
       headers: {
@@ -376,3 +361,10 @@
       btn.disabled = false;
       document.getElementById('spinner').style.display = 'none';
       document.getElementById('btn-text').textContent = 'Submit Training Request';
+      document.getElementById('btn-arrow').style.display = 'inline';
+      alert('Submission failed: ' + (err.message || 'Unknown error. Please try again.'));
+    });
+  }
+</script>
+</body>
+</html>
