@@ -350,7 +350,10 @@
     // Look up VATUSA data via Supabase Edge Function proxy
     fetch('https://rnfvvvxsesxcmejondyu.supabase.co/functions/v1/smooth-worker', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuZnZ2dnhzZXN4Y21lam9uZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNTY1MjAsImV4cCI6MjA4ODgzMjUyMH0.Az7plNF6vX4aWho-hc7eqjQdP1TdCyYVfaIuxEPdr_8'
+      },
       body: JSON.stringify({ cid: cid })
     })
       .then(function(r){ return r.json(); })
