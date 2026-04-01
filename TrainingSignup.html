@@ -210,6 +210,12 @@
       <span class="error-msg">Please enter a valid VATSIM CID</span>
     </div>
 
+    <div class="field" id="field-email">
+      <label for="email">VATSIM Email Address</label>
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+      <span class="error-msg">Please enter a valid email address</span>
+    </div>
+
     <div class="section-label">Training Selection</div>
 
     <div class="field" id="field-training">
@@ -322,6 +328,9 @@
     var cid = document.getElementById('cid').value.trim();
     var fc = document.getElementById('field-cid');
     if (!cid||!/^\d{4,8}$/.test(cid)){fc.classList.add('error');ok=false;}else fc.classList.remove('error');
+    var email = document.getElementById('email').value.trim();
+    var fe = document.getElementById('field-email');
+    if (!email||!email.includes('@')){fe.classList.add('error');ok=false;}else fe.classList.remove('error');
     var tt = document.getElementById('training-type').value;
     var ft = document.getElementById('field-training');
     if (!tt){ft.classList.add('error');ok=false;}else ft.classList.remove('error');
@@ -346,19 +355,20 @@
     var isVisitor    = trainingType.startsWith('Visitor');
     var queueType    = isVisitor ? 'Visitor' : 'Home';
 
-    // Look up actual VATSIM rating from VATUSA
-    fetch('https://api.vatusa.net/v2/user/' + cid + '?apikey=UAobqliRBtq2cOnu')
+    // Look up VATUSA data via Supabase Edge Function proxy
+    fetch('https://rnfvvvxsesxcmejondyu.supabase.co/functions/v1/vatusa-lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cid: cid })
+    })
       .then(function(r){ return r.json(); })
-      .then(function(json){
-        var d = json && (json.data || json);
-        var rating = (d && (d.rating_short || d.ratingShort || d.rating))
-                     ? String(d.rating_short || d.ratingShort || d.rating)
-                     : (ratingMap[trainingType] || 'OBS');
+      .then(function(d){
+        var rating = d.rating_short || (ratingMap[trainingType] || 'OBS');
         var numericMap = {'1':'OBS','2':'S1','3':'S2','4':'S3','5':'C1','7':'C3','8':'I1','9':'I3','10':'SUP','11':'ADM'};
         if (numericMap[rating]) rating = numericMap[rating];
-        var vatEmail = (d && d.email) ? d.email : null;
-        if (d && d.fname) firstName = d.fname;
-        if (d && d.lname) lastName  = d.lname;
+        var vatEmail = d.email || null;
+        if (d.fname) firstName = d.fname;
+        if (d.lname) lastName  = d.lname;
         doSubmit(firstName, lastName, cid, rating, trainingType, queueType, vatEmail);
       })
       .catch(function(){
