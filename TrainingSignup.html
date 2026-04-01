@@ -275,7 +275,10 @@
   </div>
 
 </div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  emailjs.init('vkV3HRSeyW9Tz34t7');
+
   var SUPABASE_URL = 'https://rnfvvvxsesxcmejondyu.supabase.co';
   var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuZnZ2dnhzZXN4Y21lam9uZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNTY1MjAsImV4cCI6MjA4ODgzMjUyMH0.Az7plNF6vX4aWho-hc7eqjQdP1TdCyYVfaIuxEPdr_8';
 
@@ -294,6 +297,20 @@
     'Visitor/Transfer — Miami Center Domestic': 'Visitor',
     'Visitor/Transfer — Miami CAB': 'Visitor'
   };
+
+  function buildPendingEmailBody(firstName) {
+    return 'Hello ' + firstName + ',\n\n' +
+      'Thank you for submitting your request to join the Miami ARTCC Training Queue. Your request has been received, and you will receive a follow-up email once an admin reviews your request.\n\n' +
+      'Best regards,\nZMA Training Team\nta@zmaartcc.net';
+  }
+
+  function sendConfirmationEmail(toEmail, firstName) {
+    return emailjs.send('service_i98tzkp', 'if8u73y', {
+      to_email: toEmail,
+      subject:  '[ZMA] Training Request Received',
+      message:  buildPendingEmailBody(firstName)
+    });
+  }
 
   function validate() {
     var ok = true;
@@ -334,22 +351,22 @@
       .then(function(r){ return r.json(); })
       .then(function(json){
         var d = json && (json.data || json);
-        var rating = (d && (d.rating_short || d.ratingShort || d.rating)) 
+        var rating = (d && (d.rating_short || d.ratingShort || d.rating))
                      ? String(d.rating_short || d.ratingShort || d.rating)
                      : (ratingMap[trainingType] || 'OBS');
-        // Convert numeric rating to short string if needed
         var numericMap = {'1':'OBS','2':'S1','3':'S2','4':'S3','5':'C1','7':'C3','8':'I1','9':'I3','10':'SUP','11':'ADM'};
         if (numericMap[rating]) rating = numericMap[rating];
-        if (json && d && d.fname) firstName = d.fname;
-        if (json && d && d.lname) lastName  = d.lname;
-        doSubmit(firstName, lastName, cid, rating, trainingType, queueType);
+        var vatEmail = (d && d.email) ? d.email : null;
+        if (d && d.fname) firstName = d.fname;
+        if (d && d.lname) lastName  = d.lname;
+        doSubmit(firstName, lastName, cid, rating, trainingType, queueType, vatEmail);
       })
       .catch(function(){
-        doSubmit(firstName, lastName, cid, ratingMap[trainingType] || 'OBS', trainingType, queueType);
+        doSubmit(firstName, lastName, cid, ratingMap[trainingType] || 'OBS', trainingType, queueType, null);
       });
   }
 
-  function doSubmit(firstName, lastName, cid, rating, trainingType, queueType) {
+  function doSubmit(firstName, lastName, cid, rating, trainingType, queueType, vatEmail) {
     var btn = document.getElementById('submit-btn');
     fetch(SUPABASE_URL + '/rest/v1/pending_queue', {
       method: 'POST',
@@ -373,12 +390,24 @@
     })
     .then(function(res) {
       if (!res.ok) return res.text().then(function(t){ throw new Error(t); });
+      // Show success screen
       document.getElementById('form-view').style.display = 'none';
       var sv = document.getElementById('success-view');
       sv.style.display = 'flex';
       document.getElementById('success-info').textContent = firstName + ' ' + lastName + '  ·  CID ' + cid + '  ·  ' + trainingType;
+      // Send confirmation email if we have their VATUSA email
+      if (vatEmail) {
+        sendConfirmationEmail(vatEmail, firstName).catch(function(){});
+      }
     })
     .catch(function(err) {
       btn.disabled = false;
       document.getElementById('spinner').style.display = 'none';
       document.getElementById('btn-text').textContent = 'Submit Training Request';
+      document.getElementById('btn-arrow').style.display = 'inline';
+      alert('Submission failed: ' + (err.message || 'Unknown error. Please try again.'));
+    });
+  }
+</script>
+</body>
+</html>
