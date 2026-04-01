@@ -1909,7 +1909,7 @@
     var panel = document.getElementById('panel-trainers');
     panel.innerHTML = '<div class="panel-empty"><div class="icon">⏳</div>Loading from VATUSA…</div>';
     loadTrainerRatingsFromSheet(function() {
-    fetch('https://api.vatusa.net/v2/facility/ZMA/roster/both?apikey=DSfNvnWR4CphFGGJ')
+    fetch('https://api.vatusa.net/v2/facility/ZMA/roster/both?apikey=UAobqliRBtq2cOnu')
       .then(function(r){ return r.json(); })
       .then(function(json) {
         var roster = json.data || json || [];

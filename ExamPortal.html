@@ -675,7 +675,7 @@ function lookupCid() {
   st.textContent = 'Looking up…'; st.className = 'cid-status';
   document.getElementById('cid-btn').disabled = true;
 
-  fetch('https://api.vatusa.net/v2/user/' + cid + '?apikey=DSfNvnWR4CphFGGJ')
+  fetch('https://api.vatusa.net/v2/user/' + cid + '?apikey=UAobqliRBtq2cOnu')
     .then(function(r){ return r.json(); })
     .then(function(json) {
       document.getElementById('cid-btn').disabled = false;

@@ -347,7 +347,7 @@
     var queueType    = isVisitor ? 'Visitor' : 'Home';
 
     // Look up actual VATSIM rating from VATUSA
-    fetch('https://api.vatusa.net/v2/user/' + cid + '?apikey=DSfNvnWR4CphFGGJ')
+    fetch('https://api.vatusa.net/v2/user/' + cid + '?apikey=UAobqliRBtq2cOnu')
       .then(function(r){ return r.json(); })
       .then(function(json){
         var d = json && (json.data || json);
