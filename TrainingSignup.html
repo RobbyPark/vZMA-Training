@@ -348,7 +348,7 @@
     var queueType    = isVisitor ? 'Visitor' : 'Home';
 
     // Look up VATUSA data via Supabase Edge Function proxy
-    fetch('https://rnfvvvxsesxcmejondyu.supabase.co/functions/v1/vatusa-lookup', {
+    fetch('https://rnfvvvxsesxcmejondyu.supabase.co/functions/v1/smooth-worker', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cid: cid })
