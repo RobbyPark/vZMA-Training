@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
+    body { background: var(--gray-50); }
     .signup-wrap { max-width: 620px; margin: 0 auto; padding: 40px 24px; }
     .signup-header { text-align: center; margin-bottom: 40px; }
     .signup-header .artcc-badge {
@@ -25,109 +26,97 @@
     .success-state { text-align: center; padding: 48px 20px; }
     .success-state .checkmark {
       width: 64px; height: 64px; background: var(--green-100); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.6rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 1.6rem;
     }
     .success-state h2 { font-size: 1.4rem; font-weight: 700; color: var(--blue-900); margin-bottom: 8px; }
     .success-state p { color: var(--gray-500); font-size: .9rem; }
   </style>
 </head>
 <body>
-  <nav class="top-nav">
-    <a class="nav-brand" href="#">
-      <span class="nav-brand-badge">ZMA</span>
-      Miami ARTCC Training Portal
-    </a>
-    <div class="nav-links">
-      <a class="nav-link active" href="signup.html">Training Signup</a>
-      <a class="nav-link" href="exam-center.html">Exam Center</a>
+  <div class="signup-wrap">
+    <div class="signup-header">
+      <span class="artcc-badge">ZMA Miami ARTCC</span>
+      <h1>Training Signup</h1>
+      <p>Submit your request to join the ZMA training queue.</p>
     </div>
-  </nav>
 
-  <div class="page-wrapper">
-    <div class="signup-wrap">
-      <div class="signup-header">
-        <span class="artcc-badge">ZMA Miami ARTCC</span>
-        <h1>Training Signup</h1>
-        <p>Submit your request to join the ZMA training queue.</p>
-      </div>
-
-      <div class="card" id="formCard">
-        <form id="signupForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">First Name</label>
-              <input type="text" class="form-input" id="firstName" placeholder="Enter first name" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Last Name</label>
-              <input type="text" class="form-input" id="lastName" placeholder="Enter last name" required>
-            </div>
-          </div>
-
+    <div class="card" id="formCard">
+      <form id="signupForm">
+        <div class="form-row">
           <div class="form-group">
-            <label class="form-label">VATSIM CID</label>
-            <input type="text" class="form-input" id="cid" placeholder="e.g. 1234567" required pattern="\d+" inputmode="numeric">
-            <div class="cid-status" id="cidStatus"></div>
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" id="firstName" placeholder="Enter first name" required>
           </div>
-
           <div class="form-group">
-            <label class="form-label">Rating / Training Type</label>
-            <select class="form-select" id="trainingType" required>
-              <option value="">Select your training type...</option>
-              <optgroup label="S1 Training">
-                <option value="S1 Training (Tier 2)">S1 Training (Tier 2)</option>
-                <option value="S1 Training (Unrestricted)">S1 Training (Unrestricted)</option>
-              </optgroup>
-              <optgroup label="S2 Training">
-                <option value="S2 Training (Tier 2)">S2 Training (Tier 2)</option>
-                <option value="S2 Training (Unrestricted)">S2 Training (Unrestricted)</option>
-              </optgroup>
-              <optgroup label="S3 Training">
-                <option value="S3 Training (Tier 2)">S3 Training (Tier 2)</option>
-                <option value="S3 Training (Unrestricted)">S3 Training (Unrestricted)</option>
-              </optgroup>
-              <optgroup label="C1 Training">
-                <option value="C1 Training">C1 Training</option>
-              </optgroup>
-              <optgroup label="Center &amp; Oceanic">
-                <option value="Miami Center Oceanic">Miami Center Oceanic</option>
-              </optgroup>
-              <optgroup label="Tier 1">
-                <option value="Tier 1 MIA GND/DEL">Tier 1 MIA GND/DEL</option>
-                <option value="Tier 1 MIA LCL">Tier 1 MIA LCL</option>
-                <option value="Tier 1 MIA TRACON">Tier 1 MIA TRACON</option>
-              </optgroup>
-              <optgroup label="Visitor / Transfer">
-                <option value="Visitor/Transfer — Miami Center Domestic">Visitor/Transfer — Miami Center Domestic</option>
-                <option value="Visitor/Transfer — Miami CAB">Visitor/Transfer — Miami CAB</option>
-              </optgroup>
-            </select>
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" id="lastName" placeholder="Enter last name" required>
           </div>
-
-          <div class="form-group">
-            <label class="checkbox-wrap">
-              <input type="checkbox" id="acknowledge" required>
-              <span class="checkbox-label">
-                I understand that all coursework must be completed before entering the training queue. Failure to uphold this will result in removal from the queue/training assignment.
-              </span>
-            </label>
-          </div>
-
-          <div class="submit-section">
-            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-              Submit Training Request
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="card" id="successCard" style="display:none;">
-        <div class="success-state">
-          <div class="checkmark">&#10003;</div>
-          <h2>Request Submitted</h2>
-          <p>Your training request is now pending approval. A confirmation email has been sent to your registered VATSIM email address. You will be notified when your request is reviewed.</p>
-          <button class="btn btn-secondary mt-4" onclick="resetForm()">Submit Another Request</button>
         </div>
+
+        <div class="form-group">
+          <label class="form-label">VATSIM CID</label>
+          <input type="text" class="form-input" id="cid" placeholder="e.g. 1234567" required pattern="\d+" inputmode="numeric">
+          <div class="cid-status" id="cidStatus"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Rating / Training Type</label>
+          <select class="form-select" id="trainingType" required>
+            <option value="">Select your training type...</option>
+            <optgroup label="S1 Training">
+              <option value="S1 Training (Tier 2)">S1 Training (Tier 2)</option>
+              <option value="S1 Training (Unrestricted)">S1 Training (Unrestricted)</option>
+            </optgroup>
+            <optgroup label="S2 Training">
+              <option value="S2 Training (Tier 2)">S2 Training (Tier 2)</option>
+              <option value="S2 Training (Unrestricted)">S2 Training (Unrestricted)</option>
+            </optgroup>
+            <optgroup label="S3 Training">
+              <option value="S3 Training (Tier 2)">S3 Training (Tier 2)</option>
+              <option value="S3 Training (Unrestricted)">S3 Training (Unrestricted)</option>
+            </optgroup>
+            <optgroup label="C1 Training">
+              <option value="C1 Training">C1 Training</option>
+            </optgroup>
+            <optgroup label="Center &amp; Oceanic">
+              <option value="Miami Center Oceanic">Miami Center Oceanic</option>
+            </optgroup>
+            <optgroup label="Tier 1">
+              <option value="Tier 1 MIA GND/DEL">Tier 1 MIA GND/DEL</option>
+              <option value="Tier 1 MIA LCL">Tier 1 MIA LCL</option>
+              <option value="Tier 1 MIA TRACON">Tier 1 MIA TRACON</option>
+            </optgroup>
+            <optgroup label="Visitor / Transfer">
+              <option value="Visitor/Transfer — Miami Center Domestic">Visitor/Transfer — Miami Center Domestic</option>
+              <option value="Visitor/Transfer — Miami CAB">Visitor/Transfer — Miami CAB</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="acknowledge" required>
+            <span class="checkbox-label">
+              I understand that all coursework must be completed before entering the training queue. Failure to uphold this will result in removal from the queue/training assignment.
+            </span>
+          </label>
+        </div>
+
+        <div class="submit-section">
+          <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+            Submit Training Request
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card" id="successCard" style="display:none;">
+      <div class="success-state">
+        <div class="checkmark">&#10003;</div>
+        <h2>Request Submitted</h2>
+        <p>Your training request is now pending approval. A confirmation email has been sent to your registered VATSIM email address. You will be notified when your request is reviewed.</p>
+        <button class="btn btn-secondary mt-4" onclick="resetForm()">Submit Another Request</button>
       </div>
     </div>
   </div>
@@ -152,7 +141,11 @@
     async function lookupCID(cid) {
       try {
         const ctrl = await VATUSA.getController(cid);
-        if (!ctrl) { cidStatus.className = 'cid-status not-found'; cidStatus.innerHTML = 'CID not found in VATSIM.'; return; }
+        if (!ctrl) {
+          cidStatus.className = 'cid-status not-found';
+          cidStatus.innerHTML = 'CID not found in VATSIM.';
+          return;
+        }
         cidLookupValid = true;
         try {
           const emailRes = await fetch(`${CONFIG.VATUSA_API}/user/${cid}/email?apikey=${CONFIG.VATUSA_API_KEY}`);
@@ -170,7 +163,8 @@
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submitBtn');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Submitting...';
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Submitting...';
       const firstName = document.getElementById('firstName').value.trim();
       const lastName = document.getElementById('lastName').value.trim();
       const cid = document.getElementById('cid').value.trim();
@@ -184,15 +178,18 @@
       else if (trainingType.startsWith('Visitor')) category = 'Visitor / Transfer';
       try {
         await SB.insert('training_requests', {
-          first_name: firstName, last_name: lastName, cid, email: resolvedEmail,
-          training_type: trainingType, training_category: category, status: 'pending',
+          first_name: firstName, last_name: lastName, cid,
+          email: resolvedEmail, training_type: trainingType,
+          training_category: category, status: 'pending',
         });
         if (resolvedEmail) await EM.sendTrainingConfirmation(resolvedEmail, `${firstName} ${lastName}`, trainingType);
         document.getElementById('formCard').style.display = 'none';
         document.getElementById('successCard').style.display = 'block';
       } catch (err) {
         toast('Error submitting request. Please try again.', 'error');
-        btn.disabled = false; btn.innerHTML = 'Submit Training Request';
+        console.error(err);
+        btn.disabled = false;
+        btn.innerHTML = 'Submit Training Request';
       }
     });
 
