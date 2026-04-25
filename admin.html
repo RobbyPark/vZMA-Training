@@ -2186,9 +2186,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         // Filter: if T1S1 selected, hide S1, etc.
         const studentCount = countByTrainer[`${t.first_name} ${t.last_name}`] || 0;
         return `
-          <div class="trainer-card">
-            <div class="trainer-name">${t.first_name} ${t.last_name}</div>
-            <span class="trainer-rating">${t.rating || '—'}</span>
+          <div class="trainer-card" id="trainerCard_${t.id}">
+            <div class="flex items-center gap-2">
+              <div class="trainer-name">${t.first_name} ${t.last_name}</div>
+              <button class="btn btn-ghost btn-sm" title="Refresh rating" onclick="refreshTrainerRating('${t.id}','${t.cid}',this)" style="padding:2px 6px;font-size:.75rem;">&#8635;</button>
+            </div>
+            <span class="trainer-rating" id="trainerRating_${t.id}">${t.rating || '—'}</span>
             <div class="trainer-students">${studentCount}</div>
             <div class="trainer-students-label">Students in queue</div>
             <div class="cert-toggle mt-4" id="certs_${t.id}">
@@ -2209,6 +2212,22 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       await SB.update('trainers', `id=eq.${trainerId}`, { certifications: certs });
       trainer.certifications = certs;
       el.classList.toggle('selected');
+    }
+
+    async function refreshTrainerRating(trainerId, cid, btn) {
+      btn.textContent = '...';
+      btn.disabled = true;
+      const ctrl = await VATUSA.getController(cid);
+      if (!ctrl) { toast('Could not fetch controller data.', 'error'); btn.textContent = '↻'; btn.disabled = false; return; }
+      const newRating = VATUSA.ratingName(ctrl.rating);
+      const newFirst = ctrl.fname;
+      const newLast = ctrl.lname;
+      await SB.update('trainers', `id=eq.${trainerId}`, { rating: newRating, first_name: newFirst, last_name: newLast, updated_at: new Date().toISOString() });
+      // Update display inline
+      const ratingEl = document.getElementById(`trainerRating_${trainerId}`);
+      if (ratingEl) ratingEl.textContent = newRating;
+      btn.textContent = '↻'; btn.disabled = false;
+      toast(`Rating updated: ${newFirst} ${newLast} — ${newRating}`);
     }
 
     async function removeTrainer(id) {
