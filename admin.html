@@ -853,7 +853,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
         <!-- ======================== COMPLETED TAB ======================== -->
         <div class="tab-content" id="tab-completed">
-          <div class="page-header"><h1>Completed Training</h1></div>
+          <div class="page-header">
+            <div class="flex items-center gap-3">
+              <h1>Completed Training</h1>
+              <button class="btn btn-primary btn-sm" onclick="openAddCompletedModal()">+ Add Manually</button>
+            </div>
+          </div>
           <div class="card" style="padding:0;">
             <div class="table-wrap">
               <table>
@@ -868,7 +873,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
         <!-- ======================== REMOVED TAB ======================== -->
         <div class="tab-content" id="tab-removed">
-          <div class="page-header"><h1>Removed Students</h1></div>
+          <div class="page-header">
+            <div class="flex items-center gap-3">
+              <h1>Removed Students</h1>
+              <button class="btn btn-primary btn-sm" onclick="openAddRemovedModal()">+ Add Manually</button>
+            </div>
+          </div>
           <div class="card" style="padding:0;">
             <div class="table-wrap">
               <table>
@@ -2321,6 +2331,116 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       loadTrainers();
     }
 
+
+    // ===================== MANUAL ADD COMPLETED =====================
+    let pendingCompStudent = null;
+    let pendingRemStudent = null;
+    let compLookupTimer = null;
+    let remLookupTimer = null;
+
+    function openAddCompletedModal() {
+      pendingCompStudent = null;
+      ['compCid','compTrainer'].forEach(id => document.getElementById(id).value = '');
+      ['compTrainingType'].forEach(id => document.getElementById(id).value = '');
+      ['compStartDate','compEndDate'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('compCidStatus').innerHTML = '';
+      document.getElementById('addCompletedBtn').disabled = true;
+      openModal('addCompletedModal');
+    }
+
+    async function lookupCompletedCid(val) {
+      clearTimeout(compLookupTimer);
+      pendingCompStudent = null;
+      document.getElementById('addCompletedBtn').disabled = true;
+      const status = document.getElementById('compCidStatus');
+      if (!val || val.length < 4) { status.innerHTML = ''; return; }
+      status.style.color = 'var(--gray-400)';
+      status.innerHTML = '<span class="spinner"></span> Looking up CID...';
+      compLookupTimer = setTimeout(async () => {
+        const ctrl = await VATUSA.getController(val);
+        if (!ctrl) { status.style.color = 'var(--red-500)'; status.innerHTML = 'CID not found.'; return; }
+        pendingCompStudent = { cid: String(val), first_name: ctrl.fname, last_name: ctrl.lname };
+        status.style.color = '#16a34a';
+        status.innerHTML = `&#10003; Found: ${ctrl.fname} ${ctrl.lname}`;
+        document.getElementById('addCompletedBtn').disabled = false;
+      }, 800);
+    }
+
+    async function confirmAddCompleted() {
+      if (!pendingCompStudent) { toast('Enter a valid CID.', 'error'); return; }
+      const trainingType = document.getElementById('compTrainingType').value;
+      const trainer = document.getElementById('compTrainer').value.trim();
+      const startDate = document.getElementById('compStartDate').value;
+      const endDate = document.getElementById('compEndDate').value;
+      if (!trainingType) { toast('Select a training type.', 'error'); return; }
+      await SB.insert('completed_training', {
+        first_name: pendingCompStudent.first_name,
+        last_name: pendingCompStudent.last_name,
+        cid: pendingCompStudent.cid,
+        training_type: trainingType,
+        trainer_name: trainer || null,
+        training_started_at: startDate ? new Date(startDate).toISOString() : null,
+        completed_at: endDate ? new Date(endDate).toISOString() : new Date().toISOString(),
+      });
+      toast('Completed training record added.');
+      closeModal('addCompletedModal');
+      loadCompleted();
+    }
+
+    // ===================== MANUAL ADD REMOVED =====================
+    function openAddRemovedModal() {
+      pendingRemStudent = null;
+      document.getElementById('remCid').value = '';
+      document.getElementById('remCidStatus').innerHTML = '';
+      document.getElementById('remTrainingType').value = '';
+      document.getElementById('remNotes').value = '';
+      document.getElementById('remJoinedDate').value = '';
+      document.getElementById('remRemovedDate').value = '';
+      document.getElementById('addRemovedBtn').disabled = true;
+      openModal('addRemovedModal');
+    }
+
+    async function lookupRemovedCid(val) {
+      clearTimeout(remLookupTimer);
+      pendingRemStudent = null;
+      document.getElementById('addRemovedBtn').disabled = true;
+      const status = document.getElementById('remCidStatus');
+      if (!val || val.length < 4) { status.innerHTML = ''; return; }
+      status.style.color = 'var(--gray-400)';
+      status.innerHTML = '<span class="spinner"></span> Looking up CID...';
+      remLookupTimer = setTimeout(async () => {
+        const ctrl = await VATUSA.getController(val);
+        if (!ctrl) { status.style.color = 'var(--red-500)'; status.innerHTML = 'CID not found.'; return; }
+        pendingRemStudent = { cid: String(val), first_name: ctrl.fname, last_name: ctrl.lname };
+        status.style.color = '#16a34a';
+        status.innerHTML = `&#10003; Found: ${ctrl.fname} ${ctrl.lname}`;
+        document.getElementById('addRemovedBtn').disabled = false;
+      }, 800);
+    }
+
+    async function confirmAddRemoved() {
+      if (!pendingRemStudent) { toast('Enter a valid CID.', 'error'); return; }
+      const trainingType = document.getElementById('remTrainingType').value;
+      const queueType = document.getElementById('remQueueType').value;
+      const joinedDate = document.getElementById('remJoinedDate').value;
+      const removedDate = document.getElementById('remRemovedDate').value;
+      const notes = document.getElementById('remNotes').value.trim();
+      if (!trainingType) { toast('Select a training type.', 'error'); return; }
+      await SB.insert('removed_students', {
+        first_name: pendingRemStudent.first_name,
+        last_name: pendingRemStudent.last_name,
+        cid: pendingRemStudent.cid,
+        training_type: trainingType,
+        queue_type: queueType,
+        joined_at: joinedDate ? new Date(joinedDate).toISOString() : null,
+        removed_at: removedDate ? new Date(removedDate).toISOString() : new Date().toISOString(),
+        removal_notes: notes || null,
+      });
+      toast('Removed student record added.');
+      closeModal('addRemovedModal');
+      loadRemoved();
+    }
+
     // ===================== POLLING =====================
     setInterval(() => {
       // Check active tab and refresh
@@ -2347,5 +2467,125 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     loadQueues();
     checkExamNotif();
   </script>
+
+  <!-- Add Completed Modal -->
+  <div class="modal-backdrop" id="addCompletedModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Manually Add Completed Training</span>
+        <button class="modal-close" onclick="closeModal('addCompletedModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">VATSIM CID</label>
+        <input class="form-input" id="compCid" placeholder="e.g. 1234567" inputmode="numeric" oninput="lookupCompletedCid(this.value)">
+        <div id="compCidStatus" style="font-size:.8rem;margin-top:6px;min-height:20px;"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Training Type</label>
+        <select class="form-select" id="compTrainingType">
+          <option value="">Select...</option>
+          <optgroup label="S1 Training">
+            <option>S1 Training (Tier 2)</option><option>S1 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S2 Training">
+            <option>S2 Training (Tier 2)</option><option>S2 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S3 Training">
+            <option>S3 Training (Tier 2)</option><option>S3 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="C1 Training"><option>C1 Training</option></optgroup>
+          <optgroup label="Center &amp; Oceanic"><option>Miami Center Oceanic</option></optgroup>
+          <optgroup label="Tier 1">
+            <option>Tier 1 MIA GND/DEL</option><option>Tier 1 MIA LCL</option><option>Tier 1 MIA TRACON</option>
+          </optgroup>
+          <optgroup label="Visitor / Transfer">
+            <option>Visitor/Transfer — Miami Center Domestic</option><option>Visitor/Transfer — Miami CAB</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Trainer Name</label>
+        <input class="form-input" id="compTrainer" placeholder="Trainer full name">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Training Start Date</label>
+          <input class="form-input" type="date" id="compStartDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Training End Date</label>
+          <input class="form-input" type="date" id="compEndDate">
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button class="btn btn-primary" id="addCompletedBtn" onclick="confirmAddCompleted()" disabled>Add Record</button>
+        <button class="btn btn-secondary" onclick="closeModal('addCompletedModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Removed Modal -->
+  <div class="modal-backdrop" id="addRemovedModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Manually Add Removed Student</span>
+        <button class="modal-close" onclick="closeModal('addRemovedModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">VATSIM CID</label>
+        <input class="form-input" id="remCid" placeholder="e.g. 1234567" inputmode="numeric" oninput="lookupRemovedCid(this.value)">
+        <div id="remCidStatus" style="font-size:.8rem;margin-top:6px;min-height:20px;"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Training Type</label>
+        <select class="form-select" id="remTrainingType">
+          <option value="">Select...</option>
+          <optgroup label="S1 Training">
+            <option>S1 Training (Tier 2)</option><option>S1 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S2 Training">
+            <option>S2 Training (Tier 2)</option><option>S2 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S3 Training">
+            <option>S3 Training (Tier 2)</option><option>S3 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="C1 Training"><option>C1 Training</option></optgroup>
+          <optgroup label="Center &amp; Oceanic"><option>Miami Center Oceanic</option></optgroup>
+          <optgroup label="Tier 1">
+            <option>Tier 1 MIA GND/DEL</option><option>Tier 1 MIA LCL</option><option>Tier 1 MIA TRACON</option>
+          </optgroup>
+          <optgroup label="Visitor / Transfer">
+            <option>Visitor/Transfer — Miami Center Domestic</option><option>Visitor/Transfer — Miami CAB</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Queue Type</label>
+        <select class="form-select" id="remQueueType">
+          <option value="home">Home</option>
+          <option value="visitor">Visitor</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date Joined Queue</label>
+          <input class="form-input" type="date" id="remJoinedDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date Removed</label>
+          <input class="form-input" type="date" id="remRemovedDate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Removal Notes</label>
+        <textarea class="form-textarea" id="remNotes" placeholder="Reason for removal..."></textarea>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button class="btn btn-primary" id="addRemovedBtn" onclick="confirmAddRemoved()" disabled>Add Record</button>
+        <button class="btn btn-secondary" onclick="closeModal('addRemovedModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
