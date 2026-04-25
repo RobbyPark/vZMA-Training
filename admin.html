@@ -940,8 +940,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div class="page-header" style="margin-top:24px;">
             <div class="flex items-center gap-3">
               <h1 style="font-size:1.1rem;">Trainers</h1>
-              <button class="btn btn-secondary btn-sm" onclick="syncTrainersFromVATUSA()">Sync from VATUSA</button>
-              <button class="btn btn-primary btn-sm" onclick="openAddTrainerModal()">+ Add Manually</button>
+              <button class="btn btn-primary btn-sm" onclick="openAddTrainerModal()">+ Add Trainer</button>
             </div>
           </div>
           <div class="trainer-grid" id="trainerGrid"></div>
@@ -1135,29 +1134,16 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
   <div class="modal-backdrop" id="addTrainerModal">
     <div class="modal">
       <div class="modal-header">
-        <span class="modal-title">Add Trainer Manually</span>
+        <span class="modal-title">Add Trainer</span>
         <button class="modal-close" onclick="closeModal('addTrainerModal')">&times;</button>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">First Name</label>
-          <input class="form-input" id="trainerFirstName">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name</label>
-          <input class="form-input" id="trainerLastName">
-        </div>
-      </div>
       <div class="form-group">
-        <label class="form-label">CID</label>
-        <input class="form-input" id="trainerCid">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Rating</label>
-        <input class="form-input" id="trainerRating" placeholder="e.g. S3">
+        <label class="form-label">VATSIM CID</label>
+        <input class="form-input" id="trainerCid" placeholder="e.g. 1234567" inputmode="numeric" oninput="lookupTrainerCid(this.value)">
+        <div id="trainerCidStatus" style="font-size:.8rem;margin-top:6px;min-height:20px;"></div>
       </div>
       <div class="flex gap-2 mt-4">
-        <button class="btn btn-primary" onclick="confirmAddTrainer()">Add Trainer</button>
+        <button class="btn btn-primary" id="addTrainerBtn" onclick="confirmAddTrainer()" disabled>Add Trainer</button>
         <button class="btn btn-secondary" onclick="closeModal('addTrainerModal')">Cancel</button>
       </div>
     </div>
@@ -2192,24 +2178,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     function renderTrainerGrid(countByTrainer) {
       const grid = document.getElementById('trainerGrid');
       if (!state.trainers.length) {
-        grid.innerHTML = '<p class="text-muted">No trainers yet. Sync from VATUSA or add manually.</p>';
+        grid.innerHTML = '<p class="text-muted">No trainers yet. Click + Add Trainer to add one.</p>';
         return;
       }
       grid.innerHTML = state.trainers.map(t => {
         const certs = (t.certifications || []);
         // Filter: if T1S1 selected, hide S1, etc.
-        const displayCerts = certs.filter(c => {
-          if (c === 'S1' && certs.includes('T1S1')) return false;
-          if (c === 'S2' && certs.includes('T1S2')) return false;
-          if (c === 'S3' && certs.includes('T1S3')) return false;
-          return true;
-        });
         const studentCount = countByTrainer[`${t.first_name} ${t.last_name}`] || 0;
         return `
           <div class="trainer-card">
             <div class="trainer-name">${t.first_name} ${t.last_name}</div>
             <span class="trainer-rating">${t.rating || '—'}</span>
-            <div class="trainer-certs">${displayCerts.map(c => `<span class="trainer-cert">${c}</span>`).join('') || '<span class="text-muted" style="font-size:.75rem;">No certs</span>'}</div>
             <div class="trainer-students">${studentCount}</div>
             <div class="trainer-students-label">Students in queue</div>
             <div class="cert-toggle mt-4" id="certs_${t.id}">
@@ -2239,36 +2218,44 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       loadTrainers();
     }
 
-    async function syncTrainersFromVATUSA() {
-      toast('Syncing from VATUSA...');
-      const staff = await VATUSA.getFacilityStaff(CONFIG.FACILITY);
-      if (!staff || !staff.length) { toast('No staff found or API error.', 'error'); return; }
-      for (const s of staff) {
-        const existing = await SB.query('trainers', `?cid=eq.${s.cid}`);
-        if (!existing.length) {
-          await SB.insert('trainers', {
-            cid: String(s.cid),
-            first_name: s.fname || '',
-            last_name: s.lname || '',
-            rating: VATUSA.ratingName(s.rating),
-            certifications: [],
-            is_manual: false,
-          });
-        }
-      }
-      toast('Trainers synced from VATUSA.');
-      loadTrainers();
+
+
+    let pendingTrainer = null;
+    let trainerLookupTimer = null;
+
+    function openAddTrainerModal() {
+      pendingTrainer = null;
+      document.getElementById('trainerCid').value = '';
+      document.getElementById('trainerCidStatus').innerHTML = '';
+      document.getElementById('addTrainerBtn').disabled = true;
+      openModal('addTrainerModal');
     }
 
-    function openAddTrainerModal() { openModal('addTrainerModal'); }
+    async function lookupTrainerCid(val) {
+      clearTimeout(trainerLookupTimer);
+      pendingTrainer = null;
+      document.getElementById('addTrainerBtn').disabled = true;
+      const status = document.getElementById('trainerCidStatus');
+      if (!val || val.length < 4) { status.innerHTML = ''; return; }
+      status.style.color = 'var(--gray-400)';
+      status.innerHTML = '<span class="spinner"></span> Looking up CID...';
+      trainerLookupTimer = setTimeout(async () => {
+        const ctrl = await VATUSA.getController(val);
+        if (!ctrl) {
+          status.style.color = 'var(--red-500)';
+          status.innerHTML = 'CID not found in VATSIM.';
+          return;
+        }
+        pendingTrainer = { cid: String(val), first_name: ctrl.fname, last_name: ctrl.lname, rating: VATUSA.ratingName(ctrl.rating) };
+        status.style.color = '#16a34a';
+        status.innerHTML = `&#10003; Found: ${ctrl.fname} ${ctrl.lname} &mdash; ${VATUSA.ratingName(ctrl.rating)}`;
+        document.getElementById('addTrainerBtn').disabled = false;
+      }, 800);
+    }
 
     async function confirmAddTrainer() {
-      const first = document.getElementById('trainerFirstName').value.trim();
-      const last = document.getElementById('trainerLastName').value.trim();
-      const cid = document.getElementById('trainerCid').value.trim();
-      const rating = document.getElementById('trainerRating').value.trim();
-      if (!first || !last || !cid) { toast('Fill all required fields.', 'error'); return; }
-      await SB.insert('trainers', { cid, first_name: first, last_name: last, rating, certifications: [], is_manual: true });
+      if (!pendingTrainer) { toast('Please enter a valid CID.', 'error'); return; }
+      await SB.insert('trainers', { ...pendingTrainer, certifications: [], is_manual: true });
       toast('Trainer added.');
       closeModal('addTrainerModal');
       loadTrainers();
