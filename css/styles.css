@@ -1,4 +1,4 @@
-/* ============================================================
+==========================================================
    ZMA ARTCC TRAINING PORTAL — SHARED STYLES
    Professional, clean, white + blue palette
    ============================================================ */
@@ -716,4 +716,4 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
   font-size: 1rem;
   padding: 0 4px;
 }
-.drag-handle:active { cursor: grab
+.drag-handle:active { cursor: grabbing; }
