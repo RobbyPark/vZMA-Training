@@ -9,7 +9,7 @@ const CONFIG = {
   VATUSA_API_KEY: 'UAobqIiRBtq2cOnu',
   FACILITY: 'ZMA',
   EMAILJS_PUBLIC_KEY: 'vkV3HRSeyW9Tz34t7',
-  EMAILJS_SERVICE_ID: 'service_i98tzkp', // UPDATE with your actual EmailJS Service ID
+  EMAILJS_SERVICE_ID: 'service_zma', // UPDATE with your actual EmailJS Service ID
   EMAILJS_TEMPLATE_TRAINING_CONFIRM: 'template_rbuk3tw',
   EMAILJS_TEMPLATE_REJECTION: 'template_rbuk3tw',     // UPDATE when you create this template
   EMAILJS_TEMPLATE_COMPLETION: 'template_rbuk3tw',    // UPDATE when you create this template
