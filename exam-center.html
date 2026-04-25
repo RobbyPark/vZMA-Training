@@ -1092,7 +1092,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('nextBtn').textContent = idx === currentQuestions.length-1 ? 'Review' : 'Next';
 
       let html = `<div class="question-text">Question ${idx+1} of ${currentQuestions.length}<br>${q.question_text}</div>`;
-      if (q.image_url) html += `<img src="${q.image_url}" style="max-width:100%;border-radius:var(--radius);margin-bottom:16px;">`;
+      if (q.image_url && q.image_url.trim() !== '') html += `<img src="${q.image_url}" style="max-width:100%;border-radius:var(--radius);margin-bottom:16px;" onerror="this.style.display='none'">`;
 
       const ans = currentAnswers[q.id];
 
