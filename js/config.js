@@ -150,7 +150,7 @@ const VATUSA = {
   },
 
   ratingName(rating) {
-    const map = { 1: 'OBS', 2: 'S1', 3: 'S2', 4: 'S3', 5: 'C1', 6: 'C3', 7: 'I1', 8: 'I3', 9: 'SUP', 10: 'ADM', 11: 'ADM' };
+    const map = { 1: 'OBS', 2: 'S1', 3: 'S2', 4: 'S3', 5: 'C1', 6: 'C2', 7: 'C3', 8: 'I1', 9: 'I3', 10: 'SUP', 11: 'ADM' };
     // VATUSA rating IDs: 1=OBS,2=S1,3=S2,4=S3,5=C1,6=C3,7=I1,8=I3,9=SUP,10=ADM
     return map[rating] || rating;
   },
