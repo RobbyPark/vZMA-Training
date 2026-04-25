@@ -1028,48 +1028,46 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <span class="modal-title">Manually Add Student to Queue</span>
         <button class="modal-close" onclick="closeModal('addStudentModal')">&times;</button>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">First Name</label>
-          <input type="text" class="form-input" id="addFirstName">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name</label>
-          <input type="text" class="form-input" id="addLastName">
-        </div>
-      </div>
       <div class="form-group">
-        <label class="form-label">CID</label>
-        <input type="text" class="form-input" id="addCid">
+        <label class="form-label">VATSIM CID</label>
+        <input type="text" class="form-input" id="addCid" placeholder="e.g. 1234567" inputmode="numeric" oninput="lookupAddStudentCid(this.value)">
+        <div id="addStudentCidStatus" style="font-size:.8rem;margin-top:6px;min-height:20px;"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Training Type</label>
         <select class="form-select" id="addTrainingType">
           <option value="">Select...</option>
-          <option value="S1 Training (Tier 2)">S1 Training (Tier 2)</option>
-          <option value="S1 Training (Unrestricted)">S1 Training (Unrestricted)</option>
-          <option value="S2 Training (Tier 2)">S2 Training (Tier 2)</option>
-          <option value="S2 Training (Unrestricted)">S2 Training (Unrestricted)</option>
-          <option value="S3 Training (Tier 2)">S3 Training (Tier 2)</option>
-          <option value="S3 Training (Unrestricted)">S3 Training (Unrestricted)</option>
-          <option value="C1 Training">C1 Training</option>
-          <option value="Miami Center Oceanic">Miami Center Oceanic</option>
-          <option value="Tier 1 MIA GND/DEL">Tier 1 MIA GND/DEL</option>
-          <option value="Tier 1 MIA LCL">Tier 1 MIA LCL</option>
-          <option value="Tier 1 MIA TRACON">Tier 1 MIA TRACON</option>
-          <option value="Visitor/Transfer — Miami Center Domestic">Visitor/Transfer — Miami Center Domestic</option>
-          <option value="Visitor/Transfer — Miami CAB">Visitor/Transfer — Miami CAB</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Queue</label>
-        <select class="form-select" id="addQueueType">
-          <option value="home">Home Queue</option>
-          <option value="visitor">Visitor Queue</option>
+          <optgroup label="S1 Training">
+            <option value="S1 Training (Tier 2)">S1 Training (Tier 2)</option>
+            <option value="S1 Training (Unrestricted)">S1 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S2 Training">
+            <option value="S2 Training (Tier 2)">S2 Training (Tier 2)</option>
+            <option value="S2 Training (Unrestricted)">S2 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S3 Training">
+            <option value="S3 Training (Tier 2)">S3 Training (Tier 2)</option>
+            <option value="S3 Training (Unrestricted)">S3 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="C1 Training">
+            <option value="C1 Training">C1 Training</option>
+          </optgroup>
+          <optgroup label="Center &amp; Oceanic">
+            <option value="Miami Center Oceanic">Miami Center Oceanic</option>
+          </optgroup>
+          <optgroup label="Tier 1">
+            <option value="Tier 1 MIA GND/DEL">Tier 1 MIA GND/DEL</option>
+            <option value="Tier 1 MIA LCL">Tier 1 MIA LCL</option>
+            <option value="Tier 1 MIA TRACON">Tier 1 MIA TRACON</option>
+          </optgroup>
+          <optgroup label="Visitor / Transfer">
+            <option value="Visitor/Transfer — Miami Center Domestic">Visitor/Transfer — Miami Center Domestic</option>
+            <option value="Visitor/Transfer — Miami CAB">Visitor/Transfer — Miami CAB</option>
+          </optgroup>
         </select>
       </div>
       <div class="flex gap-2 mt-4">
-        <button class="btn btn-primary" onclick="confirmAddStudent()">Add to Queue</button>
+        <button class="btn btn-primary" id="addStudentBtn" onclick="confirmAddStudent()" disabled>Add to Queue</button>
         <button class="btn btn-secondary" onclick="closeModal('addStudentModal')">Cancel</button>
       </div>
     </div>
@@ -1509,21 +1507,64 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // Add Student manually
-    function openAddStudentModal() { openModal('addStudentModal'); }
+    let pendingAddStudent = null;
+    let addStudentLookupTimer = null;
+
+    function openAddStudentModal() {
+      pendingAddStudent = null;
+      document.getElementById('addCid').value = '';
+      document.getElementById('addStudentCidStatus').innerHTML = '';
+      document.getElementById('addTrainingType').value = '';
+      document.getElementById('addStudentBtn').disabled = true;
+      openModal('addStudentModal');
+    }
+
+    async function lookupAddStudentCid(val) {
+      clearTimeout(addStudentLookupTimer);
+      pendingAddStudent = null;
+      document.getElementById('addStudentBtn').disabled = true;
+      const status = document.getElementById('addStudentCidStatus');
+      if (!val || val.length < 4) { status.innerHTML = ''; return; }
+      status.style.color = 'var(--gray-400)';
+      status.innerHTML = '<span class="spinner"></span> Looking up CID...';
+      addStudentLookupTimer = setTimeout(async () => {
+        const membership = await VATUSA.isMemberOfFacility(val, CONFIG.FACILITY);
+        if (!membership) {
+          const ctrl = await VATUSA.getController(val);
+          if (!ctrl) {
+            status.style.color = 'var(--red-500)';
+            status.innerHTML = 'CID not found in VATSIM.';
+            return;
+          }
+          // Not in ZMA but found — still allow manual add
+          pendingAddStudent = { cid: String(val), first_name: ctrl.fname, last_name: ctrl.lname, queue_type: 'home' };
+          status.style.color = '#a16207';
+          status.innerHTML = `&#9888; Found: ${ctrl.fname} ${ctrl.lname} (not a ZMA member — adding to home queue)`;
+        } else {
+          const ctrl = membership.controller;
+          pendingAddStudent = { cid: String(val), first_name: ctrl.fname, last_name: ctrl.lname, queue_type: membership.type };
+          status.style.color = '#16a34a';
+          status.innerHTML = `&#10003; Found: ${ctrl.fname} ${ctrl.lname} &mdash; ${membership.type === 'home' ? 'Home Controller' : 'Visiting Controller'}`;
+        }
+        document.getElementById('addStudentBtn').disabled = false;
+      }, 800);
+    }
 
     async function confirmAddStudent() {
-      const firstName = document.getElementById('addFirstName').value.trim();
-      const lastName = document.getElementById('addLastName').value.trim();
-      const cid = document.getElementById('addCid').value.trim();
+      if (!pendingAddStudent) { toast('Enter a valid CID.', 'error'); return; }
       const trainingType = document.getElementById('addTrainingType').value;
-      const queueType = document.getElementById('addQueueType').value;
-      if (!firstName || !lastName || !cid || !trainingType) { toast('Fill all fields.', 'error'); return; }
+      if (!trainingType) { toast('Select a training type.', 'error'); return; }
       await SB.insert('training_queue', {
-        first_name: firstName, last_name: lastName, cid,
-        training_type: trainingType, queue_type: queueType,
-        status: 'waiting', requested_at: new Date().toISOString(), sort_order: 999
+        first_name: pendingAddStudent.first_name,
+        last_name: pendingAddStudent.last_name,
+        cid: pendingAddStudent.cid,
+        training_type: trainingType,
+        queue_type: pendingAddStudent.queue_type,
+        status: 'waiting',
+        requested_at: new Date().toISOString(),
+        sort_order: 999
       });
-      toast('Student added to queue.');
+      toast(`${pendingAddStudent.first_name} ${pendingAddStudent.last_name} added to ${pendingAddStudent.queue_type} queue.`);
       closeModal('addStudentModal');
       loadQueues();
     }
