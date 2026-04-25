@@ -104,10 +104,8 @@ const VATUSA = {
 
   async getControllerEmail(cid) {
     try {
-      const res = await fetch(`${CONFIG.VATUSA_API}/user/${cid}/email?apikey=${CONFIG.VATUSA_API_KEY}`);
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.email || null;
+      const ctrl = await this.getController(cid);
+      return ctrl?.email || null;
     } catch { return null; }
   },
 
@@ -231,3 +229,4 @@ function timeSince(d) {
   if (days === 1) return 'Yesterday';
   return `${days} days ago`;
 }
+
