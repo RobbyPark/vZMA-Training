@@ -883,7 +883,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             <div class="table-wrap">
               <table>
                 <thead>
-                  <tr><th>Name</th><th>CID</th><th>Training Type</th><th>Joined</th><th>Removed</th><th>Notes</th></tr>
+                  <tr><th>Name</th><th>CID</th><th>Training Type</th><th>Joined</th><th>Removed</th><th>Notes</th><th></th></tr>
                 </thead>
                 <tbody id="removedBody"></tbody>
               </table>
@@ -1590,8 +1590,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <td>${formatDate(r.training_started_at)}</td>
           <td>${formatDate(r.completed_at)}</td>
           <td>${r.trainer_name || '—'}</td>
+          <td><button class="btn btn-ghost btn-sm" onclick="openEditCompletedModal(${JSON.stringify(r).split('"').join('&quot;')})">Edit</button></td>
         </tr>
-      `).join('') || '<tr><td colspan="6" class="text-muted" style="text-align:center;padding:20px;">No completed training records</td></tr>';
+      `).join('') || '<tr><td colspan="7" class="text-muted" style="text-align:center;padding:20px;">No completed training records</td></tr>';
     }
 
     // ===================== REMOVED =====================
@@ -2441,6 +2442,67 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       loadRemoved();
     }
 
+
+    // ===================== EDIT COMPLETED =====================
+    let editingCompletedId = null;
+    let editingRemovedId = null;
+
+    function openEditCompletedModal(r) {
+      editingCompletedId = r.id;
+      document.getElementById('editCompName').value = `${r.first_name} ${r.last_name}`;
+      document.getElementById('editCompTrainingType').value = r.training_type || '';
+      document.getElementById('editCompTrainer').value = r.trainer_name || '';
+      document.getElementById('editCompStartDate').value = r.training_started_at ? r.training_started_at.slice(0,10) : '';
+      document.getElementById('editCompEndDate').value = r.completed_at ? r.completed_at.slice(0,10) : '';
+      openModal('editCompletedModal');
+    }
+
+    async function confirmEditCompleted() {
+      const trainingType = document.getElementById('editCompTrainingType').value;
+      const trainer = document.getElementById('editCompTrainer').value.trim();
+      const startDate = document.getElementById('editCompStartDate').value;
+      const endDate = document.getElementById('editCompEndDate').value;
+      await SB.update('completed_training', `id=eq.${editingCompletedId}`, {
+        training_type: trainingType,
+        trainer_name: trainer || null,
+        training_started_at: startDate ? new Date(startDate).toISOString() : null,
+        completed_at: endDate ? new Date(endDate).toISOString() : null,
+      });
+      toast('Record updated.');
+      closeModal('editCompletedModal');
+      loadCompleted();
+    }
+
+    // ===================== EDIT REMOVED =====================
+    function openEditRemovedModal(r) {
+      editingRemovedId = r.id;
+      document.getElementById('editRemName').value = `${r.first_name} ${r.last_name}`;
+      document.getElementById('editRemTrainingType').value = r.training_type || '';
+      document.getElementById('editRemQueueType').value = r.queue_type || 'home';
+      document.getElementById('editRemJoinedDate').value = r.joined_at ? r.joined_at.slice(0,10) : '';
+      document.getElementById('editRemRemovedDate').value = r.removed_at ? r.removed_at.slice(0,10) : '';
+      document.getElementById('editRemNotes').value = r.removal_notes || '';
+      openModal('editRemovedModal');
+    }
+
+    async function confirmEditRemoved() {
+      const trainingType = document.getElementById('editRemTrainingType').value;
+      const queueType = document.getElementById('editRemQueueType').value;
+      const joinedDate = document.getElementById('editRemJoinedDate').value;
+      const removedDate = document.getElementById('editRemRemovedDate').value;
+      const notes = document.getElementById('editRemNotes').value.trim();
+      await SB.update('removed_students', `id=eq.${editingRemovedId}`, {
+        training_type: trainingType,
+        queue_type: queueType,
+        joined_at: joinedDate ? new Date(joinedDate).toISOString() : null,
+        removed_at: removedDate ? new Date(removedDate).toISOString() : null,
+        removal_notes: notes || null,
+      });
+      toast('Record updated.');
+      closeModal('editRemovedModal');
+      loadRemoved();
+    }
+
     // ===================== POLLING =====================
     setInterval(() => {
       // Check active tab and refresh
@@ -2587,5 +2649,120 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     </div>
   </div>
 
+
+  <!-- Edit Completed Modal -->
+  <div class="modal-backdrop" id="editCompletedModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Edit Completed Training</span>
+        <button class="modal-close" onclick="closeModal('editCompletedModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="form-input" id="editCompName" readonly style="background:var(--gray-50);">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Training Type</label>
+        <select class="form-select" id="editCompTrainingType">
+          <optgroup label="S1 Training">
+            <option>S1 Training (Tier 2)</option><option>S1 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S2 Training">
+            <option>S2 Training (Tier 2)</option><option>S2 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S3 Training">
+            <option>S3 Training (Tier 2)</option><option>S3 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="C1 Training"><option>C1 Training</option></optgroup>
+          <optgroup label="Center &amp; Oceanic"><option>Miami Center Oceanic</option></optgroup>
+          <optgroup label="Tier 1">
+            <option>Tier 1 MIA GND/DEL</option><option>Tier 1 MIA LCL</option><option>Tier 1 MIA TRACON</option>
+          </optgroup>
+          <optgroup label="Visitor / Transfer">
+            <option>Visitor/Transfer — Miami Center Domestic</option><option>Visitor/Transfer — Miami CAB</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Trainer</label>
+        <input class="form-input" id="editCompTrainer" placeholder="Trainer name">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Start Date</label>
+          <input class="form-input" type="date" id="editCompStartDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">End Date</label>
+          <input class="form-input" type="date" id="editCompEndDate">
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button class="btn btn-primary" onclick="confirmEditCompleted()">Save Changes</button>
+        <button class="btn btn-secondary" onclick="closeModal('editCompletedModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Removed Modal -->
+  <div class="modal-backdrop" id="editRemovedModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Edit Removed Student</span>
+        <button class="modal-close" onclick="closeModal('editRemovedModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="form-input" id="editRemName" readonly style="background:var(--gray-50);">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Training Type</label>
+        <select class="form-select" id="editRemTrainingType">
+          <optgroup label="S1 Training">
+            <option>S1 Training (Tier 2)</option><option>S1 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S2 Training">
+            <option>S2 Training (Tier 2)</option><option>S2 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="S3 Training">
+            <option>S3 Training (Tier 2)</option><option>S3 Training (Unrestricted)</option>
+          </optgroup>
+          <optgroup label="C1 Training"><option>C1 Training</option></optgroup>
+          <optgroup label="Center &amp; Oceanic"><option>Miami Center Oceanic</option></optgroup>
+          <optgroup label="Tier 1">
+            <option>Tier 1 MIA GND/DEL</option><option>Tier 1 MIA LCL</option><option>Tier 1 MIA TRACON</option>
+          </optgroup>
+          <optgroup label="Visitor / Transfer">
+            <option>Visitor/Transfer — Miami Center Domestic</option><option>Visitor/Transfer — Miami CAB</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Queue Type</label>
+        <select class="form-select" id="editRemQueueType">
+          <option value="home">Home</option>
+          <option value="visitor">Visitor</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date Joined</label>
+          <input class="form-input" type="date" id="editRemJoinedDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date Removed</label>
+          <input class="form-input" type="date" id="editRemRemovedDate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Removal Notes</label>
+        <textarea class="form-textarea" id="editRemNotes"></textarea>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button class="btn btn-primary" onclick="confirmEditRemoved()">Save Changes</button>
+        <button class="btn btn-secondary" onclick="closeModal('editRemovedModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
