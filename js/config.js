@@ -3,8 +3,8 @@
 // ============================================================
 
 const CONFIG = {
-  SUPABASE_URL: 'https://rnfvvvxsesxcmejonndyu.supabase.co',
-  SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuZnZ2dnhzZXN4Y21lam9uZHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNTY1MjAsImV4cCI6MjA4ODgzMjUyMH0.Az7plNF6vX4aWho-hc7eqjQdP1TdCyYVfaIuxEPdr_8',
+  SUPABASE_URL: 'https://yprhefpaozkuopjcuwas.supabase.co',
+  SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwcmhlZnBhb3prdW9wamN1d2FzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNzc1NDEsImV4cCI6MjA5MjY1MzU0MX0.8TGY_D_qE5XdogEBOKndA7LiomXt_MRGejDfJxyu5Os',
   VATUSA_API: 'https://api.vatusa.net/v2',
   VATUSA_API_KEY: 'UAobqIiRBtq2cOnu',
   FACILITY: 'ZMA',
