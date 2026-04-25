@@ -3,80 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exam Center — ZMA ARTCC</title>
+  <title>Training Signup — ZMA ARTCC</title>
   <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
-    .login-wrap { max-width: 440px; margin: 80px auto; padding: 0 20px; }
-    .login-header { text-align:center; margin-bottom:36px; }
-    .login-header .artcc-badge {
-      display:inline-block; background:var(--blue-700); color:var(--white);
-      font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
-      padding:4px 14px; border-radius:100px; margin-bottom:14px;
+    .signup-wrap { max-width: 620px; margin: 0 auto; padding: 40px 24px; }
+    .signup-header { text-align: center; margin-bottom: 40px; }
+    .signup-header .artcc-badge {
+      display: inline-block; background: var(--blue-700); color: var(--white);
+      font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 100px; margin-bottom: 14px;
     }
-    .login-header h1 { font-size:1.8rem; font-weight:700; color:var(--blue-900); letter-spacing:-.02em; }
-    .login-header p { color:var(--gray-500); margin-top:8px; font-size:.9rem; }
-
-    .exam-tab-bar {
-      display:flex; gap:4px;
-      border-bottom:2px solid var(--gray-200);
-      margin-bottom:28px;
+    .signup-header h1 { font-size: 1.9rem; font-weight: 700; color: var(--blue-900); letter-spacing: -.03em; }
+    .signup-header p { color: var(--gray-500); margin-top: 8px; font-size: .9rem; }
+    .cid-status { font-size: .8rem; margin-top: 6px; min-height: 20px; display: flex; align-items: center; gap: 6px; }
+    .cid-status.found { color: #16a34a; }
+    .cid-status.not-found { color: var(--red-500); }
+    .cid-status.loading { color: var(--gray-400); }
+    .submit-section { margin-top: 8px; }
+    .success-state { text-align: center; padding: 48px 20px; }
+    .success-state .checkmark {
+      width: 64px; height: 64px; background: var(--green-100); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.6rem;
     }
-    .exam-tab {
-      padding:10px 20px; font-size:.875rem; font-weight:600;
-      color:var(--gray-500); background:none; border:none;
-      cursor:pointer; border-bottom:2px solid transparent;
-      margin-bottom:-2px; transition:all .15s;
-    }
-    .exam-tab.active { color:var(--blue-700); border-bottom-color:var(--blue-700); }
-
-    .exam-card {
-      background:var(--white); border:1px solid var(--gray-200);
-      border-radius:var(--radius-lg); padding:24px;
-      margin-bottom:16px; cursor:pointer;
-      transition:box-shadow .15s, border-color .15s;
-    }
-    .exam-card:hover { box-shadow:var(--shadow); border-color:var(--blue-300); }
-    .exam-card-title { font-size:1rem; font-weight:700; color:var(--blue-900); margin-bottom:6px; }
-    .exam-card-meta { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
-    .exam-meta-chip {
-      background:var(--gray-100); color:var(--gray-600);
-      border-radius:4px; font-size:.75rem; font-weight:600;
-      padding:3px 10px;
-    }
-
-    /* Exam taking */
-    #examTakingView { display:none; }
-    .question-block { max-width:740px; margin:0 auto; }
-    .question-text { font-size:1rem; font-weight:600; color:var(--gray-800); margin-bottom:20px; line-height:1.5; }
-    .option-btn {
-      display:flex; align-items:flex-start; gap:12px;
-      width:100%; text-align:left; padding:14px 18px;
-      border:2px solid var(--gray-200); border-radius:var(--radius);
-      background:var(--white); cursor:pointer; margin-bottom:10px;
-      font-family:var(--font-main); font-size:.9rem; color:var(--gray-700);
-      transition:all .12s;
-    }
-    .option-btn:hover { border-color:var(--blue-400); background:var(--blue-50); }
-    .option-btn.selected { border-color:var(--blue-500); background:var(--blue-50); color:var(--blue-700); }
-    .option-btn.correct { border-color:var(--green-500); background:var(--green-100); }
-    .option-btn.incorrect { border-color:var(--red-500); background:var(--red-100); }
-
-    .results-wrap { max-width:600px; margin:0 auto; text-align:center; padding:40px 20px; }
-    .score-circle {
-      width:120px; height:120px; border-radius:50%; margin:0 auto 24px;
-      display:flex; align-items:center; justify-content:center;
-      font-size:2rem; font-weight:700;
-      border:6px solid;
-    }
-    .score-circle.pass { border-color:var(--green-500); color:var(--green-500); background:var(--green-100); }
-    .score-circle.fail { border-color:var(--red-500); color:var(--red-500); background:var(--red-100); }
-
-    .req-note {
-      background:var(--blue-50); border:1px solid var(--blue-200);
-      border-radius:var(--radius); padding:16px; margin-bottom:20px;
-      font-size:.875rem; color:var(--blue-700);
-    }
+    .success-state h2 { font-size: 1.4rem; font-weight: 700; color: var(--blue-900); margin-bottom: 8px; }
+    .success-state p { color: var(--gray-500); font-size: .9rem; }
   </style>
 </head>
 <body>
@@ -85,528 +37,171 @@
       <span class="nav-brand-badge">ZMA</span>
       Miami ARTCC Training Portal
     </a>
-    <div class="nav-links" id="navLinks">
-      <a class="nav-link" href="signup.html">Training Signup</a>
-      <a class="nav-link active" href="exam-center.html">Exam Center</a>
+    <div class="nav-links">
+      <a class="nav-link active" href="signup.html">Training Signup</a>
+      <a class="nav-link" href="exam-center.html">Exam Center</a>
     </div>
   </nav>
 
   <div class="page-wrapper">
+    <div class="signup-wrap">
+      <div class="signup-header">
+        <span class="artcc-badge">ZMA Miami ARTCC</span>
+        <h1>Training Signup</h1>
+        <p>Submit your request to join the ZMA training queue.</p>
+      </div>
 
-    <!-- LOGIN -->
-    <div id="loginView">
-      <div class="login-wrap">
-        <div class="login-header">
-          <span class="artcc-badge">ZMA Miami ARTCC</span>
-          <h1>Exam Center</h1>
-          <p>Enter your VATSIM CID to access the exam center. You must be a current home or visiting member of ZMA ARTCC.</p>
-        </div>
-        <div class="card">
+      <div class="card" id="formCard">
+        <form id="signupForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-input" id="firstName" placeholder="Enter first name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-input" id="lastName" placeholder="Enter last name" required>
+            </div>
+          </div>
+
           <div class="form-group">
             <label class="form-label">VATSIM CID</label>
-            <input type="text" class="form-input" id="loginCid" placeholder="e.g. 1234567" inputmode="numeric">
-            <div class="cid-status" id="loginCidStatus"></div>
+            <input type="text" class="form-input" id="cid" placeholder="e.g. 1234567" required pattern="\d+" inputmode="numeric">
+            <div class="cid-status" id="cidStatus"></div>
           </div>
-          <button class="btn btn-primary btn-lg" id="loginBtn" onclick="attemptLogin()">Access Exam Center</button>
+
+          <div class="form-group">
+            <label class="form-label">Rating / Training Type</label>
+            <select class="form-select" id="trainingType" required>
+              <option value="">Select your training type...</option>
+              <optgroup label="S1 Training">
+                <option value="S1 Training (Tier 2)">S1 Training (Tier 2)</option>
+                <option value="S1 Training (Unrestricted)">S1 Training (Unrestricted)</option>
+              </optgroup>
+              <optgroup label="S2 Training">
+                <option value="S2 Training (Tier 2)">S2 Training (Tier 2)</option>
+                <option value="S2 Training (Unrestricted)">S2 Training (Unrestricted)</option>
+              </optgroup>
+              <optgroup label="S3 Training">
+                <option value="S3 Training (Tier 2)">S3 Training (Tier 2)</option>
+                <option value="S3 Training (Unrestricted)">S3 Training (Unrestricted)</option>
+              </optgroup>
+              <optgroup label="C1 Training">
+                <option value="C1 Training">C1 Training</option>
+              </optgroup>
+              <optgroup label="Center &amp; Oceanic">
+                <option value="Miami Center Oceanic">Miami Center Oceanic</option>
+              </optgroup>
+              <optgroup label="Tier 1">
+                <option value="Tier 1 MIA GND/DEL">Tier 1 MIA GND/DEL</option>
+                <option value="Tier 1 MIA LCL">Tier 1 MIA LCL</option>
+                <option value="Tier 1 MIA TRACON">Tier 1 MIA TRACON</option>
+              </optgroup>
+              <optgroup label="Visitor / Transfer">
+                <option value="Visitor/Transfer — Miami Center Domestic">Visitor/Transfer — Miami Center Domestic</option>
+                <option value="Visitor/Transfer — Miami CAB">Visitor/Transfer — Miami CAB</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-wrap">
+              <input type="checkbox" id="acknowledge" required>
+              <span class="checkbox-label">
+                I understand that all coursework must be completed before entering the training queue. Failure to uphold this will result in removal from the queue/training assignment.
+              </span>
+            </label>
+          </div>
+
+          <div class="submit-section">
+            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+              Submit Training Request
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card" id="successCard" style="display:none;">
+        <div class="success-state">
+          <div class="checkmark">&#10003;</div>
+          <h2>Request Submitted</h2>
+          <p>Your training request is now pending approval. A confirmation email has been sent to your registered VATSIM email address. You will be notified when your request is reviewed.</p>
+          <button class="btn btn-secondary mt-4" onclick="resetForm()">Submit Another Request</button>
         </div>
       </div>
     </div>
-
-    <!-- MAIN EXAM CENTER -->
-    <div id="mainView" style="display:none;">
-      <div class="page-container">
-        <div class="page-header">
-          <div class="flex items-center gap-3">
-            <h1>Exam Center</h1>
-            <span id="studentNameBadge" class="badge badge-blue"></span>
-            <button class="btn btn-ghost btn-sm ml-auto" onclick="logout()">Sign Out</button>
-          </div>
-        </div>
-
-        <div class="exam-tab-bar">
-          <button class="exam-tab active" onclick="switchExamTab('exams')">Exams</button>
-          <button class="exam-tab" onclick="switchExamTab('request')">Request Exam Password</button>
-          <button class="exam-tab" onclick="switchExamTab('grades')">My Grades</button>
-        </div>
-
-        <!-- EXAMS TAB -->
-        <div id="etab-exams">
-          <div id="examListContent"></div>
-        </div>
-
-        <!-- REQUEST PASSWORD TAB -->
-        <div id="etab-request" style="display:none;">
-          <div class="req-note">
-            <strong>Note:</strong> All rating advancement training and Tier 1 Training exam passwords are provided once accepted onto the training queue. If you did not receive your password, please email <a href="mailto:ta@zmaartcc.net">ta@zmaartcc.net</a>.
-          </div>
-          <div class="card" style="max-width:500px;">
-            <div class="form-group">
-              <label class="form-label">Select Exam to Request Password</label>
-              <select class="form-select" id="requestExamSelect">
-                <option value="">Choose an exam...</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Your VATSIM Rating</label>
-              <input class="form-input" id="requestRating" placeholder="e.g. S3" readonly>
-            </div>
-            <button class="btn btn-primary" onclick="submitExamRequest()">Submit Request</button>
-          </div>
-        </div>
-
-        <!-- MY GRADES TAB -->
-        <div id="etab-grades" style="display:none;">
-          <div id="myGradesContent"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- EXAM TAKING VIEW -->
-    <div id="examTakingView">
-      <div class="exam-layout">
-        <!-- Left sidebar: question nav -->
-        <div class="exam-sidebar">
-          <div style="font-size:.75rem;font-weight:700;color:var(--gray-400);margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em;">Questions</div>
-          <div id="examQNav"></div>
-        </div>
-        <!-- Main -->
-        <div class="exam-main">
-          <div class="flex items-center gap-3 mb-4">
-            <div style="flex:1;">
-              <div style="font-weight:700;font-size:1.05rem;color:var(--blue-900);" id="examTakingTitle"></div>
-              <div class="progress-bar-wrap"><div class="progress-bar" id="examProgressBar" style="width:0%"></div></div>
-            </div>
-            <div class="exam-timer" id="examTimer" style="display:none;"></div>
-            <button class="btn btn-ghost btn-sm" onclick="flagQuestion()">Flag</button>
-          </div>
-          <div class="question-block" id="questionBlock"></div>
-          <div class="flex gap-2 mt-4" id="examNav">
-            <button class="btn btn-secondary" id="prevBtn" onclick="navQuestion(-1)">Previous</button>
-            <button class="btn btn-secondary" id="nextBtn" onclick="navQuestion(1)">Next</button>
-            <button class="btn btn-primary ml-auto" id="submitExamBtn" onclick="confirmSubmitExam()">Submit Exam</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RESULTS VIEW -->
-    <div id="resultsView" style="display:none;">
-      <div class="page-container">
-        <div class="results-wrap">
-          <div class="score-circle" id="resultCircle"></div>
-          <h2 id="resultTitle" style="font-size:1.5rem;font-weight:700;color:var(--blue-900);margin-bottom:8px;"></h2>
-          <p id="resultMsg" class="text-muted mb-4"></p>
-          <div id="resultDetails" class="card" style="text-align:left;margin-bottom:20px;"></div>
-          <button class="btn btn-primary" onclick="backToExams()">Back to Exams</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <script src="js/config.js"></script>
   <script>
     emailjs.init(CONFIG.EMAILJS_PUBLIC_KEY);
+    let cidLookupTimer, resolvedEmail = '', cidLookupValid = false;
+    const cidInput = document.getElementById('cid');
+    const cidStatus = document.getElementById('cidStatus');
 
-    let currentStudent = null; // { cid, name, rating, ratingName }
-    let currentExam = null;
-    let currentQuestions = [];
-    let currentAnswers = {};
-    let flaggedQuestions = new Set();
-    let currentQIdx = 0;
-    let timerInterval = null;
-    let timeLeft = 0;
+    cidInput.addEventListener('input', () => {
+      clearTimeout(cidLookupTimer);
+      const val = cidInput.value.trim();
+      cidStatus.innerHTML = ''; cidLookupValid = false; resolvedEmail = '';
+      if (!val || val.length < 4) return;
+      cidStatus.className = 'cid-status loading';
+      cidStatus.innerHTML = '<span class="spinner"></span> Looking up CID...';
+      cidLookupTimer = setTimeout(() => lookupCID(val), 800);
+    });
 
-    // ===================== LOGIN =====================
-    async function attemptLogin() {
-      const cid = document.getElementById('loginCid').value.trim();
-      if (!cid) return;
-      const btn = document.getElementById('loginBtn');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying...';
-      const status = document.getElementById('loginCidStatus');
+    async function lookupCID(cid) {
       try {
-        const membership = await VATUSA.isMemberOfFacility(cid, CONFIG.FACILITY);
-        if (!membership) {
-          status.className = 'cid-status not-found';
-          status.innerHTML = 'You are not a home or visiting member of ZMA ARTCC.';
-          btn.disabled = false; btn.textContent = 'Access Exam Center';
-          return;
-        }
-        const ctrl = membership.controller;
-        currentStudent = {
-          cid,
-          name: `${ctrl.fname} ${ctrl.lname}`,
-          rating: ctrl.rating,
-          ratingName: VATUSA.ratingName(ctrl.rating),
-        };
-        document.getElementById('loginView').style.display = 'none';
-        document.getElementById('mainView').style.display = 'block';
-        document.getElementById('studentNameBadge').textContent = `${currentStudent.name} — ${currentStudent.ratingName}`;
-        document.getElementById('requestRating').value = currentStudent.ratingName;
-        loadExamList();
-        loadMyGrades();
-        loadRequestableExams();
-      } catch (e) {
-        status.className = 'cid-status not-found';
-        status.innerHTML = 'Verification failed. Please try again.';
-        btn.disabled = false; btn.textContent = 'Access Exam Center';
+        const ctrl = await VATUSA.getController(cid);
+        if (!ctrl) { cidStatus.className = 'cid-status not-found'; cidStatus.innerHTML = 'CID not found in VATSIM.'; return; }
+        cidLookupValid = true;
+        try {
+          const emailRes = await fetch(`${CONFIG.VATUSA_API}/user/${cid}/email?apikey=${CONFIG.VATUSA_API_KEY}`);
+          const emailData = await emailRes.json();
+          resolvedEmail = emailData.email || '';
+        } catch {}
+        cidStatus.className = 'cid-status found';
+        cidStatus.innerHTML = `&#10003; Found: ${ctrl.fname} ${ctrl.lname} &mdash; ${VATUSA.ratingName(ctrl.rating)}`;
+      } catch {
+        cidStatus.className = 'cid-status not-found';
+        cidStatus.innerHTML = 'Unable to verify CID. Please try again.';
       }
     }
 
-    function logout() {
-      currentStudent = null;
-      document.getElementById('loginCid').value = '';
-      document.getElementById('loginCidStatus').innerHTML = '';
-      document.getElementById('loginView').style.display = 'block';
-      document.getElementById('mainView').style.display = 'none';
-      document.getElementById('examTakingView').style.display = 'none';
-      document.getElementById('resultsView').style.display = 'none';
-    }
-
-    // ===================== EXAM TABS =====================
-    function switchExamTab(name) {
-      ['exams','request','grades'].forEach(t => {
-        document.getElementById(`etab-${t}`).style.display = t === name ? 'block' : 'none';
-      });
-      document.querySelectorAll('.exam-tab').forEach((b,i) => {
-        b.classList.toggle('active', ['exams','request','grades'][i] === name);
-      });
-    }
-
-    // ===================== EXAM LIST =====================
-    async function loadExamList() {
-      const exams = await SB.query('exams', '?is_published=eq.true&order=created_at.asc');
-      const cats = [
-        { id: 'tier2', label: 'Tier 2 Exams' },
-        { id: 'tier1', label: 'Tier 1 Exams' },
-        { id: 'training', label: 'Training Exams' },
-      ];
-      let html = '';
-      cats.forEach(cat => {
-        const catExams = exams.filter(e => e.category === cat.id);
-        if (!catExams.length) return;
-        html += `<div class="exam-cat-header">${cat.label}</div>`;
-        catExams.forEach(ex => {
-          html += `
-            <div class="exam-card" onclick="startExam('${ex.id}')">
-              <div class="exam-card-title">${ex.title}</div>
-              <div class="text-muted" style="font-size:.875rem;">${ex.description || 'No description'}</div>
-              <div class="exam-card-meta">
-                <span class="exam-meta-chip">${ex.time_limit ? ex.time_limit + ' min' : 'No time limit'}</span>
-                <span class="exam-meta-chip">Pass: ${ex.passing_grade}%</span>
-                <span class="exam-meta-chip">Attempts: ${ex.allowed_attempts}</span>
-              </div>
-            </div>
-          `;
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Submitting...';
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const cid = document.getElementById('cid').value.trim();
+      const trainingType = document.getElementById('trainingType').value;
+      let category = 'S1 Training';
+      if (trainingType.startsWith('S2')) category = 'S2 Training';
+      else if (trainingType.startsWith('S3')) category = 'S3 Training';
+      else if (trainingType.startsWith('C1')) category = 'C1 Training';
+      else if (trainingType.includes('Oceanic')) category = 'Center & Oceanic';
+      else if (trainingType.startsWith('Tier 1')) category = 'Tier 1';
+      else if (trainingType.startsWith('Visitor')) category = 'Visitor / Transfer';
+      try {
+        await SB.insert('training_requests', {
+          first_name: firstName, last_name: lastName, cid, email: resolvedEmail,
+          training_type: trainingType, training_category: category, status: 'pending',
         });
-      });
-      document.getElementById('examListContent').innerHTML = html || '<p class="text-muted">No exams available at this time.</p>';
-    }
-
-    // ===================== START EXAM =====================
-    async function startExam(examId) {
-      currentExam = null; currentQuestions = []; currentAnswers = {}; flaggedQuestions = new Set(); currentQIdx = 0;
-      if (timerInterval) clearInterval(timerInterval);
-
-      const [exam] = await SB.query('exams', `?id=eq.${examId}`);
-      const questions = await SB.query('exam_questions', `?exam_id=eq.${examId}&order=sort_order.asc`);
-
-      // Check attempts
-      const attempts = await SB.query('exam_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}&is_manual=eq.false`);
-      if (attempts.length >= exam.allowed_attempts) {
-        toast(`You have used all ${exam.allowed_attempts} attempt(s) for this exam.`, 'error');
-        return;
+        if (resolvedEmail) await EM.sendTrainingConfirmation(resolvedEmail, `${firstName} ${lastName}`, trainingType);
+        document.getElementById('formCard').style.display = 'none';
+        document.getElementById('successCard').style.display = 'block';
+      } catch (err) {
+        toast('Error submitting request. Please try again.', 'error');
+        btn.disabled = false; btn.innerHTML = 'Submit Training Request';
       }
+    });
 
-      // Shuffle questions
-      currentExam = exam;
-      currentQuestions = shuffleArray([...questions]);
-
-      // Require password if exam has one
-      if (exam.password) {
-        const entered = prompt(`This exam requires a password. Enter the exam password:`);
-        if (entered !== exam.password) {
-          toast('Incorrect exam password.', 'error');
-          return;
-        }
-      }
-
-      document.getElementById('mainView').style.display = 'none';
-      document.getElementById('examTakingView').style.display = 'flex';
-      document.getElementById('examTakingTitle').textContent = exam.title;
-
-      // Timer
-      if (exam.time_limit) {
-        timeLeft = exam.time_limit * 60;
-        document.getElementById('examTimer').style.display = 'block';
-        updateTimer();
-        timerInterval = setInterval(() => {
-          timeLeft--;
-          updateTimer();
-          if (timeLeft <= 0) { clearInterval(timerInterval); submitExam(); }
-          if (timeLeft <= 300) document.getElementById('examTimer').classList.add('warning');
-        }, 1000);
-      } else {
-        document.getElementById('examTimer').style.display = 'none';
-      }
-
-      renderQNav();
-      showQuestion(0);
-    }
-
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function updateTimer() {
-      const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
-      document.getElementById('examTimer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    }
-
-    function renderQNav() {
-      document.getElementById('examQNav').innerHTML = currentQuestions.map((q,i) => `
-        <button class="exam-q-btn ${currentAnswers[q.id]!==undefined?'answered':''} ${flaggedQuestions.has(q.id)?'flagged':''}"
-          onclick="showQuestion(${i})">Q${i+1}</button>
-      `).join('');
-    }
-
-    function showQuestion(idx) {
-      currentQIdx = idx;
-      const q = currentQuestions[idx];
-      const progress = ((idx+1)/currentQuestions.length*100).toFixed(0);
-      document.getElementById('examProgressBar').style.width = progress + '%';
-      document.getElementById('prevBtn').disabled = idx === 0;
-      document.getElementById('nextBtn').textContent = idx === currentQuestions.length-1 ? 'Review' : 'Next';
-
-      let html = `<div class="question-text">Question ${idx+1} of ${currentQuestions.length}<br>${q.question_text}</div>`;
-      if (q.image_url) html += `<img src="${q.image_url}" style="max-width:100%;border-radius:var(--radius);margin-bottom:16px;">`;
-
-      const ans = currentAnswers[q.id];
-
-      if (q.question_type === 'true_false') {
-        ['true','false'].forEach(v => {
-          html += `<button class="option-btn ${ans===v?'selected':''}" onclick="selectAnswer('${q.id}','${v}',this)">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`;
-        });
-      } else if (q.question_type === 'short_response') {
-        html += `<textarea class="form-textarea" id="srInput" placeholder="Type your answer..." oninput="selectAnswer('${q.id}',this.value)">${ans||''}</textarea>`;
-      } else if (q.question_type === 'multiple_choice_single') {
-        (q.options || []).forEach(opt => {
-          html += `<button class="option-btn ${ans===opt.id?'selected':''}" onclick="selectAnswer('${q.id}','${opt.id}',this,'single')">${opt.text}</button>`;
-        });
-      } else if (q.question_type === 'multiple_choice_multi') {
-        const sel = ans || [];
-        (q.options || []).forEach(opt => {
-          html += `<button class="option-btn ${sel.includes(opt.id)?'selected':''}" onclick="selectAnswer('${q.id}','${opt.id}',this,'multi')">${opt.text}</button>`;
-        });
-      } else if (q.question_type === 'matching') {
-        const leftOpts = (q.options||[]).filter(o=>o.side==='left');
-        const rightOpts = (q.options||[]).filter(o=>o.side==='right');
-        const shuffledRight = shuffleArray([...rightOpts]);
-        html += '<div>';
-        leftOpts.forEach((left,i) => {
-          html += `
-            <div class="matching-row">
-              <div class="matching-left">${left.text}</div>
-              <span>&#8594;</span>
-              <select class="form-select" style="flex:1;" onchange="selectMatchingAnswer('${q.id}','${left.id}',this.value)">
-                <option value="">Select...</option>
-                ${shuffledRight.map(r => `<option value="${r.id}" ${(ans&&ans[left.id]===r.id)?'selected':''}>${r.text}</option>`).join('')}
-              </select>
-            </div>`;
-        });
-        html += '</div>';
-      }
-
-      document.getElementById('questionBlock').innerHTML = html;
-      renderQNav();
-    }
-
-    function selectAnswer(qId, val, btn, mode) {
-      if (mode === 'single') {
-        currentAnswers[qId] = val;
-        document.querySelectorAll('#questionBlock .option-btn').forEach(b => b.classList.remove('selected'));
-        if (btn) btn.classList.add('selected');
-      } else if (mode === 'multi') {
-        if (!currentAnswers[qId]) currentAnswers[qId] = [];
-        const arr = currentAnswers[qId];
-        const idx = arr.indexOf(val);
-        if (idx >= 0) { arr.splice(idx,1); if(btn) btn.classList.remove('selected'); }
-        else { arr.push(val); if(btn) btn.classList.add('selected'); }
-      } else {
-        currentAnswers[qId] = val;
-      }
-      renderQNav();
-    }
-
-    function selectMatchingAnswer(qId, leftId, rightId) {
-      if (!currentAnswers[qId]) currentAnswers[qId] = {};
-      currentAnswers[qId][leftId] = rightId;
-      renderQNav();
-    }
-
-    function navQuestion(dir) {
-      const newIdx = currentQIdx + dir;
-      if (newIdx >= 0 && newIdx < currentQuestions.length) showQuestion(newIdx);
-    }
-
-    function flagQuestion() {
-      const qId = currentQuestions[currentQIdx].id;
-      if (flaggedQuestions.has(qId)) flaggedQuestions.delete(qId);
-      else flaggedQuestions.add(qId);
-      renderQNav();
-    }
-
-    function confirmSubmitExam() {
-      const unanswered = currentQuestions.filter(q => currentAnswers[q.id] === undefined).length;
-      if (unanswered > 0) {
-        if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
-      } else {
-        if (!confirm('Submit this exam?')) return;
-      }
-      submitExam();
-    }
-
-    async function submitExam() {
-      if (timerInterval) clearInterval(timerInterval);
-      // Grade exam
-      let totalPoints = 0, earnedPoints = 0;
-      currentQuestions.forEach(q => {
-        totalPoints += q.points || 1;
-        if (isAnswerCorrect(q, currentAnswers[q.id])) earnedPoints += q.points || 1;
-      });
-      const score = totalPoints > 0 ? Math.round(earnedPoints/totalPoints*100) : 0;
-      const passed = score >= currentExam.passing_grade;
-
-      await SB.insert('exam_attempts', {
-        exam_id: currentExam.id,
-        cid: currentStudent.cid,
-        student_name: currentStudent.name,
-        answers: currentAnswers,
-        score, passed,
-        submitted_at: new Date().toISOString(),
-      });
-
-      showResults(score, passed);
-    }
-
-    function isAnswerCorrect(q, answer) {
-      if (answer === undefined || answer === null || answer === '') return false;
-      if (q.question_type === 'true_false') return answer === q.correct_answers;
-      if (q.question_type === 'short_response') return answer.toLowerCase().trim() === (q.correct_text||'').toLowerCase().trim();
-      if (q.question_type === 'multiple_choice_single') return answer === (q.correct_answers||[])[0];
-      if (q.question_type === 'multiple_choice_multi') {
-        if (!Array.isArray(answer) || !Array.isArray(q.correct_answers)) return false;
-        return answer.sort().join(',') === q.correct_answers.sort().join(',');
-      }
-      if (q.question_type === 'matching') {
-        if (!q.correct_answers || !answer) return false;
-        return q.correct_answers.every(pair => answer[pair.left_id] === pair.right_id);
-      }
-      return false;
-    }
-
-    function showResults(score, passed) {
-      document.getElementById('examTakingView').style.display = 'none';
-      document.getElementById('resultsView').style.display = 'block';
-      const circle = document.getElementById('resultCircle');
-      circle.textContent = score + '%';
-      circle.className = `score-circle ${passed ? 'pass' : 'fail'}`;
-      document.getElementById('resultTitle').textContent = passed ? 'Exam Passed' : 'Exam Not Passed';
-      document.getElementById('resultMsg').textContent = passed
-        ? `Congratulations! You passed ${currentExam.title} with a score of ${score}%.`
-        : `You scored ${score}%. A passing grade of ${currentExam.passing_grade}% is required.`;
-
-      // Question review
-      let reviewHtml = '<div class="table-wrap"><table><thead><tr><th>#</th><th>Question</th><th>Result</th></tr></thead><tbody>';
-      currentQuestions.forEach((q, i) => {
-        const correct = isAnswerCorrect(q, currentAnswers[q.id]);
-        reviewHtml += `<tr>
-          <td>${i+1}</td>
-          <td style="font-size:.8rem;">${q.question_text.slice(0,80)}${q.question_text.length>80?'...':''}</td>
-          <td><span class="badge ${correct?'badge-green':'badge-red'}">${correct?'Correct':'Incorrect'}</span></td>
-        </tr>`;
-      });
-      reviewHtml += '</tbody></table></div>';
-      document.getElementById('resultDetails').innerHTML = reviewHtml;
-    }
-
-    function backToExams() {
-      document.getElementById('resultsView').style.display = 'none';
-      document.getElementById('mainView').style.display = 'block';
-      loadExamList();
-      loadMyGrades();
-    }
-
-    // ===================== MY GRADES =====================
-    async function loadMyGrades() {
-      if (!currentStudent) return;
-      const attempts = await SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&order=submitted_at.desc`);
-      if (!attempts.length) {
-        document.getElementById('myGradesContent').innerHTML = '<p class="text-muted">No exam grades yet.</p>';
-        return;
-      }
-      // Load exam titles
-      const examIds = [...new Set(attempts.map(a => a.exam_id))];
-      const exams = await Promise.all(examIds.map(id => SB.query('exams', `?id=eq.${id}`).then(r => r[0])));
-      const examMap = {};
-      exams.forEach(e => { if(e) examMap[e.id] = e; });
-
-      document.getElementById('myGradesContent').innerHTML = `
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Exam</th><th>Score</th><th>Passed</th><th>Date</th></tr></thead>
-            <tbody>
-              ${attempts.map(a => `
-                <tr>
-                  <td>${examMap[a.exam_id]?.title || 'Unknown Exam'}</td>
-                  <td>${a.score !== null ? a.score + '%' : '—'}</td>
-                  <td><span class="badge ${a.passed?'badge-green':'badge-red'}">${a.passed?'Pass':'Fail'}</span>${a.is_manual?'<span class="text-muted" style="font-size:.75rem;margin-left:6px;">Manual</span>':''}</td>
-                  <td>${formatDate(a.submitted_at)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
-
-    // ===================== REQUEST PASSWORD =====================
-    async function loadRequestableExams() {
-      const exams = await SB.query('exams', '?is_published=eq.true&allow_password_request=eq.true&order=created_at.asc');
-      const sel = document.getElementById('requestExamSelect');
-      sel.innerHTML = '<option value="">Choose an exam...</option>';
-      exams.forEach(e => {
-        const opt = document.createElement('option');
-        opt.value = e.id;
-        opt.dataset.title = e.title;
-        opt.textContent = e.title;
-        sel.appendChild(opt);
-      });
-    }
-
-    async function submitExamRequest() {
-      const sel = document.getElementById('requestExamSelect');
-      const examId = sel.value;
-      if (!examId) { toast('Select an exam.', 'error'); return; }
-      const examTitle = sel.options[sel.selectedIndex].dataset.title;
-      // Check if already pending
-      const existing = await SB.query('exam_requests', `?cid=eq.${currentStudent.cid}&exam_id=eq.${examId}&status=eq.pending`);
-      if (existing.length) { toast('You already have a pending request for this exam.', 'error'); return; }
-      await SB.insert('exam_requests', {
-        cid: currentStudent.cid,
-        student_name: currentStudent.name,
-        vatsim_rating: currentStudent.ratingName,
-        exam_id: examId,
-        exam_title: examTitle,
-        status: 'pending',
-        requested_at: new Date().toISOString(),
-      });
-      toast('Exam password request submitted. You will be notified when it is reviewed.');
-      document.getElementById('requestExamSelect').value = '';
+    function resetForm() {
+      document.getElementById('signupForm').reset();
+      document.getElementById('cidStatus').innerHTML = '';
+      cidLookupValid = false; resolvedEmail = '';
+      document.getElementById('formCard').style.display = 'block';
+      document.getElementById('successCard').style.display = 'none';
     }
   </script>
 </body>
