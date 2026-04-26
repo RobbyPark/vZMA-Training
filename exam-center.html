@@ -835,6 +835,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <div class="exam-tab-bar">
           <button class="exam-tab active" onclick="switchExamTab('exams')">Exams</button>
           <button class="exam-tab" onclick="switchExamTab('request')">Request Exam Password</button>
+          <button class="exam-tab" onclick="switchExamTab('passwords')" id="passwordsTab">My Passwords <span id="passwordsNotifDot" style="display:none;background:var(--red-500);color:#fff;font-size:.65rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;vertical-align:middle;"></span></button>
           <button class="exam-tab" onclick="switchExamTab('grades')">My Grades</button>
         </div>
 
@@ -861,6 +862,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             </div>
             <button class="btn btn-primary" onclick="submitExamRequest()">Submit Request</button>
           </div>
+        </div>
+
+        <!-- MY PASSWORDS TAB -->
+        <div id="etab-passwords" style="display:none;">
+          <div id="myPasswordsContent"></div>
         </div>
 
         <!-- MY GRADES TAB -->
@@ -954,6 +960,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         document.getElementById('requestRating').value = currentStudent.ratingName;
         loadExamList();
         loadMyGrades();
+        loadMyPasswords();
         loadRequestableExams();
       } catch (e) {
         status.className = 'cid-status not-found';
@@ -972,14 +979,59 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('resultsView').style.display = 'none';
     }
 
+    // ===================== MY PASSWORDS =====================
+    async function loadMyPasswords() {
+      try {
+        const approved = await SB.query('exam_requests',
+          `?cid=eq.${currentStudent.cid}&status=eq.approved&order=resolved_at.desc`);
+        const el = document.getElementById('myPasswordsContent');
+        if (!el) return;
+
+        // Show notification dot on tab if there are passwords
+        const dot = document.getElementById('passwordsNotifDot');
+        if (dot) dot.style.display = approved.length ? 'inline-flex' : 'none';
+
+        if (!approved.length) {
+          el.innerHTML = `
+            <div class="card" style="max-width:600px;text-align:center;padding:40px;">
+              <div style="font-size:2rem;margin-bottom:12px;">🔒</div>
+              <div style="font-weight:600;color:var(--blue-900);margin-bottom:8px;">No Approved Passwords Yet</div>
+              <p class="text-muted">Once an exam password request is approved, it will appear here.</p>
+            </div>`;
+          return;
+        }
+
+        el.innerHTML = `
+          <div style="margin-bottom:16px;">
+            <p class="text-muted" style="font-size:.85rem;">Your approved exam passwords are shown below. Keep these confidential.</p>
+          </div>
+          ${approved.map(r => `
+            <div class="card" style="max-width:600px;margin-bottom:16px;padding:20px 24px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                <div>
+                  <div style="font-weight:700;font-size:1rem;color:var(--blue-900);">${r.exam_title || 'Exam'}</div>
+                  <div style="font-size:.78rem;color:var(--gray-400);margin-top:2px;">Approved ${r.resolved_at ? new Date(r.resolved_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''}</div>
+                </div>
+                <div style="background:var(--green-100);border:1px solid #bbf7d0;border-radius:var(--radius);padding:12px 20px;text-align:center;">
+                  <div style="font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#16a34a;margin-bottom:4px;">Password</div>
+                  <div style="font-size:1.6rem;font-weight:800;color:var(--blue-900);letter-spacing:4px;">${r.password_sent || '—'}</div>
+                </div>
+              </div>
+            </div>`).join('')}`;
+      } catch(e) {
+        console.error('loadMyPasswords error:', e);
+      }
+    }
+
     // ===================== EXAM TABS =====================
     function switchExamTab(name) {
-      ['exams','request','grades'].forEach(t => {
+      ['exams','request','passwords','grades'].forEach(t => {
         document.getElementById(`etab-${t}`).style.display = t === name ? 'block' : 'none';
       });
       document.querySelectorAll('.exam-tab').forEach((b,i) => {
-        b.classList.toggle('active', ['exams','request','grades'][i] === name);
+        b.classList.toggle('active', ['exams','request','passwords','grades'][i] === name);
       });
+      if (name === 'passwords') loadMyPasswords();
     }
 
     // ===================== EXAM LIST =====================
