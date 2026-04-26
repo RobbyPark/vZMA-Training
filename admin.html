@@ -1678,15 +1678,13 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         cid, student_name: studentName, exam_id: examId, exam_title: examTitle,
         password_sent: password, sent_at: new Date().toISOString()
       });
-      // Get email
-      const ctrl = await VATUSA.getController(cid);
-      if (ctrl) {
-        try {
-          const emailRes = await fetch(`${CONFIG.VATUSA_API}/user/${cid}/email?apikey=${CONFIG.VATUSA_API_KEY}`);
-          const emailData = await emailRes.json();
-          if (emailData.email) await EM.sendExamApproved(emailData.email, studentName, examTitle, password);
-        } catch {}
-      }
+      // Get email from controller lookup (ctrl.email is returned by VATUSA getController)
+      try {
+        const ctrl = await VATUSA.getController(cid);
+        if (ctrl && ctrl.email) {
+          await EM.sendExamPasswordApproved(ctrl.email, studentName, examTitle, password);
+        }
+      } catch(e) { console.error('Exam password email error:', e); }
       toast('Exam approved. Password sent.');
       loadExamRequests();
     }
