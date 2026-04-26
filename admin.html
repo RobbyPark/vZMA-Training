@@ -2066,16 +2066,26 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>`;
       }
       if (type === 'matching') {
-        const pairs = (opts.length ? opts : [{left:'',right:''}]);
+        // Reconstruct display pairs from stored options+correct_answers
+        let displayPairs = [{left:'', right:''}];
+        if (opts.length && correct.length) {
+          // Build lookup from id->text
+          const textMap = {};
+          opts.forEach(o => { textMap[o.id] = o.text || ''; });
+          displayPairs = correct.map(pair => ({
+            left:  textMap[pair.left_id]  || '',
+            right: textMap[pair.right_id] || '',
+          }));
+        }
         return `
           <div class="form-group">
             <label class="form-label">Matching Pairs (Left &#8594; Right)</label>
             <div class="q-matching-list">
-              ${pairs.map(p => `
+              ${displayPairs.map(p => `
                 <div class="matching-row">
-                  <input class="form-input" placeholder="Left side" value="${p.left||''}">
+                  <input class="form-input" placeholder="Left side" value="${(p.left||'').replace(/"/g,'&quot;')}">
                   <span>&#8594;</span>
-                  <input class="form-input" placeholder="Right side" value="${p.right||''}">
+                  <input class="form-input" placeholder="Right side" value="${(p.right||'').replace(/"/g,'&quot;')}">
                   <button class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">&#x2715;</button>
                 </div>`).join('')}
             </div>
@@ -2108,7 +2118,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         const typeSel = card.querySelector('select');
         const type = typeSel.value;
         const questionText = card.querySelectorAll('textarea')[0].value.trim();
-        const imageUrl = card.querySelectorAll('input[type="text"], input:not([type="number"]):not([type="checkbox"]):not([type="radio"])')[1]?.value.trim() || '';
+        // Get image URL from the dedicated image input (has placeholder "https://...")
+        const imageInput = Array.from(card.querySelectorAll('input.form-input:not([type="number"]):not([type="checkbox"]):not([type="radio"])')).find(el => el.placeholder === 'https://...');
+        const imageUrl = imageInput?.value.trim() || '';
         const pointsInput = card.querySelector('input[type="number"]');
         const points = parseInt(pointsInput?.value || '1');
         let options = null, correctAnswers = null, correctText = null;
@@ -2134,10 +2146,13 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           options = [];
           correctAnswers = [];
           card.querySelectorAll('.q-matching-list .matching-row').forEach((row, i) => {
-            const inputs = row.querySelectorAll('input');
+            const inputs = row.querySelectorAll('input.form-input');
+            const leftText  = inputs[0]?.value.trim() || '';
+            const rightText = inputs[1]?.value.trim() || '';
+            if (!leftText && !rightText) return; // skip empty rows
             const leftId = `left_${i}`, rightId = `right_${i}`;
-            options.push({ id: leftId, text: inputs[0]?.value, side: 'left' });
-            options.push({ id: rightId, text: inputs[1]?.value, side: 'right' });
+            options.push({ id: leftId, text: leftText,  side: 'left'  });
+            options.push({ id: rightId, text: rightText, side: 'right' });
             correctAnswers.push({ left_id: leftId, right_id: rightId });
           });
         }
