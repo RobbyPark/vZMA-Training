@@ -1090,35 +1090,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <span class="modal-title">Remove Student</span>
         <button class="modal-close" onclick="closeModal('removeModal')">&times;</button>
       </div>
+      <p class="text-muted mb-4">Add a note for this removal (optional).</p>
       <div class="form-group">
-        <label class="form-label">Email Notification</label>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;">
-            <input type="radio" name="removeEmailType" value="ineligibility" id="removeTypeIneligibility" style="accent-color:var(--blue-600);width:16px;height:16px;flex-shrink:0;">
-            <div>
-              <div style="font-weight:600;font-size:.875rem;color:var(--gray-800);">Ineligibility Removal</div>
-              <div style="font-size:.78rem;color:var(--gray-500);">Sends ineligibility per T01 email to student</div>
-            </div>
-          </label>
-          <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;">
-            <input type="radio" name="removeEmailType" value="inactivity" id="removeTypeInactivity" style="accent-color:var(--blue-600);width:16px;height:16px;flex-shrink:0;">
-            <div>
-              <div style="font-weight:600;font-size:.875rem;color:var(--gray-800);">Inactivity Removal</div>
-              <div style="font-size:.78rem;color:var(--gray-500);">Sends inactivity removal email to student</div>
-            </div>
-          </label>
-          <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;">
-            <input type="radio" name="removeEmailType" value="silent" id="removeTypeSilent" checked style="accent-color:var(--blue-600);width:16px;height:16px;flex-shrink:0;">
-            <div>
-              <div style="font-weight:600;font-size:.875rem;color:var(--gray-800);">Remove Silently</div>
-              <div style="font-size:.78rem;color:var(--gray-500);">No email notification sent to student</div>
-            </div>
-          </label>
-        </div>
-      </div>
-      <div class="form-group" style="margin-top:16px;">
-        <label class="form-label">Internal Notes (optional)</label>
-        <textarea class="form-textarea" id="removeNotes" placeholder="Internal reason for removal (not sent to student)..."></textarea>
+        <textarea class="form-textarea" id="removeNotes" placeholder="Reason for removal..."></textarea>
       </div>
       <div class="flex gap-2 mt-4">
         <button class="btn btn-danger" onclick="confirmRemove()">Remove Student</button>
@@ -1338,22 +1312,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           sort_order: maxOrder + 1,
           requested_at: req.requested_at || new Date().toISOString(),
         });
-        // Send approval email
-        if (email) {
-          const needsExam = EXAM_REQUIRED_TYPES.includes(trainingType);
-          if (needsExam) {
-            const allExams = await SB.query('exams', '?is_published=eq.true');
-            const linkedExam = allExams.find(e => e.linked_training_type === trainingType);
-            const examPassword = linkedExam?.password || null;
-            if (examPassword) {
-              await EM.sendApprovalWithExam(email, `${firstName} ${lastName}`, trainingType, examPassword);
-            } else {
-              await EM.sendApprovalNoExam(email, `${firstName} ${lastName}`, trainingType);
-            }
-          } else {
-            await EM.sendApprovalNoExam(email, `${firstName} ${lastName}`, trainingType);
-          }
-        }
         toast(`${firstName} ${lastName} approved and added to ${queueType} queue.`);
         loadQueues();
       } catch (e) { console.error(e); toast('Error approving request', 'error'); }
@@ -1492,27 +1450,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     async function confirmTrainerAssign() {
       const sel = document.getElementById('trainerSelect');
       const trainerId = sel.value;
-      const trainerName = sel.options[sel.selectedIndex].textContent.trim();
+      const trainerName = sel.options[sel.selectedIndex].textContent;
       if (!trainerId) { toast('Select a trainer.', 'error'); return; }
       await SB.update('training_queue', `id=eq.${state.currentTrainerQueueId}`, {
         trainer_id: trainerId, trainer_name: trainerName, status: 'training', training_started_at: new Date().toISOString()
       });
-      try {
-        const [entry] = await SB.query('training_queue', `?id=eq.${state.currentTrainerQueueId}`);
-        if (entry) {
-          if (entry.email) {
-            await EM.sendTrainerAssignedStudent(entry.email, `${entry.first_name} ${entry.last_name}`, trainerName, entry.training_type);
-          }
-          const [trainerRow] = await SB.query('trainers', `?id=eq.${trainerId}`);
-          if (trainerRow) {
-            const trainerCtrl = await VATUSA.getController(trainerRow.cid);
-            if (trainerCtrl && trainerCtrl.email) {
-              await EM.sendTrainerAssignedTrainer(trainerCtrl.email, trainerName, `${entry.first_name} ${entry.last_name}`, entry.training_type);
-            }
-          }
-        }
-      } catch(e) { console.error('Trainer email error:', e); }
-      toast('Trainer assigned and emails sent.');
+      toast('Trainer assigned.');
       closeModal('trainerModal');
       loadQueues();
     }
@@ -1554,13 +1497,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     function openRemoveModal(queueId) {
       state.currentRemoveId = queueId;
       document.getElementById('removeNotes').value = '';
-      document.getElementById('removeTypeSilent').checked = true;
       openModal('removeModal');
     }
 
     async function confirmRemove() {
       const notes = document.getElementById('removeNotes').value.trim();
-      const emailType = document.querySelector('input[name="removeEmailType"]:checked')?.value || 'silent';
       const [entry] = await SB.query('training_queue', `?id=eq.${state.currentRemoveId}`);
       await SB.update('training_queue', `id=eq.${state.currentRemoveId}`, { status: 'removed', removed_at: new Date().toISOString() });
       await SB.insert('removed_students', {
@@ -1570,12 +1511,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         queue_type: entry.queue_type, joined_at: entry.requested_at,
         removed_at: new Date().toISOString(), removal_notes: notes
       });
-      if (entry.email && emailType !== 'silent') {
-        const studentName = `${entry.first_name} ${entry.last_name}`;
-        if (emailType === 'ineligibility') await EM.sendRemovalIneligibility(entry.email, studentName);
-        else if (emailType === 'inactivity') await EM.sendRemovalInactivity(entry.email, studentName);
-      }
-      toast(emailType === 'silent' ? 'Student removed (no email sent).' : 'Student removed and email sent.');
+      toast('Student removed.');
       closeModal('removeModal');
       loadQueues();
     }
@@ -1733,13 +1669,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         cid, student_name: studentName, exam_id: examId, exam_title: examTitle,
         password_sent: password, sent_at: new Date().toISOString()
       });
-      // Send exam password email
-      try {
-        const ctrl = await VATUSA.getController(cid);
-        if (ctrl && ctrl.email) {
-          await EM.sendExamPasswordApproved(ctrl.email, studentName, examTitle, password);
-        }
-      } catch(e) { console.error('Exam email error:', e); }
+      // Get email
+      const ctrl = await VATUSA.getController(cid);
+      if (ctrl) {
+        try {
+          const emailRes = await fetch(`${CONFIG.VATUSA_API}/user/${cid}/email?apikey=${CONFIG.VATUSA_API_KEY}`);
+          const emailData = await emailRes.json();
+          if (emailData.email) await EM.sendExamApproved(emailData.email, studentName, examTitle, password);
+        } catch {}
+      }
       toast('Exam approved. Password sent.');
       loadExamRequests();
     }
@@ -1979,21 +1917,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Link to Training Type <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--gray-400);">— auto-fills this exam's password in approval emails</span></label>
-          <select class="form-select" id="eb_linked_training_type">
-            <option value="">Not linked to a training type</option>
-            <option value="S1 Training (Tier 2)" ${exam?.linked_training_type==='S1 Training (Tier 2)'?'selected':''}>S1 Training (Tier 2)</option>
-            <option value="S2 Training (Tier 2)" ${exam?.linked_training_type==='S2 Training (Tier 2)'?'selected':''}>S2 Training (Tier 2)</option>
-            <option value="S3 Training (Tier 2)" ${exam?.linked_training_type==='S3 Training (Tier 2)'?'selected':''}>S3 Training (Tier 2)</option>
-            <option value="C1 Training" ${exam?.linked_training_type==='C1 Training'?'selected':''}>C1 Training</option>
-            <option value="Tier 1 MIA GND/DEL" ${exam?.linked_training_type==='Tier 1 MIA GND/DEL'?'selected':''}>Tier 1 MIA GND/DEL</option>
-            <option value="Tier 1 MIA LCL" ${exam?.linked_training_type==='Tier 1 MIA LCL'?'selected':''}>Tier 1 MIA LCL</option>
-            <option value="Tier 1 MIA TRACON" ${exam?.linked_training_type==='Tier 1 MIA TRACON'?'selected':''}>Tier 1 MIA TRACON</option>
-            <option value="Visitor/Transfer — Miami Center Domestic" ${exam?.linked_training_type==='Visitor/Transfer — Miami Center Domestic'?'selected':''}>Visitor/Transfer — Miami Center Domestic</option>
-            <option value="Visitor/Transfer — Miami CAB" ${exam?.linked_training_type==='Visitor/Transfer — Miami CAB'?'selected':''}>Visitor/Transfer — Miami CAB</option>
-          </select>
-        </div>
-        <div class="form-group">
           <label class="checkbox-wrap">
             <input type="checkbox" id="eb_allow_request" ${exam?.allow_password_request?'checked':''}>
             <span class="checkbox-label">Allow students to request this exam password from the Exam Center</span>
@@ -2190,7 +2113,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         passing_grade: parseInt(document.getElementById('eb_passing_grade').value) || 70,
         allowed_attempts: parseInt(document.getElementById('eb_allowed_attempts').value) || 1,
         password: document.getElementById('eb_password').value.trim(),
-        linked_training_type: document.getElementById('eb_linked_training_type').value || null,
         allow_password_request: document.getElementById('eb_allow_request').checked,
         is_published: publish,
         updated_at: new Date().toISOString(),
@@ -2216,9 +2138,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     async function deleteExam(id) {
       if (!confirm('Delete this exam and all its data?')) return;
-      await SB.delete('exams', `id=eq.${id}`);
-      toast('Exam deleted.');
-      loadAdminExams();
+      try {
+        await SB.delete('exam_questions',    `exam_id=eq.${id}`);
+        await SB.delete('exam_attempts',     `exam_id=eq.${id}`);
+        await SB.delete('exam_requests',     `exam_id=eq.${id}`);
+        await SB.delete('exam_code_history', `exam_id=eq.${id}`);
+        await SB.delete('exams',             `id=eq.${id}`);
+        toast('Exam deleted.');
+        loadAdminExams();
+      } catch(e) {
+        console.error('Delete exam error:', e);
+        toast('Error deleting exam. Check console for details.', 'error');
+      }
     }
 
     // Manual Grade
