@@ -1108,6 +1108,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         });
       } else if (q.question_type === 'multiple_choice_multi') {
         const sel = ans || [];
+        html += '<div style="font-weight:700;font-size:.9rem;color:var(--blue-700);margin-bottom:12px;">Select all that apply</div>';
         (q.options || []).forEach(opt => {
           html += `<button class="option-btn ${sel.includes(opt.id)?'selected':''}" onclick="selectAnswer('${q.id}','${opt.id}',this,'multi')">${opt.text}</button>`;
         });
