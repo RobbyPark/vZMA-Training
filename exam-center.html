@@ -892,8 +892,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div class="flex gap-2 mt-4" id="examNav">
             <button class="btn btn-secondary" id="prevBtn" onclick="navQuestion(-1)">Previous</button>
             <button class="btn btn-secondary" id="nextBtn" onclick="navQuestion(1)">Next</button>
-            <button class="btn btn-secondary ml-auto" id="saveProgressBtn" onclick="saveExamProgress()" style="display:none;">Save Progress</button>
-            <button class="btn btn-primary" id="submitExamBtn" onclick="confirmSubmitExam()">Submit Exam</button>
+            <button class="btn btn-primary ml-auto" id="submitExamBtn" onclick="confirmSubmitExam()">Submit Exam</button>
           </div>
         </div>
       </div>
@@ -926,7 +925,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     let currentQIdx = 0;
     let timerInterval = null;
     let timeLeft = 0;
-    let savedExamProgress = {}; // keyed by examId — stores { answers, flagged, qIdx, questions }
 
     // ===================== LOGIN =====================
     async function attemptLogin() {
@@ -1024,9 +1022,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
       // Check attempts
       const attempts = await SB.query('exam_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}&is_manual=eq.false`);
-      if (attempts.length >= exam.allowed_attempts) {
-        toast(`You have used all ${exam.allowed_attempts} attempt(s) for this exam.`, 'error');
-        return;
+      if (exam.allowed_attempts !== 0) {
+        // Check for extra attempts granted to this student
+        let totalAllowed = exam.allowed_attempts;
+        try {
+          const extras = await SB.query('exam_extra_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}`);
+          if (extras.length) totalAllowed += extras[0].extra_attempts;
+        } catch(e) {}
+        if (attempts.length >= totalAllowed) {
+          toast(`You have used all ${totalAllowed} attempt(s) for this exam.`, 'error');
+          return;
+        }
       }
 
       // Shuffle questions
@@ -1050,7 +1056,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       if (exam.time_limit) {
         timeLeft = exam.time_limit * 60;
         document.getElementById('examTimer').style.display = 'block';
-        document.getElementById('saveProgressBtn').style.display = 'none';
         updateTimer();
         timerInterval = setInterval(() => {
           timeLeft--;
@@ -1060,18 +1065,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         }, 1000);
       } else {
         document.getElementById('examTimer').style.display = 'none';
-        document.getElementById('saveProgressBtn').style.display = 'inline-flex';
-        // Restore saved progress if available
-        const saved = savedExamProgress[examId];
-        if (saved) {
-          const resume = confirm('You have saved progress for this exam. Would you like to resume where you left off?');
-          if (resume) {
-            currentAnswers = saved.answers;
-            flaggedQuestions = new Set(saved.flagged);
-            currentQIdx = saved.qIdx;
-            currentQuestions = saved.questions;
-          }
-        }
       }
 
       renderQNav();
@@ -1084,17 +1077,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
       return arr;
-    }
-
-    function saveExamProgress() {
-      if (!currentExam) return;
-      savedExamProgress[currentExam.id] = {
-        answers: { ...currentAnswers },
-        flagged: [...flaggedQuestions],
-        qIdx: currentQIdx,
-        questions: currentQuestions,
-      };
-      toast('Progress saved! You can resume this exam anytime.', 'success');
     }
 
     function updateTimer() {
@@ -1207,8 +1189,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     async function submitExam() {
       if (timerInterval) clearInterval(timerInterval);
-      // Clear any saved progress for this exam
-      if (currentExam) delete savedExamProgress[currentExam.id];
       // Grade exam
       let totalPoints = 0, earnedPoints = 0;
       currentQuestions.forEach(q => {
@@ -1257,17 +1237,28 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         ? `Congratulations! You passed ${currentExam.title} with a score of ${score}%.`
         : `You scored ${score}%. A passing grade of ${currentExam.passing_grade}% is required.`;
 
-      // Question review
-      let reviewHtml = '<div class="table-wrap"><table><thead><tr><th>#</th><th>Question</th><th>Result</th></tr></thead><tbody>';
-      currentQuestions.forEach((q, i) => {
-        const correct = isAnswerCorrect(q, currentAnswers[q.id]);
-        reviewHtml += `<tr>
-          <td>${i+1}</td>
-          <td style="font-size:.8rem;">${q.question_text.slice(0,80)}${q.question_text.length>80?'...':''}</td>
-          <td><span class="badge ${correct?'badge-green':'badge-red'}">${correct?'Correct':'Incorrect'}</span></td>
-        </tr>`;
-      });
-      reviewHtml += '</tbody></table></div>';
+      // Score summary (always shown)
+      const totalQ = currentQuestions.length;
+      const earnedQ = currentQuestions.filter(q => isAnswerCorrect(q, currentAnswers[q.id])).length;
+      let reviewHtml = `<div style="text-align:center;padding:16px 0;">
+        <div style="font-size:2.2rem;font-weight:800;color:${passed?'#16a34a':'var(--red-500)'};">${earnedQ} / ${totalQ}</div>
+        <div style="font-size:.85rem;color:var(--gray-500);margin-top:4px;">questions correct</div>
+      </div>`;
+
+      // Question-by-question review only shown if passed
+      if (passed) {
+        reviewHtml += '<hr style="border:none;border-top:1px solid var(--gray-200);margin:8px 0 16px;">';
+        reviewHtml += '<div class="table-wrap"><table><thead><tr><th>#</th><th>Question</th><th>Result</th></tr></thead><tbody>';
+        currentQuestions.forEach((q, i) => {
+          const correct = isAnswerCorrect(q, currentAnswers[q.id]);
+          reviewHtml += `<tr>
+            <td>${i+1}</td>
+            <td style="font-size:.8rem;">${q.question_text.slice(0,80)}${q.question_text.length>80?'...':''}</td>
+            <td><span class="badge ${correct?'badge-green':'badge-red'}">${correct?'Correct':'Incorrect'}</span></td>
+          </tr>`;
+        });
+        reviewHtml += '</tbody></table></div>';
+      }
       document.getElementById('resultDetails').innerHTML = reviewHtml;
     }
 

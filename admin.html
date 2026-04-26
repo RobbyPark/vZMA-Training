@@ -1766,11 +1766,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
                 <div style="flex:1;">
                   <strong>${ex.title}</strong>
                   <span class="badge ${ex.is_published ? 'badge-green' : 'badge-gray'}" style="margin-left:8px;">${ex.is_published ? 'Published' : 'Draft'}</span>
-                  <div class="text-muted" style="margin-top:2px;font-size:.8rem;">${ex.description || 'No description'} &bull; ${ex.time_limit ? ex.time_limit + ' min' : 'No time limit'} &bull; Pass: ${ex.passing_grade}% &bull; Attempts: ${ex.allowed_attempts}</div>
+                  <div class="text-muted" style="margin-top:2px;font-size:.8rem;">${ex.description || 'No description'} &bull; ${ex.time_limit ? ex.time_limit + ' min' : 'No time limit'} &bull; Pass: ${ex.passing_grade}% &bull; Attempts: ${ex.allowed_attempts === 0 ? 'Unlimited' : ex.allowed_attempts}</div>
                 </div>
                 <div class="action-row">
                   <button class="btn btn-secondary btn-sm" onclick="openExamBuilder('${ex.id}')">Edit</button>
                   <button class="btn btn-ghost btn-sm" onclick="openManualGradeModal('${ex.id}')">+ Grade</button>
+                  <button class="btn btn-ghost btn-sm" onclick="openExtraAttemptsModal('${ex.id}','${ex.title}')">+ Attempts</button>
                   <button class="btn btn-danger btn-sm" onclick="deleteExam('${ex.id}')">Delete</button>
                 </div>
               </div>
@@ -1909,7 +1910,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Allowed Attempts</label>
-            <input class="form-input" id="eb_allowed_attempts" type="number" value="${exam?.allowed_attempts || 1}" min="1">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <input class="form-input" id="eb_allowed_attempts" type="number" value="${exam?.allowed_attempts === 0 ? 0 : (exam?.allowed_attempts || 1)}" min="0" style="flex:1;" oninput="document.getElementById('eb_unlimited_label').style.display=this.value==='0'?'inline':'none'">
+              <span id="eb_unlimited_label" style="display:${exam?.allowed_attempts===0?'inline':'none'};font-size:.8rem;font-weight:600;color:var(--blue-600);white-space:nowrap;">Unlimited</span>
+            </div>
+            <div style="font-size:.75rem;color:var(--gray-400);margin-top:4px;">Set to 0 for unlimited attempts</div>
           </div>
           <div class="form-group">
             <label class="form-label">Exam Password</label>
@@ -2111,7 +2116,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         description: document.getElementById('eb_description').value.trim(),
         time_limit: parseInt(document.getElementById('eb_time_limit').value) || null,
         passing_grade: parseInt(document.getElementById('eb_passing_grade').value) || 70,
-        allowed_attempts: parseInt(document.getElementById('eb_allowed_attempts').value) || 1,
+        allowed_attempts: parseInt(document.getElementById('eb_allowed_attempts').value) ?? 1,
         password: document.getElementById('eb_password').value.trim(),
         allow_password_request: document.getElementById('eb_allow_request').checked,
         is_published: publish,
@@ -2146,10 +2151,75 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         await SB.delete('exams',             `id=eq.${id}`);
         toast('Exam deleted.');
         loadAdminExams();
-      } catch(e) {
-        console.error('Delete exam error:', e);
-        toast('Error deleting exam. Check console for details.', 'error');
+      } catch(e) { console.error('Delete exam error:', e); toast('Error deleting exam.', 'error'); }
+    }
+
+    // Extra attempts
+    let extraAttemptsExamId = null;
+    let extraAttemptsCidTimer = null;
+    let extraAttemptsPendingCid = null;
+
+    async function openExtraAttemptsModal(examId, examTitle) {
+      extraAttemptsExamId = examId;
+      extraAttemptsPendingCid = null;
+      document.getElementById('extraAttemptsExamTitle').textContent = examTitle;
+      document.getElementById('extraAttemptsCid').value = '';
+      document.getElementById('extraAttemptsCidStatus').innerHTML = '';
+      document.getElementById('extraAttemptsCount').value = '1';
+      document.getElementById('extraAttemptsConfirmBtn').disabled = true;
+      await loadExtraAttemptsList(examId);
+      openModal('extraAttemptsModal');
+    }
+
+    async function loadExtraAttemptsList(examId) {
+      const list = await SB.query('exam_extra_attempts', `?exam_id=eq.${examId}`);
+      const el = document.getElementById('extraAttemptsList');
+      if (!list.length) { el.innerHTML = '<p class="text-muted" style="font-size:.85rem;">No extra attempts granted yet.</p>'; return; }
+      el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Name</th><th>CID</th><th>Extra Attempts</th><th></th></tr></thead><tbody>' +
+        list.map(r => `<tr><td>${r.student_name||'—'}</td><td class="text-mono">${r.cid}</td><td>${r.extra_attempts}</td><td><button class="btn btn-ghost btn-sm" onclick="removeExtraAttempt('${r.id}','${examId}')">Remove</button></td></tr>`).join('') +
+        '</tbody></table></div>';
+    }
+
+    async function removeExtraAttempt(id, examId) {
+      await SB.delete('exam_extra_attempts', `id=eq.${id}`);
+      loadExtraAttemptsList(examId);
+      toast('Extra attempts removed.');
+    }
+
+    function lookupExtraAttemptsCid(val) {
+      clearTimeout(extraAttemptsCidTimer);
+      extraAttemptsPendingCid = null;
+      document.getElementById('extraAttemptsConfirmBtn').disabled = true;
+      const status = document.getElementById('extraAttemptsCidStatus');
+      if (!val || val.length < 4) { status.innerHTML = ''; return; }
+      status.style.color = 'var(--gray-400)'; status.innerHTML = '<span class="spinner"></span> Looking up CID...';
+      extraAttemptsCidTimer = setTimeout(async () => {
+        const ctrl = await VATUSA.getController(val);
+        if (!ctrl) { status.style.color = 'var(--red-500)'; status.innerHTML = 'CID not found.'; return; }
+        extraAttemptsPendingCid = { cid: String(val), name: `${ctrl.fname} ${ctrl.lname}` };
+        status.style.color = '#16a34a';
+        status.innerHTML = `&#10003; Found: ${ctrl.fname} ${ctrl.lname}`;
+        document.getElementById('extraAttemptsConfirmBtn').disabled = false;
+      }, 800);
+    }
+
+    async function confirmExtraAttempts() {
+      if (!extraAttemptsPendingCid) { toast('Enter a valid CID.', 'error'); return; }
+      const count = parseInt(document.getElementById('extraAttemptsCount').value) || 1;
+      // Check if record already exists — update if so
+      const existing = await SB.query('exam_extra_attempts', `?exam_id=eq.${extraAttemptsExamId}&cid=eq.${extraAttemptsPendingCid.cid}`);
+      if (existing.length) {
+        await SB.update('exam_extra_attempts', `id=eq.${existing[0].id}`, { extra_attempts: existing[0].extra_attempts + count });
+      } else {
+        await SB.insert('exam_extra_attempts', { exam_id: extraAttemptsExamId, cid: extraAttemptsPendingCid.cid, student_name: extraAttemptsPendingCid.name, extra_attempts: count });
       }
+      toast(`${count} extra attempt(s) granted to ${extraAttemptsPendingCid.name}.`);
+      loadExtraAttemptsList(extraAttemptsExamId);
+      document.getElementById('extraAttemptsCid').value = '';
+      document.getElementById('extraAttemptsCidStatus').innerHTML = '';
+      document.getElementById('extraAttemptsCount').value = '1';
+      document.getElementById('extraAttemptsConfirmBtn').disabled = true;
+      extraAttemptsPendingCid = null;
     }
 
     // Manual Grade
@@ -2773,5 +2843,32 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       </div>
     </div>
   </div>
+  <!-- Extra Attempts Modal -->
+  <div class="modal-backdrop" id="extraAttemptsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Grant Extra Attempts</span>
+        <button class="modal-close" onclick="closeModal('extraAttemptsModal')">&times;</button>
+      </div>
+      <p class="text-muted mb-4" id="extraAttemptsExamTitle" style="font-weight:600;color:var(--blue-900);font-size:.95rem;"></p>
+      <div class="form-group">
+        <label class="form-label">Student CID</label>
+        <input class="form-input" id="extraAttemptsCid" placeholder="e.g. 1234567" inputmode="numeric" oninput="lookupExtraAttemptsCid(this.value)">
+        <div id="extraAttemptsCidStatus" style="font-size:.8rem;margin-top:6px;min-height:20px;"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of Extra Attempts to Grant</label>
+        <input class="form-input" id="extraAttemptsCount" type="number" value="1" min="1">
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button class="btn btn-primary" id="extraAttemptsConfirmBtn" onclick="confirmExtraAttempts()" disabled>Grant Attempts</button>
+        <button class="btn btn-secondary" onclick="closeModal('extraAttemptsModal')">Cancel</button>
+      </div>
+      <hr class="section-divider">
+      <div class="form-label" style="margin-bottom:12px;">Current Extra Attempts</div>
+      <div id="extraAttemptsList"></div>
+    </div>
+  </div>
+
 </body>
 </html>
