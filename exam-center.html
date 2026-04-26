@@ -1022,17 +1022,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
       // Check attempts
       const attempts = await SB.query('exam_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}&is_manual=eq.false`);
-      if (exam.allowed_attempts !== 0) {
-        // Check for extra attempts granted to this student
-        let totalAllowed = exam.allowed_attempts;
-        try {
-          const extras = await SB.query('exam_extra_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}`);
-          if (extras.length) totalAllowed += extras[0].extra_attempts;
-        } catch(e) {}
-        if (attempts.length >= totalAllowed) {
-          toast(`You have used all ${totalAllowed} attempt(s) for this exam.`, 'error');
-          return;
-        }
+      if (attempts.length >= exam.allowed_attempts) {
+        toast(`You have used all ${exam.allowed_attempts} attempt(s) for this exam.`, 'error');
+        return;
       }
 
       // Shuffle questions
@@ -1086,7 +1078,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     function renderQNav() {
       document.getElementById('examQNav').innerHTML = currentQuestions.map((q,i) => `
-        <button class="exam-q-btn ${currentAnswers[q.id]!==undefined?'answered':''} ${flaggedQuestions.has(q.id)?'flagged':''}"
+        <button class="exam-q-btn ${(currentAnswers[q.id]!==undefined && (q.question_type!=='matching' || Object.keys(currentAnswers[q.id]||{}).length>0))?'answered':''} ${flaggedQuestions.has(q.id)?'flagged':''}"
           onclick="showQuestion(${i})">Q${i+1}</button>
       `).join('');
     }
@@ -1100,7 +1092,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('nextBtn').textContent = idx === currentQuestions.length-1 ? 'Review' : 'Next';
 
       let html = `<div class="question-text">Question ${idx+1} of ${currentQuestions.length}<br>${q.question_text}</div>`;
-      if (q.image_url && q.image_url.trim() !== '') html += `<img src="${q.image_url}" style="max-width:100%;border-radius:var(--radius);margin-bottom:16px;" onerror="this.style.display='none'">`;
+      if (q.image_url) html += `<img src="${q.image_url}" style="max-width:100%;border-radius:var(--radius);margin-bottom:16px;">`;
 
       const ans = currentAnswers[q.id];
 
@@ -1120,18 +1112,30 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           html += `<button class="option-btn ${sel.includes(opt.id)?'selected':''}" onclick="selectAnswer('${q.id}','${opt.id}',this,'multi')">${opt.text}</button>`;
         });
       } else if (q.question_type === 'matching') {
-        const leftOpts = (q.options||[]).filter(o=>o.side==='left');
-        const rightOpts = (q.options||[]).filter(o=>o.side==='right');
-        const shuffledRight = shuffleArray([...rightOpts]);
-        html += '<div>';
-        leftOpts.forEach((left,i) => {
+        // Build left/right pairs from correct_answers + options
+        const leftOpts = (q.options||[]).filter(o => o.side === 'left');
+        const rightOpts = (q.options||[]).filter(o => o.side === 'right');
+        // If side field missing, derive from correct_answers pairs
+        const pairs = q.correct_answers || [];
+        const leftItems = leftOpts.length ? leftOpts : pairs.map((p,i) => ({ id: p.left_id, text: p.left_id }));
+        const rightItems = rightOpts.length ? rightOpts : pairs.map(p => ({ id: p.right_id, text: p.right_id }));
+        // Build a lookup from option id -> text for display
+        const optionText = {};
+        (q.options||[]).forEach(o => { optionText[o.id] = o.text; });
+        // Enrich left/right with text from options if needed
+        const enrichedLeft = leftItems.map(l => ({ id: l.id, text: optionText[l.id] || l.text || l.id }));
+        const enrichedRight = rightItems.map(r => ({ id: r.id, text: optionText[r.id] || r.text || r.id }));
+        const shuffledRight = shuffleArray([...enrichedRight]);
+        html += '<div style="max-width:500px;">';
+        enrichedLeft.forEach(left => {
+          const savedVal = ans ? (ans[left.id] || '') : '';
           html += `
-            <div class="matching-row">
-              <div class="matching-left">${left.text}</div>
-              <span>&#8594;</span>
+            <div class="matching-row" style="margin-bottom:10px;">
+              <div class="matching-left" style="min-width:140px;flex:1;">${left.text}</div>
+              <span style="flex-shrink:0;">&#8594;</span>
               <select class="form-select" style="flex:1;" onchange="selectMatchingAnswer('${q.id}','${left.id}',this.value)">
                 <option value="">Select...</option>
-                ${shuffledRight.map(r => `<option value="${r.id}" ${(ans&&ans[left.id]===r.id)?'selected':''}>${r.text}</option>`).join('')}
+                ${shuffledRight.map(r => `<option value="${r.id}" ${savedVal===r.id?'selected':''}>${r.text}</option>`).join('')}
               </select>
             </div>`;
         });
@@ -1178,7 +1182,14 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     function confirmSubmitExam() {
-      const unanswered = currentQuestions.filter(q => currentAnswers[q.id] === undefined).length;
+      const unanswered = currentQuestions.filter(q => {
+        if (q.question_type === 'matching') {
+          const pairs = (q.correct_answers||[]).length;
+          const filled = Object.keys(currentAnswers[q.id]||{}).length;
+          return filled < pairs;
+        }
+        return currentAnswers[q.id] === undefined;
+      }).length;
       if (unanswered > 0) {
         if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
       } else {
@@ -1216,6 +1227,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       if (q.question_type === 'short_response') return answer.toLowerCase().trim() === (q.correct_text||'').toLowerCase().trim();
       if (q.question_type === 'multiple_choice_single') return answer === (q.correct_answers||[])[0];
       if (q.question_type === 'multiple_choice_multi') {
+        html += '<div style="font-weight:700;font-size:.85rem;color:var(--blue-700);margin-bottom:10px;">Select all that apply</div>';
         if (!Array.isArray(answer) || !Array.isArray(q.correct_answers)) return false;
         return answer.sort().join(',') === q.correct_answers.sort().join(',');
       }
@@ -1237,28 +1249,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         ? `Congratulations! You passed ${currentExam.title} with a score of ${score}%.`
         : `You scored ${score}%. A passing grade of ${currentExam.passing_grade}% is required.`;
 
-      // Score summary (always shown)
-      const totalQ = currentQuestions.length;
-      const earnedQ = currentQuestions.filter(q => isAnswerCorrect(q, currentAnswers[q.id])).length;
-      let reviewHtml = `<div style="text-align:center;padding:16px 0;">
-        <div style="font-size:2.2rem;font-weight:800;color:${passed?'#16a34a':'var(--red-500)'};">${earnedQ} / ${totalQ}</div>
-        <div style="font-size:.85rem;color:var(--gray-500);margin-top:4px;">questions correct</div>
-      </div>`;
-
-      // Question-by-question review only shown if passed
-      if (passed) {
-        reviewHtml += '<hr style="border:none;border-top:1px solid var(--gray-200);margin:8px 0 16px;">';
-        reviewHtml += '<div class="table-wrap"><table><thead><tr><th>#</th><th>Question</th><th>Result</th></tr></thead><tbody>';
-        currentQuestions.forEach((q, i) => {
-          const correct = isAnswerCorrect(q, currentAnswers[q.id]);
-          reviewHtml += `<tr>
-            <td>${i+1}</td>
-            <td style="font-size:.8rem;">${q.question_text.slice(0,80)}${q.question_text.length>80?'...':''}</td>
-            <td><span class="badge ${correct?'badge-green':'badge-red'}">${correct?'Correct':'Incorrect'}</span></td>
-          </tr>`;
-        });
-        reviewHtml += '</tbody></table></div>';
-      }
+      // Question review
+      let reviewHtml = '<div class="table-wrap"><table><thead><tr><th>#</th><th>Question</th><th>Result</th></tr></thead><tbody>';
+      currentQuestions.forEach((q, i) => {
+        const correct = isAnswerCorrect(q, currentAnswers[q.id]);
+        reviewHtml += `<tr>
+          <td>${i+1}</td>
+          <td style="font-size:.8rem;">${q.question_text.slice(0,80)}${q.question_text.length>80?'...':''}</td>
+          <td><span class="badge ${correct?'badge-green':'badge-red'}">${correct?'Correct':'Incorrect'}</span></td>
+        </tr>`;
+      });
+      reviewHtml += '</tbody></table></div>';
       document.getElementById('resultDetails').innerHTML = reviewHtml;
     }
 
