@@ -971,6 +971,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     function logout() {
       currentStudent = null;
+      seenPasswordExamIds = new Set();
       document.getElementById('loginCid').value = '';
       document.getElementById('loginCidStatus').innerHTML = '';
       document.getElementById('loginView').style.display = 'block';
@@ -980,6 +981,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // ===================== MY PASSWORDS =====================
+    // Tracks which exam IDs the student has already viewed passwords for this session
+    let seenPasswordExamIds = new Set();
+
     async function loadMyPasswords() {
       try {
         const approved = await SB.query('exam_requests',
@@ -987,11 +991,20 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         const el = document.getElementById('myPasswordsContent');
         if (!el) return;
 
-        // Show notification dot on tab if there are passwords
-        const dot = document.getElementById('passwordsNotifDot');
-        if (dot) dot.style.display = approved.length ? 'inline-flex' : 'none';
+        // Deduplicate — only show the most recent approval per exam
+        const seen = new Set();
+        const unique = approved.filter(r => {
+          if (seen.has(r.exam_id)) return false;
+          seen.add(r.exam_id);
+          return true;
+        });
 
-        if (!approved.length) {
+        // Red dot only if there are passwords the student hasn't viewed yet this session
+        const newCount = unique.filter(r => !seenPasswordExamIds.has(r.exam_id)).length;
+        const dot = document.getElementById('passwordsNotifDot');
+        if (dot) dot.style.display = newCount > 0 ? 'inline-flex' : 'none';
+
+        if (!unique.length) {
           el.innerHTML = `
             <div class="card" style="max-width:600px;text-align:center;padding:40px;">
               <div style="font-size:2rem;margin-bottom:12px;">🔒</div>
@@ -1005,10 +1018,13 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div style="margin-bottom:16px;">
             <p class="text-muted" style="font-size:.85rem;">Your approved exam passwords are shown below. Keep these confidential.</p>
           </div>
-          ${approved.map(r => `
-            <div class="card" style="max-width:600px;margin-bottom:16px;padding:20px 24px;">
+          ${unique.map(r => {
+            const isNew = !seenPasswordExamIds.has(r.exam_id);
+            return `
+            <div class="card" style="max-width:600px;margin-bottom:16px;padding:20px 24px;${isNew ? 'border-color:var(--blue-300);' : ''}">
               <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
                 <div>
+                  ${isNew ? '<span style="display:inline-block;background:var(--blue-600);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:100px;margin-bottom:6px;">NEW</span>' : ''}
                   <div style="font-weight:700;font-size:1rem;color:var(--blue-900);">${r.exam_title || 'Exam'}</div>
                   <div style="font-size:.78rem;color:var(--gray-400);margin-top:2px;">Approved ${r.resolved_at ? new Date(r.resolved_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''}</div>
                 </div>
@@ -1017,7 +1033,13 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
                   <div style="font-size:1.6rem;font-weight:800;color:var(--blue-900);letter-spacing:4px;">${r.password_sent || '—'}</div>
                 </div>
               </div>
-            </div>`).join('')}`;
+            </div>`;
+          }).join('')}`;
+
+        // Mark all as seen now that they've been displayed
+        unique.forEach(r => seenPasswordExamIds.add(r.exam_id));
+        if (dot) dot.style.display = 'none';
+
       } catch(e) {
         console.error('loadMyPasswords error:', e);
       }
