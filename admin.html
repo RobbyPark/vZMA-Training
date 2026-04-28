@@ -1709,7 +1709,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       if (!prefab) { toast('Select a reason.', 'error'); return; }
       if (prefab === 'custom' && !custom) { toast('Please write a custom reason.', 'error'); return; }
 
-      const ineligibilityMsg = `Hello ${state.currentExamRejectName},\n\nYour exam password request has been denied because you are currently not eligible to complete the requested exam. Please review the T01 documentation through the ZMA website for more information.\n\nBest regards,\nZMA Training Team.`;
+      const ineligibilityMsg = `You are currently not eligible to complete the requested exam. Please review the T01 documentation through the ZMA website for more information.`;
       const reason = prefab === 'ineligibility' ? ineligibilityMsg : custom;
 
       await SB.update('exam_requests', `id=eq.${state.currentExamRejectId}`, {
