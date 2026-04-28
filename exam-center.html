@@ -1172,7 +1172,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
       if (q.question_type === 'true_false') {
         ['true','false'].forEach(v => {
-          html += `<button class="option-btn ${ans===v?'selected':''}" onclick="selectAnswer('${q.id}','${v}',this)">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`;
+          html += `<button class="option-btn ${ans===v?'selected':''}" onclick="selectAnswer('${q.id}','${v}',this,'single')">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`;
         });
       } else if (q.question_type === 'short_response') {
         html += `<textarea class="form-textarea" id="srInput" placeholder="Type your answer..." oninput="selectAnswer('${q.id}',this.value)">${ans||''}</textarea>`;
@@ -1200,7 +1200,14 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         // Enrich left/right with text from options if needed
         const enrichedLeft = leftItems.map(l => ({ id: l.id, text: optionText[l.id] || l.text || l.id }));
         const enrichedRight = rightItems.map(r => ({ id: r.id, text: optionText[r.id] || r.text || r.id }));
-        const shuffledRight = shuffleArray([...enrichedRight]);
+        // Deduplicate right options by display text (keep first occurrence)
+        const seenTexts = new Set();
+        const dedupedRight = enrichedRight.filter(r => {
+          if (seenTexts.has(r.text)) return false;
+          seenTexts.add(r.text);
+          return true;
+        });
+        const shuffledRight = shuffleArray([...dedupedRight]);
         html += '<div style="max-width:500px;">';
         enrichedLeft.forEach(left => {
           const savedVal = ans ? (ans[left.id] || '') : '';
