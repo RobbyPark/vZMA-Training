@@ -911,7 +911,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div class="score-circle" id="resultCircle"></div>
           <h2 id="resultTitle" style="font-size:1.5rem;font-weight:700;color:var(--blue-900);margin-bottom:8px;"></h2>
           <p id="resultMsg" class="text-muted mb-4"></p>
-          <button class="btn btn-primary" onclick="backToExams()">Back to Exams</button>
+          <div id="resultDetails"></div>
+          <button class="btn btn-primary" style="margin-top:20px;" onclick="backToExams()">Back to Exams</button>
         </div>
       </div>
     </div>
@@ -1340,7 +1341,21 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         ? `Congratulations! You passed ${currentExam.title} with a score of ${score}%.`
         : `You scored ${score}%. A passing grade of ${currentExam.passing_grade}% is required.`;
 
-      document.getElementById('resultDetails').innerHTML = '';
+      // Show only questions answered incorrectly (question text only, no answers)
+      const wrongQuestions = currentQuestions.filter(q => !isAnswerCorrect(q, currentAnswers[q.id]));
+      if (wrongQuestions.length > 0) {
+        let html = `<div style="text-align:left;margin-top:28px;">
+          <div style="font-weight:700;font-size:.95rem;color:var(--red-600);margin-bottom:12px;">Questions Answered Incorrectly (${wrongQuestions.length})</div>`;
+        wrongQuestions.forEach((q, i) => {
+          html += `<div style="background:var(--red-50,#fef2f2);border:1px solid var(--red-200,#fecaca);border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:.9rem;color:var(--gray-800);">
+            <span style="font-weight:600;color:var(--red-600);">Q${currentQuestions.indexOf(q)+1}.</span> ${q.question_text}
+          </div>`;
+        });
+        html += '</div>';
+        document.getElementById('resultDetails').innerHTML = html;
+      } else {
+        document.getElementById('resultDetails').innerHTML = '';
+      }
     }
 
     function backToExams() {

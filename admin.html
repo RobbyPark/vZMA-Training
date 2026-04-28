@@ -933,6 +933,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <!-- Exam list by category -->
           <div id="adminExamList"></div>
 
+          <!-- Student Attempt Lookup -->
+          <div class="section-divider"></div>
+          <div class="page-header"><h1 style="font-size:1.1rem;">Student Attempt Lookup</h1></div>
+          <div class="card mb-4">
+            <label class="form-label">Search by CID</label>
+            <div class="flex gap-2">
+              <input class="form-input" id="studentCidSearch" type="text" placeholder="Enter CID..." style="max-width:200px;">
+              <button class="btn btn-primary" onclick="loadStudentAttempts()">Search</button>
+            </div>
+          </div>
+          <div id="studentAttemptsArea"></div>
+
           <!-- Exam Stats -->
           <div class="section-divider"></div>
           <div class="page-header"><h1 style="font-size:1.1rem;">Exam Statistics</h1></div>
@@ -1111,7 +1123,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
   </div>
 
   <!-- Exam Reject Modal -->
-  <div class="modal-backdrop" id="examRejectModal">
+  <!-- Attempt Detail Modal -->
+  <div class="modal-backdrop" id="attemptDetailModal">
+    <div class="modal" style="max-width:700px;max-height:80vh;overflow-y:auto;">
+      <div class="modal-header">
+        <span class="modal-title" id="attemptDetailTitle">Attempt Detail</span>
+        <button class="modal-close" onclick="closeModal('attemptDetailModal')">&times;</button>
+      </div>
+      <div id="attemptDetailBody"></div>
+    </div>
+  </div>
+
+  <!-- Exam Reject Modal -->
     <div class="modal">
       <div class="modal-header">
         <span class="modal-title">Deny Exam Request</span>
@@ -1872,6 +1895,104 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>
         </div>
       `;
+    }
+
+    // ── Student Attempt Lookup ───────────────────────────────
+    async function loadStudentAttempts() {
+      const cid = document.getElementById('studentCidSearch').value.trim();
+      if (!cid) { toast('Enter a CID.', 'error'); return; }
+      const area = document.getElementById('studentAttemptsArea');
+      area.innerHTML = '<p class="text-muted">Loading...</p>';
+      const attempts = await SB.query('exam_attempts', `?cid=eq.${cid}&order=submitted_at.desc`);
+      if (!attempts.length) {
+        area.innerHTML = '<div class="card"><p class="text-muted">No attempts found for this CID.</p></div>';
+        return;
+      }
+      const studentName = attempts[0].student_name || cid;
+      area.innerHTML = `
+        <div class="card">
+          <div class="card-header"><span class="card-title">Attempts for ${studentName} (${cid})</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Exam</th><th>Score</th><th>Result</th><th>Date</th><th></th></tr></thead>
+              <tbody>
+                ${attempts.map(a => `
+                  <tr>
+                    <td>${a.exam_title || '—'}</td>
+                    <td>${a.score !== null ? a.score + '%' : '—'}</td>
+                    <td><span class="badge ${a.passed ? 'badge-green' : 'badge-red'}">${a.passed ? 'Pass' : 'Fail'}</span></td>
+                    <td>${formatDate(a.submitted_at)}</td>
+                    <td><button class="btn btn-secondary btn-sm" onclick="showAttemptDetail('${a.id}','${a.exam_id}')">View</button></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    async function showAttemptDetail(attemptId, examId) {
+      openModal('attemptDetailModal');
+      document.getElementById('attemptDetailBody').innerHTML = '<p class="text-muted">Loading...</p>';
+      const [attempt] = await SB.query('exam_attempts', `?id=eq.${attemptId}`);
+      const questions = await SB.query('exam_questions', `?exam_id=eq.${examId}&order=sort_order.asc`);
+      document.getElementById('attemptDetailTitle').textContent = `${attempt.student_name} — ${attempt.exam_title || 'Exam'} (${attempt.score}%)`;
+
+      const wrongQs = questions.filter(q => !isAnswerCorrect(q, (attempt.answers||{})[q.id], attempt.question_overrides));
+      if (!wrongQs.length) {
+        document.getElementById('attemptDetailBody').innerHTML = '<p class="text-muted" style="padding:16px;">All questions answered correctly.</p>';
+        return;
+      }
+
+      const optionText = (q) => {
+        const map = {};
+        (q.options||[]).forEach(o => { map[o.id] = o.text; });
+        return map;
+      };
+
+      const formatAnswer = (q, ans) => {
+        const oMap = optionText(q);
+        if (ans === undefined || ans === null || ans === '') return '<em>No answer</em>';
+        if (q.question_type === 'true_false') return ans;
+        if (q.question_type === 'short_response') return ans;
+        if (q.question_type === 'multiple_choice_single') return oMap[ans] || ans;
+        if (q.question_type === 'multiple_choice_multi') return (Array.isArray(ans) ? ans : []).map(id => oMap[id]||id).join(', ') || '<em>No answer</em>';
+        if (q.question_type === 'matching') {
+          if (!ans) return '<em>No answer</em>';
+          return Object.entries(ans).map(([lid, rid]) => `${oMap[lid]||lid} → ${oMap[rid]||rid}`).join('<br>');
+        }
+        return String(ans);
+      };
+
+      const formatCorrect = (q) => {
+        const oMap = optionText(q);
+        if (q.question_type === 'true_false') return q.correct_answers;
+        if (q.question_type === 'short_response') return q.correct_text || '—';
+        if (q.question_type === 'multiple_choice_single') return oMap[(q.correct_answers||[])[0]] || (q.correct_answers||[])[0] || '—';
+        if (q.question_type === 'multiple_choice_multi') return (q.correct_answers||[]).map(id => oMap[id]||id).join(', ');
+        if (q.question_type === 'matching') return (q.correct_answers||[]).map(p => `${oMap[p.left_id]||p.left_id} → ${oMap[p.right_id]||p.right_id}`).join('<br>');
+        return '—';
+      };
+
+      let html = `<div style="font-weight:700;font-size:.9rem;color:var(--red-600);margin-bottom:16px;padding:0 4px;">${wrongQs.length} question${wrongQs.length>1?'s':''} answered incorrectly</div>`;
+      wrongQs.forEach((q, i) => {
+        const studentAns = (attempt.answers||{})[q.id];
+        html += `
+          <div style="border:1px solid var(--gray-200);border-radius:10px;padding:16px;margin-bottom:14px;">
+            <div style="font-weight:600;font-size:.95rem;color:var(--gray-900);margin-bottom:12px;">${i+1}. ${q.question_text}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;">
+                <div style="font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:4px;">Student's Answer</div>
+                <div style="font-size:.9rem;color:var(--gray-800);">${formatAnswer(q, studentAns)}</div>
+              </div>
+              <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;">
+                <div style="font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#16a34a;margin-bottom:4px;">Correct Answer</div>
+                <div style="font-size:.9rem;color:var(--gray-800);">${formatCorrect(q)}</div>
+              </div>
+            </div>
+          </div>`;
+      });
+      document.getElementById('attemptDetailBody').innerHTML = html;
     }
 
     function isAnswerCorrect(question, answer, overrides) {
