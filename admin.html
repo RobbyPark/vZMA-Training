@@ -749,6 +749,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       background: var(--blue-50); border-radius: var(--radius-sm);
       padding: 6px 12px; margin: 20px 0 12px;
     }
+    .exam-cat-header:first-child { margin-top: 0; }
+    #adminExamList > div:first-child .exam-cat-header,
+    #adminExamList .exam-cat-header:first-of-type { margin-top: 0; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     .trainer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
@@ -1805,10 +1808,10 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         { id: 'tier1', label: 'Tier 1 Exams' },
         { id: 'training', label: 'Training Exams' },
       ];
-      document.getElementById('adminExamList').innerHTML = categories.map(cat => {
+      document.getElementById('adminExamList').innerHTML = categories.map((cat, catIdx) => {
         const exams = state.exams.filter(e => e.category === cat.id);
         return `
-          <div class="exam-cat-header">${cat.label}</div>
+          <div class="exam-cat-header" style="${catIdx === 0 ? 'margin-top:0;' : ''}">${cat.label}</div>
           ${exams.length ? exams.map(ex => `
             <div class="card mb-4" style="padding:16px 20px;">
               <div class="flex items-center gap-3">
