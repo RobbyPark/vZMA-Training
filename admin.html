@@ -1909,6 +1909,13 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         area.innerHTML = '<div class="card"><p class="text-muted">No attempts found for this CID.</p></div>';
         return;
       }
+      // Fetch exam titles for any attempts missing them
+      const missingIds = [...new Set(attempts.filter(a => !a.exam_title && a.exam_id).map(a => a.exam_id))];
+      const examTitleMap = {};
+      if (missingIds.length) {
+        const exams = await SB.query('exams', `?id=in.(${missingIds.join(',')})`);
+        exams.forEach(e => { examTitleMap[e.id] = e.title; });
+      }
       const studentName = attempts[0].student_name || cid;
       area.innerHTML = `
         <div class="card">
@@ -1919,7 +1926,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
               <tbody>
                 ${attempts.map(a => `
                   <tr>
-                    <td>${a.exam_title || '—'}</td>
+                    <td>${a.exam_title || examTitleMap[a.exam_id] || '—'}</td>
                     <td>${a.score !== null ? a.score + '%' : '—'}</td>
                     <td><span class="badge ${a.passed ? 'badge-green' : 'badge-red'}">${a.passed ? 'Pass' : 'Fail'}</span></td>
                     <td>${formatDate(a.submitted_at)}</td>

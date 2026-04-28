@@ -1304,6 +1304,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
       await SB.insert('exam_attempts', {
         exam_id: currentExam.id,
+        exam_title: currentExam.title,
         cid: currentStudent.cid,
         student_name: currentStudent.name,
         answers: currentAnswers,
