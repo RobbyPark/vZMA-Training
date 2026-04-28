@@ -1338,8 +1338,20 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           submitted_at: new Date().toISOString(),
         });
       } catch(e) {
-        console.error('Failed to save exam attempt:', e);
-        // Still show results even if save fails
+        console.error('Insert with exam_title failed, trying without:', e);
+        try {
+          await SB.insert('exam_attempts', {
+            exam_id: currentExam.id,
+            cid: currentStudent.cid,
+            student_name: currentStudent.name,
+            answers: currentAnswers,
+            score, passed,
+            submitted_at: new Date().toISOString(),
+          });
+        } catch(e2) {
+          console.error('Exam attempt save failed completely:', e2);
+          alert('Warning: Your exam was graded but could not be saved. Please contact your trainer with your score: ' + score + '%');
+        }
       }
 
       showResults(score, passed);
