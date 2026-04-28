@@ -1302,15 +1302,20 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const score = totalPoints > 0 ? Math.round(earnedPoints/totalPoints*100) : 0;
       const passed = score >= currentExam.passing_grade;
 
-      await SB.insert('exam_attempts', {
-        exam_id: currentExam.id,
-        exam_title: currentExam.title,
-        cid: currentStudent.cid,
-        student_name: currentStudent.name,
-        answers: currentAnswers,
-        score, passed,
-        submitted_at: new Date().toISOString(),
-      });
+      try {
+        await SB.insert('exam_attempts', {
+          exam_id: currentExam.id,
+          exam_title: currentExam.title,
+          cid: currentStudent.cid,
+          student_name: currentStudent.name,
+          answers: currentAnswers,
+          score, passed,
+          submitted_at: new Date().toISOString(),
+        });
+      } catch(e) {
+        console.error('Failed to save exam attempt:', e);
+        // Still show results even if save fails
+      }
 
       showResults(score, passed);
     }
