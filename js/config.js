@@ -514,13 +514,10 @@ const EM = {
       <table width="100%" cellpadding="0" cellspacing="0" style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;margin-bottom:24px;">
         <tr><td style="padding:20px 24px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#dc2626;margin-bottom:8px;">Reason</div>
-          <div style="font-size:15px;color:#334155;line-height:1.6;white-space:pre-line;">${reason}</div>
+          <div style="font-size:15px;color:#334155;line-height:1.6;">${reason}</div>
         </td></tr>
       </table>
 
-      <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
-        If you have any questions, please contact <a href="mailto:ta@zmaartcc.net" style="color:#1e4d8c;font-weight:600;">ta@zmaartcc.net</a>.
-      </p>
       <p style="margin:0;font-size:15px;color:#334155;line-height:1.6;">Best regards,<br><strong>ZMA Training Team</strong></p>`;
 
     return this._send(toEmail, `ZMA ARTCC — Exam Request Denied: ${examTitle}`, 'Exam Request Denied', body);
