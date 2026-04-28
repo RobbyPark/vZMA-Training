@@ -351,8 +351,8 @@ tr:hover td { background: var(--blue-50); }
   padding: 24px 0;
   flex-shrink: 0;
   position: sticky;
-  top: var(--nav-height);
-  height: calc(100vh - var(--nav-height));
+  top: 0;
+  height: 100vh;
   overflow-y: auto;
 }
 
@@ -768,8 +768,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 </head>
 <body>
 
-  <div class="page-wrapper" style="padding-top:0;">
-    <div class="admin-layout">
+  <div class="page-wrapper" style="padding-top:var(--nav-height);">
+    <div class="admin-layout" style="min-height:calc(100vh - var(--nav-height))">
       <!-- SIDEBAR -->
       <nav class="admin-sidebar">
         <div class="sidebar-section">
