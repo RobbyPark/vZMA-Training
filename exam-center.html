@@ -898,7 +898,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div class="flex gap-2 mt-4" id="examNav">
             <button class="btn btn-secondary" id="prevBtn" onclick="navQuestion(-1)">Previous</button>
             <button class="btn btn-secondary" id="nextBtn" onclick="navQuestion(1)">Next</button>
-            <button class="btn btn-primary ml-auto" id="submitExamBtn" onclick="confirmSubmitExam()">Submit Exam</button>
+            <button class="btn btn-ghost btn-sm" id="saveProgressBtn" onclick="saveProgress(true)" style="margin-left:auto;margin-right:8px;">💾 Save</button>
+            <button class="btn btn-primary" id="submitExamBtn" onclick="confirmSubmitExam()">Submit Exam</button>
           </div>
         </div>
       </div>
@@ -1105,6 +1106,24 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       currentExam = exam;
       currentQuestions = shuffleArray([...questions]);
 
+      // Check for saved progress
+      const saved = loadProgress(examId);
+      let resumeIdx = 0;
+      if (saved && saved.questionOrder) {
+        const resume = confirm(`You have a saved session for this exam from ${new Date(saved.savedAt).toLocaleString()}. Resume where you left off?`);
+        if (resume) {
+          // Restore question order
+          const qMap = Object.fromEntries(questions.map(q => [q.id, q]));
+          const restored = saved.questionOrder.map(id => qMap[id]).filter(Boolean);
+          if (restored.length === currentQuestions.length) currentQuestions = restored;
+          currentAnswers = saved.answers || {};
+          flaggedQuestions = new Set(saved.flagged || []);
+          resumeIdx = saved.questionIdx || 0;
+        } else {
+          clearProgress();
+        }
+      }
+
       // Require password if exam has one
       if (exam.password) {
         const entered = prompt(`This exam requires a password. Enter the exam password:`);
@@ -1134,7 +1153,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       }
 
       renderQNav();
-      showQuestion(0);
+      showQuestion(resumeIdx);
     }
 
     function shuffleArray(arr) {
@@ -1178,13 +1197,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       } else if (q.question_type === 'short_response') {
         html += `<textarea class="form-textarea" id="srInput" placeholder="Type your answer..." oninput="selectAnswer('${q.id}',this.value)">${ans||''}</textarea>`;
       } else if (q.question_type === 'multiple_choice_single') {
-        (q.options || []).forEach(opt => {
+        if (!q._shuffledOptions) q._shuffledOptions = shuffleArray([...(q.options||[])]);
+        q._shuffledOptions.forEach(opt => {
           html += `<button class="option-btn ${ans===opt.id?'selected':''}" onclick="selectAnswer('${q.id}','${opt.id}',this,'single')">${opt.text}</button>`;
         });
       } else if (q.question_type === 'multiple_choice_multi') {
+        if (!q._shuffledOptions) q._shuffledOptions = shuffleArray([...(q.options||[])]);
         const sel = ans || [];
         html += '<div style="font-weight:700;font-size:.9rem;color:var(--blue-700);margin-bottom:12px;">Select all that apply</div>';
-        (q.options || []).forEach(opt => {
+        q._shuffledOptions.forEach(opt => {
           html += `<button class="option-btn ${sel.includes(opt.id)?'selected':''}" data-val="${opt.id}" onclick="selectAnswer('${q.id}','${opt.id}',this,'multi')">${opt.text}</button>`;
         });
       } else if (q.question_type === 'matching') {
@@ -1200,6 +1221,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         (q.options||[]).forEach(o => { optionText[o.id] = o.text; });
         // Enrich left/right with text from options if needed
         const enrichedLeft = leftItems.map(l => ({ id: l.id, text: optionText[l.id] || l.text || l.id }));
+        if (!q._shuffledLeft) q._shuffledLeft = shuffleArray([...enrichedLeft]);
         const enrichedRight = rightItems.map(r => ({ id: r.id, text: optionText[r.id] || r.text || r.id }));
         // Deduplicate right options by display text (keep first occurrence)
         const seenTexts = new Set();
@@ -1210,7 +1232,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         });
         const shuffledRight = shuffleArray([...dedupedRight]);
         html += '<div style="max-width:500px;">';
-        enrichedLeft.forEach(left => {
+        q._shuffledLeft.forEach(left => {
           const savedVal = ans ? (ans[left.id] || '') : '';
           html += `
             <div class="matching-row" style="margin-bottom:10px;">
@@ -1254,12 +1276,14 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         currentAnswers[qId] = val;
       }
       renderQNav();
+      saveProgress(false);
     }
 
     function selectMatchingAnswer(qId, leftId, rightId) {
       if (!currentAnswers[qId]) currentAnswers[qId] = {};
       currentAnswers[qId][leftId] = rightId;
       renderQNav();
+      saveProgress(false);
     }
 
     function navQuestion(dir) {
@@ -1293,6 +1317,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     async function submitExam() {
       if (timerInterval) clearInterval(timerInterval);
+      clearProgress(); // remove saved session on submit
       // Grade exam
       let totalPoints = 0, earnedPoints = 0;
       currentQuestions.forEach(q => {
@@ -1318,6 +1343,36 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       }
 
       showResults(score, passed);
+    }
+
+    // ── Exam Progress Save/Restore ───────────────────────────
+    function saveProgressKey() {
+      return `exam_progress_${currentStudent.cid}_${currentExam.id}`;
+    }
+
+    function saveProgress(showToast = false) {
+      const data = {
+        answers: currentAnswers,
+        questionIdx: currentQIdx,
+        flagged: [...flaggedQuestions],
+        questionOrder: currentQuestions.map(q => q.id),
+        savedAt: Date.now(),
+      };
+      localStorage.setItem(saveProgressKey(), JSON.stringify(data));
+      if (showToast) {
+        const btn = document.getElementById('saveProgressBtn');
+        btn.textContent = '✓ Saved';
+        setTimeout(() => { btn.textContent = '💾 Save'; }, 1500);
+      }
+    }
+
+    function loadProgress(examId) {
+      const key = `exam_progress_${currentStudent.cid}_${examId}`;
+      try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
+    }
+
+    function clearProgress() {
+      localStorage.removeItem(saveProgressKey());
     }
 
     function isAnswerCorrect(q, answer) {
