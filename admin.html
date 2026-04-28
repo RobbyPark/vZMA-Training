@@ -1121,8 +1121,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <label class="form-label">Pre-written Reasons</label>
         <select class="form-select" id="examRejectPrefab" onchange="fillExamRejectPrefab()">
           <option value="">Select a reason...</option>
-          <option value="[PLACEHOLDER] You are not eligible for this exam at this time. Please contact your trainer.">Not eligible at this time</option>
-          <option value="[PLACEHOLDER] Please complete the required prerequisites before requesting this exam.">Prerequisites not met</option>
+          <option value="ineligibility">Ineligibility</option>
           <option value="custom">Custom message...</option>
         </select>
       </div>
@@ -1130,7 +1129,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <textarea class="form-textarea" id="examRejectCustomMsg" placeholder="Custom reason..."></textarea>
       </div>
       <div class="flex gap-2 mt-4">
-        <button class="btn btn-danger" onclick="confirmExamReject()">Send Denial</button>
+        <button class="btn btn-danger" onclick="confirmExamReject(false)">Send Denial</button>
+        <button class="btn btn-secondary" onclick="confirmExamReject(true)">Reject Silently</button>
         <button class="btn btn-secondary" onclick="closeModal('examRejectModal')">Cancel</button>
       </div>
     </div>
@@ -1661,6 +1661,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             <div class="action-row">
               <button class="btn btn-success btn-sm" onclick="approveExamRequest('${r.id}','${r.cid}','${r.student_name}','${r.exam_id}','${r.exam_title}')">Approve</button>
               <button class="btn btn-danger btn-sm" onclick="openExamRejectModal('${r.id}','${r.cid}','${r.student_name}','${r.exam_title}')">Deny</button>
+
             </div>
           </td>
         </tr>
@@ -1691,6 +1692,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     function openExamRejectModal(reqId, cid, name, examTitle) {
       state.currentExamRejectId = reqId;
+      state.currentExamRejectCid = cid;
       state.currentExamRejectName = name;
       state.currentExamRejectExamTitle = examTitle;
       openModal('examRejectModal');
@@ -1701,15 +1703,31 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('examCustomRejectWrap').style.display = val === 'custom' ? 'block' : 'none';
     }
 
-    async function confirmExamReject() {
+    async function confirmExamReject(silent = false) {
       const prefab = document.getElementById('examRejectPrefab').value;
       const custom = document.getElementById('examRejectCustomMsg').value.trim();
-      const reason = prefab === 'custom' ? custom : prefab;
-      if (!reason) { toast('Select a reason.', 'error'); return; }
+      if (!prefab) { toast('Select a reason.', 'error'); return; }
+      if (prefab === 'custom' && !custom) { toast('Please write a custom reason.', 'error'); return; }
+
+      const ineligibilityMsg = `Hello ${state.currentExamRejectName},\n\nYour exam password request has been denied because you are currently not eligible to complete the requested exam. Please review the T01 documentation through the ZMA website for more information.\n\nBest regards,\nZMA Training Team.`;
+      const reason = prefab === 'ineligibility' ? ineligibilityMsg : custom;
+
       await SB.update('exam_requests', `id=eq.${state.currentExamRejectId}`, {
         status: 'rejected', resolved_at: new Date().toISOString(), rejection_reason: reason
       });
-      toast('Exam request denied.');
+
+      if (!silent) {
+        try {
+          const ctrl = await VATUSA.getController(state.currentExamRejectCid);
+          if (ctrl && ctrl.email) {
+            await EM.sendExamRejection(ctrl.email, state.currentExamRejectName, state.currentExamRejectExamTitle, reason);
+          }
+        } catch(e) { console.error('Exam rejection email error:', e); }
+        toast('Exam request denied and email sent.');
+      } else {
+        toast('Exam request rejected silently.');
+      }
+
       closeModal('examRejectModal');
       loadExamRequests();
     }
