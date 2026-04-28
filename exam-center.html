@@ -911,7 +911,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div class="score-circle" id="resultCircle"></div>
           <h2 id="resultTitle" style="font-size:1.5rem;font-weight:700;color:var(--blue-900);margin-bottom:8px;"></h2>
           <p id="resultMsg" class="text-muted mb-4"></p>
-          <div id="resultDetails" class="card" style="text-align:left;margin-bottom:20px;"></div>
           <button class="btn btn-primary" onclick="backToExams()">Back to Exams</button>
         </div>
       </div>
@@ -1163,7 +1162,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const progress = ((idx+1)/currentQuestions.length*100).toFixed(0);
       document.getElementById('examProgressBar').style.width = progress + '%';
       document.getElementById('prevBtn').disabled = idx === 0;
-      document.getElementById('nextBtn').textContent = idx === currentQuestions.length-1 ? 'Review' : 'Next';
+      document.getElementById('nextBtn').textContent = 'Next';
+      document.getElementById('nextBtn').disabled = idx === currentQuestions.length - 1;
 
       let html = `<div class="question-text">Question ${idx+1} of ${currentQuestions.length}<br>${q.question_text}</div>`;
       if (q.image_url && q.image_url.trim() !== "") html += `<img src="${q.image_url}" style="max-width:100%;border-radius:var(--radius);margin-bottom:16px;" onerror="this.style.display='none'">`;
@@ -1302,7 +1302,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       if (q.question_type === 'short_response') return answer.toLowerCase().trim() === (q.correct_text||'').toLowerCase().trim();
       if (q.question_type === 'multiple_choice_single') return answer === (q.correct_answers||[])[0];
       if (q.question_type === 'multiple_choice_multi') {
-        html += '<div style="font-weight:700;font-size:.85rem;color:var(--blue-700);margin-bottom:10px;">Select all that apply</div>';
         if (!Array.isArray(answer) || !Array.isArray(q.correct_answers)) return false;
         return answer.sort().join(',') === q.correct_answers.sort().join(',');
       }
@@ -1324,18 +1323,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         ? `Congratulations! You passed ${currentExam.title} with a score of ${score}%.`
         : `You scored ${score}%. A passing grade of ${currentExam.passing_grade}% is required.`;
 
-      // Question review
-      let reviewHtml = '<div class="table-wrap"><table><thead><tr><th>#</th><th>Question</th><th>Result</th></tr></thead><tbody>';
-      currentQuestions.forEach((q, i) => {
-        const correct = isAnswerCorrect(q, currentAnswers[q.id]);
-        reviewHtml += `<tr>
-          <td>${i+1}</td>
-          <td style="font-size:.8rem;">${q.question_text.slice(0,80)}${q.question_text.length>80?'...':''}</td>
-          <td><span class="badge ${correct?'badge-green':'badge-red'}">${correct?'Correct':'Incorrect'}</span></td>
-        </tr>`;
-      });
-      reviewHtml += '</tbody></table></div>';
-      document.getElementById('resultDetails').innerHTML = reviewHtml;
+      document.getElementById('resultDetails').innerHTML = '';
     }
 
     function backToExams() {
