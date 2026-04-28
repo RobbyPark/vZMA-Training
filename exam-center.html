@@ -1184,7 +1184,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         const sel = ans || [];
         html += '<div style="font-weight:700;font-size:.9rem;color:var(--blue-700);margin-bottom:12px;">Select all that apply</div>';
         (q.options || []).forEach(opt => {
-          html += `<button class="option-btn ${sel.includes(opt.id)?'selected':''}" onclick="selectAnswer('${q.id}','${opt.id}',this,'multi')">${opt.text}</button>`;
+          html += `<button class="option-btn ${sel.includes(opt.id)?'selected':''}" data-val="${opt.id}" onclick="selectAnswer('${q.id}','${opt.id}',this,'multi')">${opt.text}</button>`;
         });
       } else if (q.question_type === 'matching') {
         // Build left/right pairs from correct_answers + options
@@ -1237,8 +1237,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         if (!currentAnswers[qId]) currentAnswers[qId] = [];
         const arr = currentAnswers[qId];
         const idx = arr.indexOf(val);
-        if (idx >= 0) { arr.splice(idx,1); if(btn) btn.classList.remove('selected'); }
-        else { arr.push(val); if(btn) btn.classList.add('selected'); }
+        if (idx >= 0) {
+          arr.splice(idx, 1);
+          if (btn) btn.classList.remove('selected');
+        } else {
+          arr.push(val);
+          if (btn) btn.classList.add('selected');
+        }
+        // Sync all multi buttons to match array state (safety net)
+        document.querySelectorAll('#questionBlock .option-btn').forEach(b => {
+          const bVal = b.getAttribute('data-val');
+          if (bVal !== null) b.classList.toggle('selected', arr.includes(bVal));
+        });
       } else {
         currentAnswers[qId] = val;
       }
