@@ -871,7 +871,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             <div class="table-wrap">
               <table>
                 <thead>
-                  <tr><th>Name</th><th>CID</th><th>Training Type</th><th>Start Date</th><th>End Date</th><th>Trainer</th></tr>
+                  <tr><th>Name</th><th>CID</th><th>Training Type</th><th>Start Date</th><th>End Date</th><th>Trainer</th><th>Notes</th><th></th></tr>
                 </thead>
                 <tbody id="completedBody"></tbody>
               </table>
@@ -944,7 +944,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>
           <div id="studentAttemptsArea"></div>
 
-          <!-- Exam Stats -->
+          <!-- Add Exam Attempts -->
+          <div class="section-divider"></div>
+          <div class="page-header"><h1 style="font-size:1.1rem;">Add Exam Attempts</h1></div>
+          <div class="card mb-4">
+            <label class="form-label">Search by CID</label>
+            <div class="flex gap-2">
+              <input class="form-input" id="addAttemptsCidInput" type="text" placeholder="Enter CID..." style="max-width:200px;">
+              <button class="btn btn-primary" onclick="loadExhaustedExams()">Search</button>
+            </div>
+          </div>
+          <div id="exhaustedExamsArea"></div>
           <div class="section-divider"></div>
           <div class="page-header"><h1 style="font-size:1.1rem;">Exam Statistics</h1></div>
           <div class="card mb-4">
@@ -1006,7 +1016,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       </div>
       <div id="rejectMsgPreview" class="note-chip" style="display:none;"></div>
       <div class="flex gap-2 mt-4">
-        <button class="btn btn-danger" onclick="confirmReject()">Send Rejection</button>
+        <button class="btn btn-danger" onclick="confirmReject(false)">Send Rejection</button>
+        <button class="btn btn-secondary" onclick="confirmReject(true)">Reject Silently</button>
         <button class="btn btn-secondary" onclick="closeModal('rejectModal')">Cancel</button>
       </div>
     </div>
@@ -1506,7 +1517,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       }
     }
 
-    async function confirmReject() {
+    async function confirmReject(silent = false) {
       const prefab = document.getElementById('rejectPrefab').value;
       const custom = document.getElementById('rejectCustomMsg').value.trim();
       if (!prefab) { toast('Please select or write a reason.', 'error'); return; }
@@ -1516,10 +1527,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         await SB.update('training_requests', `id=eq.${state.currentRejectId}`, {
           status: 'rejected', rejected_at: new Date().toISOString(), rejection_reason: reason
         });
-        if (state.currentRejectEmail) {
+        if (!silent && state.currentRejectEmail) {
           await EM.sendRejection(state.currentRejectEmail, state.currentRejectName, null, reason);
+          toast('Request rejected and email sent.');
+        } else {
+          toast('Request rejected silently.');
         }
-        toast('Request rejected and email sent.');
         closeModal('rejectModal');
         loadQueues();
       } catch (e) { toast('Error rejecting request', 'error'); }
@@ -1813,7 +1826,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <td>${formatDate(r.training_started_at)}</td>
           <td>${formatDate(r.completed_at)}</td>
           <td>${r.trainer_name || '—'}</td>
-          <td><button class="btn btn-ghost btn-sm" onclick="openEditCompletedModal(${JSON.stringify(r).split('"').join('&quot;')})">Edit</button></td>
+          <td><span class="text-muted" style="font-size:.85rem;">${r.notes || '—'}</span></td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="openEditCompletedModal(${JSON.stringify(r).split('"').join('&quot;')})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCompleted('${r.id}')">Delete</button>
+          </td>
         </tr>
       `).join('') || '<tr><td colspan="7" class="text-muted" style="text-align:center;padding:20px;">No completed training records</td></tr>';
     }
@@ -1831,6 +1848,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <td>
             <span class="text-muted">${r.removal_notes || '—'}</span>
             <button class="btn btn-ghost btn-sm" onclick="editRemovalNote('${r.id}','${(r.removal_notes||'').replace(/'/g,"\\'")}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteRemoved('${r.id}')">Delete</button>
           </td>
         </tr>
       `).join('') || '<tr><td colspan="6" class="text-muted" style="text-align:center;padding:20px;">No removed students</td></tr>';
@@ -1875,11 +1893,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             <div class="action-row">
               <button class="btn btn-success btn-sm" onclick="approveExamRequest('${r.id}','${r.cid}','${r.student_name}','${r.exam_id}','${r.exam_title}')">Approve</button>
               <button class="btn btn-danger btn-sm" onclick="openExamRejectModal('${r.id}','${r.cid}','${r.student_name}','${r.exam_title}')">Deny</button>
-
+              <button class="btn btn-ghost btn-sm" onclick="deleteExamRequest('${r.id}')">Delete</button>
             </div>
           </td>
         </tr>
       `).join('') || '<tr><td colspan="6" class="text-muted" style="text-align:center;padding:20px;">No pending exam requests</td></tr>';
+    }
+
+    async function deleteExamRequest(id) {
+      if (!confirm('Delete this exam password request? This cannot be undone.')) return;
+      await SB.delete('exam_requests', `id=eq.${id}`);
+      toast('Request deleted.');
+      loadExamRequests();
     }
 
     async function approveExamRequest(reqId, cid, studentName, examId, examTitle) {
@@ -2086,6 +2111,67 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>
         </div>
       `;
+    }
+
+    // ── Add Exam Attempts ────────────────────────────────────
+    async function loadExhaustedExams() {
+      const cid = document.getElementById('addAttemptsCidInput').value.trim();
+      if (!cid) { toast('Enter a CID.', 'error'); return; }
+      const area = document.getElementById('exhaustedExamsArea');
+      area.innerHTML = '<p class="text-muted">Loading...</p>';
+
+      const [attempts, exams] = await Promise.all([
+        SB.query('exam_attempts', `?cid=eq.${cid}&is_manual=eq.false`),
+        SB.query('exams', '?is_published=eq.true'),
+      ]);
+
+      // Count attempts per exam
+      const countMap = {};
+      attempts.forEach(a => { countMap[a.exam_id] = (countMap[a.exam_id] || 0) + 1; });
+
+      // Only exams with a limit where student has used all attempts
+      const exhausted = exams.filter(ex => ex.allowed_attempts && (countMap[ex.id] || 0) >= ex.allowed_attempts);
+
+      if (!exhausted.length) {
+        area.innerHTML = '<div class="card"><p class="text-muted">No exhausted exams found for this CID.</p></div>';
+        return;
+      }
+
+      const ctrl = await VATUSA.getController(cid);
+      const studentName = ctrl ? `${ctrl.fname} ${ctrl.lname}` : cid;
+
+      area.innerHTML = `
+        <div class="card">
+          <div class="card-header"><span class="card-title">Exhausted Exams — ${studentName} (${cid})</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Exam</th><th>Used</th><th>Limit</th><th>Add Attempts</th></tr></thead>
+              <tbody>
+                ${exhausted.map(ex => `
+                  <tr>
+                    <td>${ex.title}</td>
+                    <td>${countMap[ex.id] || 0}</td>
+                    <td>${ex.allowed_attempts}</td>
+                    <td>
+                      <div class="flex gap-2 items-center">
+                        <input type="number" min="1" max="10" value="3" style="width:60px;padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;font-size:.85rem;" id="addAmt_${ex.id}">
+                        <button class="btn btn-primary btn-sm" onclick="addExamAttempts('${ex.id}','${cid}',${ex.allowed_attempts})">Add</button>
+                      </div>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    async function addExamAttempts(examId, cid, currentLimit) {
+      const input = document.getElementById(`addAmt_${examId}`);
+      const toAdd = parseInt(input.value) || 3;
+      const newLimit = currentLimit + toAdd;
+      await SB.update('exams', `id=eq.${examId}`, { allowed_attempts: newLimit });
+      toast(`Added ${toAdd} attempt${toAdd > 1 ? 's' : ''}. New limit: ${newLimit}.`);
+      loadExhaustedExams();
     }
 
     // ── Student Attempt Lookup ───────────────────────────────
@@ -2858,6 +2944,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('editCompTrainer').value = r.trainer_name || '';
       document.getElementById('editCompStartDate').value = r.training_started_at ? r.training_started_at.slice(0,10) : '';
       document.getElementById('editCompEndDate').value = r.completed_at ? r.completed_at.slice(0,10) : '';
+      document.getElementById('editCompNotes').value = r.notes || '';
       openModal('editCompletedModal');
     }
 
@@ -2866,15 +2953,31 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const trainer = document.getElementById('editCompTrainer').value.trim();
       const startDate = document.getElementById('editCompStartDate').value;
       const endDate = document.getElementById('editCompEndDate').value;
+      const notes = document.getElementById('editCompNotes').value.trim();
       await SB.update('completed_training', `id=eq.${editingCompletedId}`, {
         training_type: trainingType,
         trainer_name: trainer || null,
         training_started_at: startDate ? new Date(startDate).toISOString() : null,
         completed_at: endDate ? new Date(endDate).toISOString() : null,
+        notes: notes || null,
       });
       toast('Record updated.');
       closeModal('editCompletedModal');
       loadCompleted();
+    }
+
+    async function deleteCompleted(id) {
+      if (!confirm('Delete this completed training record? This cannot be undone.')) return;
+      await SB.delete('completed_training', `id=eq.${id}`);
+      toast('Record deleted.');
+      loadCompleted();
+    }
+
+    async function deleteRemoved(id) {
+      if (!confirm('Delete this removed student record? This cannot be undone.')) return;
+      await SB.delete('removed_students', `id=eq.${id}`);
+      toast('Record deleted.');
+      loadRemoved();
     }
 
     // ===================== EDIT REMOVED =====================
@@ -3101,14 +3204,14 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <input class="form-input" type="date" id="editCompEndDate">
         </div>
       </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="editCompNotes" placeholder="Optional notes..."></textarea>
+      </div>
       <div class="flex gap-2 mt-4">
         <button class="btn btn-primary" onclick="confirmEditCompleted()">Save Changes</button>
         <button class="btn btn-secondary" onclick="closeModal('editCompletedModal')">Cancel</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Edit Removed Modal -->
   <div class="modal-backdrop" id="editRemovedModal">
     <div class="modal">
       <div class="modal-header">
