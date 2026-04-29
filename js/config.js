@@ -141,11 +141,19 @@ const VATUSA = {
   async getExamGrades(cid) {
     try {
       const res = await fetch(`${CONFIG.VATUSA_API}/academy/transcript/${cid}?apikey=${CONFIG.VATUSA_API_KEY}`);
-      if (!res.ok) return [];
+      console.log('VATUSA transcript status:', res.status);
+      if (!res.ok) {
+        const err = await res.text();
+        console.log('VATUSA transcript error:', err);
+        return [];
+      }
       const data = await res.json();
-      // Transcript returns array of course objects with name, passed, score etc.
+      console.log('VATUSA transcript raw:', JSON.stringify(data));
       return data.data || data || [];
-    } catch { return []; }
+    } catch(e) {
+      console.log('VATUSA transcript exception:', e);
+      return [];
+    }
   },
 
   ratingName(rating) {
