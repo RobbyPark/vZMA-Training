@@ -1330,12 +1330,20 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       `).join('') || '<tr><td colspan="6" class="text-muted" style="text-align:center;padding:20px;">No pending requests</td></tr>';
     }
 
-    // VATUSA rating → exam name map
+    // VATUSA rating → exam name keywords map
     const VATUSA_EXAM_MAP = {
       'S1': 'S1', 'S1 Training (Tier 2)': 'S1', 'S1 Training (Unrestricted)': 'S1',
       'S2': 'S2', 'S2 Training (Tier 2)': 'S2', 'S2 Training (Unrestricted)': 'S2',
       'S3': 'S3', 'S3 Training (Tier 2)': 'S3', 'S3 Training (Unrestricted)': 'S3',
       'C1': 'C1', 'C1 Training': 'C1',
+    };
+
+    // Broader keyword matching for VATUSA exam names
+    const VATUSA_EXAM_KEYWORDS = {
+      'S1': ['s1', 'basic atc', 'ground', 'del'],
+      'S2': ['s2', 'twr', 'tower'],
+      'S3': ['s3', 'dep', 'app', 'approach', 'departure'],
+      'C1': ['c1', 'ctr', 'center', 'enroute'],
     };
 
     async function openExamGrades(cid, studentName, trainingType) {
@@ -1348,7 +1356,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       let vatusaHtml = '';
       try {
         const grades = await VATUSA.getExamGrades(cid);
-        const relevant = vatusaExamName ? grades.filter(g => String(g.exam_id).toUpperCase().includes(vatusaExamName)) : grades;
+        const vatusaKeywords = vatusaExamName ? (VATUSA_EXAM_KEYWORDS[vatusaExamName] || [vatusaExamName.toLowerCase()]) : [];
+        let relevant = vatusaExamName
+          ? grades.filter(g => {
+              const name = (g.exam_name || g.exam_id || g.name || JSON.stringify(g)).toLowerCase();
+              return vatusaKeywords.some(kw => name.includes(kw));
+            })
+          : grades;
+        // Fallback: show all if filter returned nothing but grades exist
+        if (!relevant.length && grades.length) relevant = grades;
         if (relevant.length) {
           vatusaHtml = `
             <div class="table-wrap">
@@ -1357,9 +1373,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
                 <tbody>
                   ${relevant.map(g => `
                     <tr>
-                      <td>${g.exam_id || '—'}</td>
-                      <td>${g.score !== undefined ? g.score + '%' : '—'}</td>
-                      <td><span class="badge ${g.passed ? 'badge-green' : 'badge-red'}">${g.passed ? 'Pass' : 'Fail'}</span></td>
+                      <td>${g.exam_name || g.exam_id || '—'}</td>
+                      <td>${g.score !== undefined && g.score !== null ? g.score + '%' : '—'}</td>
+                      <td><span class="badge ${g.passed || g.pass ? 'badge-green' : 'badge-red'}">${g.passed || g.pass ? 'Pass' : 'Fail'}</span></td>
                       <td>${formatDate(g.date || g.created_at)}</td>
                     </tr>`).join('')}
                 </tbody>
