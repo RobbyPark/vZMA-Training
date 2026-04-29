@@ -55,6 +55,7 @@ const SB = {
     'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
     'Content-Type': 'application/json',
     'Prefer': 'return=representation',
+    'Cache-Control': 'no-cache',
   },
 
   async query(table, params = '') {
