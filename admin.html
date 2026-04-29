@@ -1045,7 +1045,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         </select>
       </div>
       <div class="flex gap-2 mt-4">
-        <button class="btn btn-primary" onclick="confirmTrainerAssign()">Assign</button>
+        <button class="btn btn-primary" onclick="confirmTrainerAssign(false)">Assign & Notify</button>
+        <button class="btn btn-secondary" onclick="confirmTrainerAssign(true)">Assign Silently</button>
         <button class="btn btn-secondary" onclick="closeModal('trainerModal')">Cancel</button>
       </div>
     </div>
@@ -1122,6 +1123,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
   </div>
 
   <!-- Exam Reject Modal -->
+  <!-- Exam Grades Modal -->
+  <div class="modal-backdrop" id="examGradesModal">
+    <div class="modal modal-lg" style="max-height:85vh;overflow-y:auto;">
+      <div class="modal-header">
+        <span class="modal-title" id="examGradesTitle">Exam Grades</span>
+        <button class="modal-close" onclick="closeModal('examGradesModal')">&times;</button>
+      </div>
+      <div id="examGradesBody"></div>
+    </div>
+  </div>
+
   <!-- Attempt Detail Modal -->
   <div class="modal-backdrop" id="attemptDetailModal">
     <div class="modal" style="max-width:700px;max-height:80vh;overflow-y:auto;">
@@ -1306,10 +1318,10 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('pendingBody').innerHTML = state.pending.map(r => `
         <tr>
           <td>${r.first_name} ${r.last_name}</td>
-          <td><a class="cid-link" href="https://stats.vatsim.net/dashboard/${r.cid}" target="_blank">${r.cid}</a></td>
+          <td><a class="cid-link" href="https://stats.vatsim.net/stats/${r.cid}" target="_blank">${r.cid}</a></td>
           <td>${r.training_type}</td>
           <td>${formatDate(r.requested_at)}</td>
-          <td><button class="btn btn-ghost btn-sm" onclick="loadExamGrades('${r.cid}', this)">View</button></td>
+          <td><button class="btn btn-ghost btn-sm" onclick="openExamGrades('${r.cid}','${r.first_name} ${r.last_name}','${r.training_type}')">View</button></td>
           <td class="action-row">
             <button class="btn btn-success btn-sm" onclick="approveRequest('${r.id}','${r.cid}','${r.first_name}','${r.last_name}','${r.training_type}','${r.email || ''}')">Approve</button>
             <button class="btn btn-danger btn-sm" onclick="openRejectModal('${r.id}','${r.email || ''}','${r.first_name} ${r.last_name}')">Reject</button>
@@ -1318,10 +1330,101 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       `).join('') || '<tr><td colspan="6" class="text-muted" style="text-align:center;padding:20px;">No pending requests</td></tr>';
     }
 
-    async function loadExamGrades(cid, btn) {
-      btn.textContent = 'Loading...';
-      const grades = await VATUSA.getExamGrades(cid);
-      btn.textContent = grades.length ? grades.map(g => `${g.exam_id}: ${g.score}%`).join(', ') : 'None found';
+    // VATUSA rating → exam name map
+    const VATUSA_EXAM_MAP = {
+      'S1': 'S1', 'S1 Training (Tier 2)': 'S1', 'S1 Training (Unrestricted)': 'S1',
+      'S2': 'S2', 'S2 Training (Tier 2)': 'S2', 'S2 Training (Unrestricted)': 'S2',
+      'S3': 'S3', 'S3 Training (Tier 2)': 'S3', 'S3 Training (Unrestricted)': 'S3',
+      'C1': 'C1', 'C1 Training': 'C1',
+    };
+
+    async function openExamGrades(cid, studentName, trainingType) {
+      document.getElementById('examGradesTitle').textContent = `Exam Grades — ${studentName}`;
+      document.getElementById('examGradesBody').innerHTML = '<p class="text-muted" style="padding:16px;">Loading...</p>';
+      openModal('examGradesModal');
+
+      // 1. VATUSA transcript
+      const vatusaExamName = VATUSA_EXAM_MAP[trainingType];
+      let vatusaHtml = '';
+      try {
+        const grades = await VATUSA.getExamGrades(cid);
+        const relevant = vatusaExamName ? grades.filter(g => String(g.exam_id).toUpperCase().includes(vatusaExamName)) : grades;
+        if (relevant.length) {
+          vatusaHtml = `
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Exam</th><th>Score</th><th>Result</th><th>Date</th></tr></thead>
+                <tbody>
+                  ${relevant.map(g => `
+                    <tr>
+                      <td>${g.exam_id || '—'}</td>
+                      <td>${g.score !== undefined ? g.score + '%' : '—'}</td>
+                      <td><span class="badge ${g.passed ? 'badge-green' : 'badge-red'}">${g.passed ? 'Pass' : 'Fail'}</span></td>
+                      <td>${formatDate(g.date || g.created_at)}</td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>`;
+        } else {
+          vatusaHtml = `<p class="text-muted" style="padding:8px 0;">No ${vatusaExamName || ''} VATUSA exam records found.</p>`;
+        }
+      } catch(e) {
+        vatusaHtml = '<p class="text-muted" style="padding:8px 0;">Could not load VATUSA transcript.</p>';
+      }
+
+      // 2. Local exam center attempts — exams assigned to this training type
+      let localHtml = '';
+      try {
+        const allExams = await SB.query('exams', '?is_published=eq.true');
+        const relevantExams = allExams.filter(ex => (ex.training_types || []).includes(trainingType));
+        if (relevantExams.length) {
+          const examIds = relevantExams.map(ex => ex.id);
+          const attempts = await SB.query('exam_attempts', `?cid=eq.${cid}&exam_id=in.(${examIds.join(',')})&order=submitted_at.desc`);
+          const examMap = Object.fromEntries(relevantExams.map(ex => [ex.id, ex]));
+
+          localHtml = relevantExams.map(ex => {
+            const exAttempts = attempts.filter(a => a.exam_id === ex.id);
+            const best = exAttempts.reduce((b, a) => (!b || a.score > b.score) ? a : b, null);
+            return `
+              <div style="margin-bottom:16px;">
+                <div style="font-weight:600;font-size:.9rem;color:var(--gray-900);margin-bottom:6px;">${ex.title}</div>
+                ${exAttempts.length ? `
+                  <div class="table-wrap">
+                    <table>
+                      <thead><tr><th>Score</th><th>Result</th><th>Date</th><th></th></tr></thead>
+                      <tbody>
+                        ${exAttempts.map(a => `
+                          <tr>
+                            <td>${a.score !== null ? a.score + '%' : '—'} ${a.id === best?.id ? '<span style="font-size:.7rem;color:var(--blue-600);font-weight:700;">BEST</span>' : ''}</td>
+                            <td><span class="badge ${a.passed ? 'badge-green' : 'badge-red'}">${a.passed ? 'Pass' : 'Fail'}</span></td>
+                            <td>${formatDate(a.submitted_at)}</td>
+                            <td><button class="btn btn-ghost btn-sm" onclick="showAttemptDetail('${a.id}','${ex.id}')">Detail</button></td>
+                          </tr>`).join('')}
+                      </tbody>
+                    </table>
+                  </div>` : '<p class="text-muted" style="font-size:.85rem;">No attempts yet.</p>'}
+              </div>`;
+          }).join('');
+        } else {
+          localHtml = `<p class="text-muted" style="padding:8px 0;">No local exams assigned to <em>${trainingType}</em>. You can assign exams in the Exam Builder.</p>`;
+        }
+      } catch(e) {
+        localHtml = '<p class="text-muted">Could not load local exam data.</p>';
+      }
+
+      document.getElementById('examGradesBody').innerHTML = `
+        <div style="margin-bottom:24px;">
+          <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-600);margin-bottom:10px;">
+            VATUSA Transcript ${vatusaExamName ? `(${vatusaExamName} Exam)` : ''}
+          </div>
+          ${vatusaHtml}
+        </div>
+        <div>
+          <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-600);margin-bottom:10px;">
+            ZMA Exam Center — ${trainingType}
+          </div>
+          ${localHtml}
+        </div>`;
     }
 
     async function approveRequest(id, cid, firstName, lastName, trainingType, email) {
@@ -1402,7 +1505,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <tr draggable="true" data-id="${e.id}" data-queue="${queueType}" data-idx="${i}">
           <td class="drag-handle">&#8597;</td>
           <td>${e.first_name} ${e.last_name}</td>
-          <td><a class="cid-link" href="https://stats.vatsim.net/dashboard/${e.cid}" target="_blank">${e.cid}</a></td>
+          <td><a class="cid-link" href="https://stats.vatsim.net/stats/${e.cid}" target="_blank">${e.cid}</a></td>
           <td>${e.training_type}</td>
           <td>${formatDate(e.requested_at)}</td>
           <td>
@@ -1410,10 +1513,10 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
               ${e.status === 'training' ? 'In Training' : 'Waiting'}
             </span>
           </td>
-          <td><button class="btn btn-ghost btn-sm" onclick="loadExamGrades('${e.cid}', this)">View</button></td>
+          <td><button class="btn btn-ghost btn-sm" onclick="openExamGrades('${e.cid}','${e.first_name} ${e.last_name}','${e.training_type}')">View</button></td>
           <td>
             ${e.trainer_name ? `<span class="badge badge-blue">${e.trainer_name}</span>` : '—'}
-            <button class="btn btn-ghost btn-sm" onclick="openTrainerModal('${e.id}')">Assign</button>
+            <button class="btn btn-ghost btn-sm" onclick="openTrainerModal('${e.id}','${e.cid}','${e.student_name}','${e.training_type}')">Assign</button>
           </td>
           <td>
             <div class="action-row">
@@ -1465,8 +1568,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // Trainer assignment
-    async function openTrainerModal(queueId) {
+    async function openTrainerModal(queueId, studentCid, studentName, trainingType) {
       state.currentTrainerQueueId = queueId;
+      state.currentTrainerStudentCid = studentCid;
+      state.currentTrainerStudentName = studentName;
+      state.currentTrainerTrainingType = trainingType;
       const sel = document.getElementById('trainerSelect');
       sel.innerHTML = '<option value="">Choose trainer...</option>';
       const trainers = await SB.query('trainers', '');
@@ -1474,20 +1580,38 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         const opt = document.createElement('option');
         opt.value = t.id;
         opt.textContent = `${t.first_name} ${t.last_name}`;
+        opt.dataset.cid = t.cid || '';
         sel.appendChild(opt);
       });
       openModal('trainerModal');
     }
 
-    async function confirmTrainerAssign() {
+    async function confirmTrainerAssign(silent = false) {
       const sel = document.getElementById('trainerSelect');
       const trainerId = sel.value;
       const trainerName = sel.options[sel.selectedIndex].textContent;
+      const trainerCid = sel.options[sel.selectedIndex].dataset.cid;
       if (!trainerId) { toast('Select a trainer.', 'error'); return; }
       await SB.update('training_queue', `id=eq.${state.currentTrainerQueueId}`, {
         trainer_id: trainerId, trainer_name: trainerName, status: 'training', training_started_at: new Date().toISOString()
       });
-      toast('Trainer assigned.');
+      if (!silent) {
+        try {
+          const studentCtrl = await VATUSA.getController(state.currentTrainerStudentCid);
+          if (studentCtrl?.email) {
+            await EM.sendTrainerAssignedStudent(studentCtrl.email, state.currentTrainerStudentName, trainerName, state.currentTrainerTrainingType);
+          }
+          if (trainerCid) {
+            const trainerCtrl = await VATUSA.getController(trainerCid);
+            if (trainerCtrl?.email) {
+              await EM.sendTrainerAssignedTrainer(trainerCtrl.email, trainerName, state.currentTrainerStudentName, state.currentTrainerTrainingType);
+            }
+          }
+        } catch(e) { console.error('Trainer assign email error:', e); }
+        toast('Trainer assigned and emails sent.');
+      } else {
+        toast('Trainer assigned silently.');
+      }
       closeModal('trainerModal');
       loadQueues();
     }
@@ -1617,7 +1741,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('completedBody').innerHTML = data.map(r => `
         <tr>
           <td>${r.first_name} ${r.last_name}</td>
-          <td><a class="cid-link" href="https://stats.vatsim.net/dashboard/${r.cid}" target="_blank">${r.cid}</a></td>
+          <td><a class="cid-link" href="https://stats.vatsim.net/stats/${r.cid}" target="_blank">${r.cid}</a></td>
           <td>${r.training_type}</td>
           <td>${formatDate(r.training_started_at)}</td>
           <td>${formatDate(r.completed_at)}</td>
@@ -1633,7 +1757,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('removedBody').innerHTML = data.map(r => `
         <tr>
           <td>${r.first_name} ${r.last_name}</td>
-          <td><a class="cid-link" href="https://stats.vatsim.net/dashboard/${r.cid}" target="_blank">${r.cid}</a></td>
+          <td><a class="cid-link" href="https://stats.vatsim.net/stats/${r.cid}" target="_blank">${r.cid}</a></td>
           <td>${r.training_type}</td>
           <td>${formatDate(r.joined_at)}</td>
           <td>${formatDate(r.removed_at)}</td>
@@ -1676,7 +1800,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('examRequestsBody').innerHTML = state.examRequests.map(r => `
         <tr>
           <td>${r.student_name || '—'}</td>
-          <td><a class="cid-link" href="https://stats.vatsim.net/dashboard/${r.cid}" target="_blank">${r.cid}</a></td>
+          <td><a class="cid-link" href="https://stats.vatsim.net/stats/${r.cid}" target="_blank">${r.cid}</a></td>
           <td>${r.vatsim_rating || '—'}</td>
           <td>${r.exam_title || '—'}</td>
           <td>${formatDate(r.requested_at)}</td>
@@ -2070,6 +2194,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>
         </div>
         <div class="form-group">
+          <label class="form-label">Applies to Training Types <span style="font-size:.75rem;color:var(--gray-400);">(used for Exam Grades popup in queues)</span></label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--gray-200);border-radius:var(--radius);background:var(--gray-50);">
+            ${Object.values(TRAINING_TYPES).flat().map(tt => `
+              <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer;">
+                <input type="checkbox" class="eb_training_type" value="${tt}" ${(exam?.training_types||[]).includes(tt)?'checked':''}> ${tt}
+              </label>`).join('')}
+          </div>
+        </div>
+        <div class="form-group">
           <label class="checkbox-wrap">
             <input type="checkbox" id="eb_allow_request" ${exam?.allow_password_request?'checked':''}>
             <span class="checkbox-label">Allow students to request this exam password from the Exam Center</span>
@@ -2317,6 +2450,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         allowed_attempts: parseInt(document.getElementById('eb_allowed_attempts').value) || 1,
         password: document.getElementById('eb_password').value.trim(),
         allow_password_request: document.getElementById('eb_allow_request').checked,
+        training_types: [...document.querySelectorAll('.eb_training_type:checked')].map(cb => cb.value),
         is_published: publish,
         updated_at: new Date().toISOString(),
       };
