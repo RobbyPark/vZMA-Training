@@ -806,6 +806,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     <div id="loginView">
       <div class="login-wrap">
         <div class="login-header">
+          <img src="ZMA_Transparent.png" alt="ZMA Miami ARTCC" style="width:130px;height:130px;object-fit:contain;margin:0 auto 8px;display:block;">
           <span class="artcc-badge">ZMA Miami ARTCC</span>
           <h1>Exam Center</h1>
           <p>Enter your VATSIM CID to access the exam center. You must be a current home or visiting member of ZMA ARTCC.</p>
@@ -918,6 +919,42 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       </div>
     </div>
 
+  </div>
+
+  <!-- Privacy Policy Link -->
+  <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.82);backdrop-filter:blur(4px);text-align:center;padding:6px 16px;font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:.01em;">
+    For simulation purposes only. All content is used exclusively within the virtual Miami ARTCC (ZMA). Not affiliated with real-world aviation.
+    &nbsp;·&nbsp;
+    <button onclick="document.getElementById('privacyModal').style.display='flex'" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:.72rem;cursor:pointer;text-decoration:underline;padding:0;">Privacy Policy</button>
+  </div>
+
+  <!-- Privacy Policy Modal -->
+  <div id="privacyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;">
+      <button onclick="document.getElementById('privacyModal').style.display='none'"
+        style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--gray-400);">&times;</button>
+      <h2 style="font-size:1.2rem;font-weight:700;color:var(--blue-900);margin-bottom:4px;">Privacy Policy</h2>
+      <p style="font-size:.8rem;color:var(--gray-400);margin-bottom:20px;">ZMA ARTCC Training — Last updated April 2026</p>
+
+      <div style="font-size:.875rem;color:var(--gray-700);line-height:1.7;">
+        <p style="margin-bottom:14px;">This Privacy Policy describes how the ZMA ARTCC Training Exam Center ("we", "us") collects, uses, and handles your information when you use our exam platform.</p>
+
+        <p style="font-weight:700;color:var(--gray-900);margin-bottom:6px;">Data We Collect</p>
+        <p style="margin-bottom:14px;">When you log in and take exams, we collect your VATSIM CID, name, and controller rating as provided by the VATUSA API. We also store your exam answers, scores, and attempt history.</p>
+
+        <p style="font-weight:700;color:var(--gray-900);margin-bottom:6px;">How We Use Your Data</p>
+        <p style="margin-bottom:14px;">Your data is used solely for tracking training progress and exam results within ZMA ARTCC. It is not sold, shared with advertisers, or disclosed to any third parties outside of ZMA ARTCC staff.</p>
+
+        <p style="font-weight:700;color:var(--gray-900);margin-bottom:6px;">Data Storage</p>
+        <p style="margin-bottom:14px;">Exam results and progress are stored securely in our database. Temporary exam progress may also be stored in your browser's local storage and is automatically cleared when you submit your exam.</p>
+
+        <p style="font-weight:700;color:var(--gray-900);margin-bottom:6px;">Your Rights</p>
+        <p style="margin-bottom:14px;">You may request the deletion of your exam data at any time by contacting us at <a href="mailto:ta@zmaartcc.net" style="color:var(--blue-600);">ta@zmaartcc.net</a>.</p>
+
+        <p style="font-weight:700;color:var(--gray-900);margin-bottom:6px;">Third-Party Services</p>
+        <p>This platform uses VATUSA and VATSIM APIs solely for identity verification. We do not control the data practices of VATSIM or VATUSA.</p>
+      </div>
+    </div>
   </div>
 
   <script src="js/config.js"></script>
