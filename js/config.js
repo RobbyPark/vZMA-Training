@@ -140,10 +140,11 @@ const VATUSA = {
 
   async getExamGrades(cid) {
     try {
-      const res = await fetch(`${CONFIG.VATUSA_API}/user/${cid}/exam?apikey=${CONFIG.VATUSA_API_KEY}`);
+      const res = await fetch(`${CONFIG.VATUSA_API}/academy/transcript/${cid}?apikey=${CONFIG.VATUSA_API_KEY}`);
       if (!res.ok) return [];
       const data = await res.json();
-      return data.data || [];
+      // Transcript returns array of course objects with name, passed, score etc.
+      return data.data || data || [];
     } catch { return []; }
   },
 
