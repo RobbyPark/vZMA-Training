@@ -995,8 +995,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <select class="form-select" id="rejectPrefab" onchange="fillPrefabReject()">
           <option value="">Select a reason...</option>
           <option value="coursework">Coursework not completed</option>
-          <option value="[PLACEHOLDER] Your VATSIM rating does not meet the requirements for this training type at this time.">Rating requirement not met</option>
-          <option value="[PLACEHOLDER] Our training queue is currently at capacity. Please resubmit when space opens up.">Queue at capacity</option>
+          <option value="rating">Rating requirement not met</option>
+          <option value="capacity">Queue at capacity</option>
           <option value="custom">Custom message...</option>
         </select>
       </div>
@@ -1487,6 +1487,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     const REJECT_MESSAGES = {
       coursework: `Your training request has been denied at this time as you have not yet completed all required coursework. Please review the T01 documentation before submitting another request.`,
+      rating: `Your training request has been denied as your current VATSIM rating does not meet the requirements for this training type. Please review the T01 documentation before submitting another request.`,
+      capacity: `Your training request has been denied as our training queue is currently at capacity. Please resubmit your request when space becomes available.`,
     };
 
     function fillPrefabReject() {
