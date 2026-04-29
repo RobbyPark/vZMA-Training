@@ -1528,8 +1528,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </td>
           <td><button class="btn btn-ghost btn-sm" onclick="openExamGrades('${e.cid}','${e.first_name} ${e.last_name}','${e.training_type}')">View</button></td>
           <td>
-            ${e.trainer_name ? `<span class="badge badge-blue">${e.trainer_name}</span>` : '—'}
-            <button class="btn btn-ghost btn-sm" onclick="openTrainerModal('${e.id}','${e.cid}','${e.student_name}','${e.training_type}')">Assign</button>
+            ${e.trainer_name
+              ? `<span class="badge badge-blue">${e.trainer_name}</span>
+                 <button class="btn btn-ghost btn-sm" style="color:var(--red-500);font-size:.75rem;" onclick="unassignTrainer('${e.id}')">Unassign</button>`
+              : '—'}
+            <button class="btn btn-ghost btn-sm" onclick="openTrainerModal('${e.id}','${e.cid}','${e.first_name} ${e.last_name}','${e.training_type}')">Assign</button>
           </td>
           <td>
             <div class="action-row">
@@ -1581,6 +1584,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // Trainer assignment
+    async function unassignTrainer(queueId) {
+      if (!confirm('Unassign trainer from this student?')) return;
+      await SB.update('training_queue', `id=eq.${queueId}`, {
+        trainer_id: null, trainer_name: null, status: 'waiting', training_started_at: null
+      });
+      toast('Trainer unassigned.');
+      loadQueues();
+    }
+
     async function openTrainerModal(queueId, studentCid, studentName, trainingType) {
       state.currentTrainerQueueId = queueId;
       state.currentTrainerStudentCid = studentCid;
@@ -2198,8 +2210,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Allowed Attempts</label>
-            <input class="form-input" id="eb_allowed_attempts" type="number" value="${exam?.allowed_attempts || 1}" min="1">
+            <label class="form-label">Allowed Attempts <span style="font-size:.75rem;color:var(--gray-400);">(0 or blank = unlimited)</span></label>
+            <input class="form-input" id="eb_allowed_attempts" type="number" value="${exam?.allowed_attempts || ''}" min="0" placeholder="0 = unlimited">
           </div>
           <div class="form-group">
             <label class="form-label">Exam Password</label>
@@ -2460,7 +2472,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         description: document.getElementById('eb_description').value.trim(),
         time_limit: parseInt(document.getElementById('eb_time_limit').value) || null,
         passing_grade: parseInt(document.getElementById('eb_passing_grade').value) || 70,
-        allowed_attempts: parseInt(document.getElementById('eb_allowed_attempts').value) || 1,
+        allowed_attempts: parseInt(document.getElementById('eb_allowed_attempts').value) || null,
         password: document.getElementById('eb_password').value.trim(),
         allow_password_request: document.getElementById('eb_allow_request').checked,
         training_types: [...document.querySelectorAll('.eb_training_type:checked')].map(cb => cb.value),
