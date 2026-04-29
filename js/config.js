@@ -141,18 +141,12 @@ const VATUSA = {
   async getExamGrades(cid) {
     try {
       const res = await fetch(`${CONFIG.VATUSA_API}/academy/transcript/${cid}?apikey=${CONFIG.VATUSA_API_KEY}`);
-      console.log('VATUSA transcript status:', res.status);
-      if (!res.ok) {
-        const err = await res.text();
-        console.log('VATUSA transcript error:', err);
-        return [];
-      }
+      if (!res.ok) return {};
       const data = await res.json();
-      console.log('VATUSA transcript raw:', JSON.stringify(data));
-      return data.data || data || [];
+      return data.data || {};
     } catch(e) {
       console.log('VATUSA transcript exception:', e);
-      return [];
+      return {};
     }
   },
 
@@ -297,8 +291,7 @@ const EM = {
 
   // ── 4. Rejection ────────────────────────────────────────
   async sendRejection(toEmail, toName, trainingType, customMessage) {
-    const reason = customMessage ||
-      `After reviewing your request, we are unable to accommodate your training request for <strong>${trainingType}</strong> at this time. Please contact us at <a href="mailto:ta@zmaartcc.net" style="color:#1e4d8c;font-weight:600;">ta@zmaartcc.net</a> for more information.`;
+    const reason = customMessage || `Your training request has been denied at this time. Please review the T01 documentation before submitting another request.`;
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${toName}</strong>,</p>
       <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">${reason}</p>

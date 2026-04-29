@@ -994,7 +994,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <label class="form-label">Pre-written Reasons</label>
         <select class="form-select" id="rejectPrefab" onchange="fillPrefabReject()">
           <option value="">Select a reason...</option>
-          <option value="[PLACEHOLDER] Coursework not completed. Please complete all required coursework before resubmitting.">Coursework not completed</option>
+          <option value="coursework">Coursework not completed</option>
           <option value="[PLACEHOLDER] Your VATSIM rating does not meet the requirements for this training type at this time.">Rating requirement not met</option>
           <option value="[PLACEHOLDER] Our training queue is currently at capacity. Please resubmit when space opens up.">Queue at capacity</option>
           <option value="custom">Custom message...</option>
@@ -1111,12 +1111,22 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <span class="modal-title">Remove Student</span>
         <button class="modal-close" onclick="closeModal('removeModal')">&times;</button>
       </div>
-      <p class="text-muted mb-4">Add a note for this removal (optional).</p>
       <div class="form-group">
+        <label class="form-label">Reason</label>
+        <select class="form-select" id="removeReason" onchange="handleRemoveReasonChange()">
+          <option value="">Select a reason...</option>
+          <option value="ineligibility">Ineligibility (T01)</option>
+          <option value="inactivity">Inactivity</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="form-group" id="removeNotesWrap" style="display:none;">
+        <label class="form-label">Custom Notes</label>
         <textarea class="form-textarea" id="removeNotes" placeholder="Reason for removal..."></textarea>
       </div>
       <div class="flex gap-2 mt-4">
-        <button class="btn btn-danger" onclick="confirmRemove()">Remove Student</button>
+        <button class="btn btn-danger" onclick="confirmRemove(false)">Remove & Notify</button>
+        <button class="btn btn-secondary" onclick="confirmRemove(true)">Remove Silently</button>
         <button class="btn btn-secondary" onclick="closeModal('removeModal')">Cancel</button>
       </div>
     </div>
@@ -1475,6 +1485,10 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       openModal('rejectModal');
     }
 
+    const REJECT_MESSAGES = {
+      coursework: `Your training request has been denied at this time as you have not yet completed all required coursework. Please review the T01 documentation before submitting another request.`,
+    };
+
     function fillPrefabReject() {
       const val = document.getElementById('rejectPrefab').value;
       if (val === 'custom') {
@@ -1483,7 +1497,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       } else if (val) {
         document.getElementById('customRejectWrap').style.display = 'none';
         document.getElementById('rejectMsgPreview').style.display = 'block';
-        document.getElementById('rejectMsgPreview').textContent = val;
+        document.getElementById('rejectMsgPreview').textContent = REJECT_MESSAGES[val] || val;
       } else {
         document.getElementById('customRejectWrap').style.display = 'none';
         document.getElementById('rejectMsgPreview').style.display = 'none';
@@ -1493,14 +1507,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     async function confirmReject() {
       const prefab = document.getElementById('rejectPrefab').value;
       const custom = document.getElementById('rejectCustomMsg').value.trim();
-      const reason = prefab === 'custom' ? custom : prefab;
-      if (!reason) { toast('Please select or write a reason.', 'error'); return; }
+      if (!prefab) { toast('Please select or write a reason.', 'error'); return; }
+      if (prefab === 'custom' && !custom) { toast('Please write a custom reason.', 'error'); return; }
+      const reason = prefab === 'custom' ? custom : (REJECT_MESSAGES[prefab] || prefab);
       try {
         await SB.update('training_requests', `id=eq.${state.currentRejectId}`, {
           status: 'rejected', rejected_at: new Date().toISOString(), rejection_reason: reason
         });
         if (state.currentRejectEmail) {
-          await EM.sendRejection(state.currentRejectEmail, state.currentRejectName, reason);
+          await EM.sendRejection(state.currentRejectEmail, state.currentRejectName, null, reason);
         }
         toast('Request rejected and email sent.');
         closeModal('rejectModal');
@@ -1675,14 +1690,25 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // Remove
+    function handleRemoveReasonChange() {
+      const val = document.getElementById('removeReason').value;
+      document.getElementById('removeNotesWrap').style.display = val === 'custom' ? 'block' : 'none';
+    }
+
     function openRemoveModal(queueId) {
       state.currentRemoveId = queueId;
+      document.getElementById('removeReason').value = '';
       document.getElementById('removeNotes').value = '';
+      document.getElementById('removeNotesWrap').style.display = 'none';
       openModal('removeModal');
     }
 
-    async function confirmRemove() {
+    async function confirmRemove(silent = false) {
+      const reason = document.getElementById('removeReason').value;
+      if (!reason) { toast('Select a reason.', 'error'); return; }
       const notes = document.getElementById('removeNotes').value.trim();
+      const removalNotes = reason === 'custom' ? notes : reason;
+
       const [entry] = await SB.query('training_queue', `?id=eq.${state.currentRemoveId}`);
       await SB.update('training_queue', `id=eq.${state.currentRemoveId}`, { status: 'removed', removed_at: new Date().toISOString() });
       await SB.insert('removed_students', {
@@ -1690,9 +1716,23 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         first_name: entry.first_name, last_name: entry.last_name,
         cid: entry.cid, training_type: entry.training_type,
         queue_type: entry.queue_type, joined_at: entry.requested_at,
-        removed_at: new Date().toISOString(), removal_notes: notes
+        removed_at: new Date().toISOString(), removal_notes: removalNotes
       });
-      toast('Student removed.');
+
+      if (!silent) {
+        try {
+          const ctrl = await VATUSA.getController(entry.cid);
+          if (ctrl?.email) {
+            const studentName = `${entry.first_name} ${entry.last_name}`;
+            if (reason === 'ineligibility') await EM.sendRemovalIneligibility(ctrl.email, studentName);
+            else if (reason === 'inactivity') await EM.sendRemovalInactivity(ctrl.email, studentName);
+          }
+        } catch(e) { console.error('Removal email error:', e); }
+        toast('Student removed and email sent.');
+      } else {
+        toast('Student removed silently.');
+      }
+
       closeModal('removeModal');
       loadQueues();
     }
