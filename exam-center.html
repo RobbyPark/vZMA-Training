@@ -1011,6 +1011,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       seenPasswordExamIds = new Set();
       document.getElementById('loginCid').value = '';
       document.getElementById('loginCidStatus').innerHTML = '';
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = false;
+      btn.textContent = 'Access Exam Center';
       document.getElementById('loginView').style.display = 'block';
       document.getElementById('mainView').style.display = 'none';
       document.getElementById('examTakingView').style.display = 'none';
