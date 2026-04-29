@@ -1117,7 +1117,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
               <div class="exam-card-meta">
                 <span class="exam-meta-chip">${ex.time_limit ? ex.time_limit + ' min' : 'No time limit'}</span>
                 <span class="exam-meta-chip">Pass: ${ex.passing_grade}%</span>
-                <span class="exam-meta-chip">Attempts: ${ex.allowed_attempts}</span>
+                <span class="exam-meta-chip">Attempts: ${ex.allowed_attempts || 'Unlimited'}</span>
               </div>
             </div>
           `;
@@ -1136,7 +1136,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
       // Check attempts
       const attempts = await SB.query('exam_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}&is_manual=eq.false`);
-      if (attempts.length >= exam.allowed_attempts) {
+      if (exam.allowed_attempts && attempts.length >= exam.allowed_attempts) {
         toast(`You have used all ${exam.allowed_attempts} attempt(s) for this exam.`, 'error');
         return;
       }
