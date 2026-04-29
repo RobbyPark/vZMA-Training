@@ -920,6 +920,24 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
   </div>
 
+  <!-- Out of Attempts Modal -->
+  <div id="outOfAttemptsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:14px;max-width:480px;width:90%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:2.5rem;margin-bottom:8px;">🚫</div>
+        <h2 style="font-size:1.1rem;font-weight:700;color:var(--blue-900);margin-bottom:6px;">No Attempts Remaining</h2>
+        <p style="font-size:.85rem;color:var(--gray-500);" id="outOfAttemptsTitle"></p>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#334155;line-height:1.7;">
+        Per ZMA T01, you have run out of exam attempts for this exam. Please submit your test corrections in alignment with <strong>T01 2-5 C iii</strong> to receive an additional 3 exam attempts.
+      </div>
+      <button onclick="document.getElementById('outOfAttemptsModal').style.display='none'"
+        style="margin-top:20px;width:100%;padding:10px;background:var(--blue-600);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;">
+        OK
+      </button>
+    </div>
+  </div>
+
   <!-- Privacy Policy Link -->
   <div style="position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.82);backdrop-filter:blur(4px);text-align:center;padding:6px 16px;font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:.01em;">
     For simulation purposes only. All content is used exclusively within the virtual Miami ARTCC (ZMA). Not affiliated with real-world aviation.
@@ -1097,8 +1115,32 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // ===================== EXAM LIST =====================
+    function getAttemptsChipColor(used, allowed) {
+      if (!allowed) return '';
+      const remaining = allowed - used;
+      if (remaining <= 0) return 'background:#fee2e2;color:#dc2626;border-color:#fecaca;';
+      if (remaining === 1) return 'background:#fee2e2;color:#dc2626;border-color:#fecaca;';
+      if (remaining === 2) return 'background:#ffedd5;color:#c2410c;border-color:#fed7aa;';
+      if (remaining === 3) return 'background:#fef9c3;color:#a16207;border-color:#fde68a;';
+      if (used > 0) return 'background:#fef9c3;color:#a16207;border-color:#fde68a;';
+      return '';
+    }
+
+    function showOutOfAttemptsModal(examTitle) {
+      document.getElementById('outOfAttemptsTitle').textContent = examTitle;
+      document.getElementById('outOfAttemptsModal').style.display = 'flex';
+    }
+
     async function loadExamList() {
       const exams = await SB.query('exams', '?is_published=eq.true&order=created_at.asc');
+      const attempts = await SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&is_manual=eq.false`);
+      const attemptCountMap = {};
+      const passedExamIds = new Set();
+      attempts.forEach(a => {
+        attemptCountMap[a.exam_id] = (attemptCountMap[a.exam_id] || 0) + 1;
+        if (a.passed) passedExamIds.add(a.exam_id);
+      });
+
       const cats = [
         { id: 'tier2', label: 'Tier 2 Exams' },
         { id: 'tier1', label: 'Tier 1 Exams' },
@@ -1110,20 +1152,43 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         if (!catExams.length) return;
         html += `<div class="exam-cat-header">${cat.label}</div>`;
         catExams.forEach(ex => {
+          const used = attemptCountMap[ex.id] || 0;
+          const remaining = ex.allowed_attempts ? ex.allowed_attempts - used : null;
+          const noAttemptsLeft = ex.allowed_attempts && used >= ex.allowed_attempts;
+          const hasPassed = passedExamIds.has(ex.id);
+          const chipStyle = getAttemptsChipColor(used, ex.allowed_attempts);
+          const attemptsLabel = ex.allowed_attempts
+            ? `${remaining} of ${ex.allowed_attempts} attempt${ex.allowed_attempts > 1 ? 's' : ''} remaining`
+            : 'Unlimited attempts';
+
+          let onclick = '';
+          if (noAttemptsLeft) onclick = `showOutOfAttemptsModal('${ex.title.replace(/'/g,"\\'")}')`;
+          else if (remaining !== null && remaining <= 3) onclick = `confirmLowAttempts('${ex.id}', ${remaining})`;
+          else onclick = `startExam('${ex.id}')`;
+
           html += `
-            <div class="exam-card" onclick="startExam('${ex.id}')">
-              <div class="exam-card-title">${ex.title}</div>
-              <div class="text-muted" style="font-size:.875rem;">${ex.description || 'No description'}</div>
+            <div class="exam-card" onclick="${onclick}" style="${noAttemptsLeft ? 'opacity:.6;' : ''}">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="exam-card-title" style="flex:1;">${ex.title}</div>
+                ${hasPassed ? '<span style="background:#dcfce7;color:#16a34a;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #bbf7d0;">✓ Passed</span>' : ''}
+              </div>
+              <div class="text-muted" style="font-size:.875rem;margin-top:4px;">${ex.description || 'No description'}</div>
               <div class="exam-card-meta">
                 <span class="exam-meta-chip">${ex.time_limit ? ex.time_limit + ' min' : 'No time limit'}</span>
                 <span class="exam-meta-chip">Pass: ${ex.passing_grade}%</span>
-                <span class="exam-meta-chip">Attempts: ${ex.allowed_attempts || 'Unlimited'}</span>
+                ${ex.allowed_attempts ? `<span class="exam-meta-chip" style="${chipStyle}">${attemptsLabel}</span>` : `<span class="exam-meta-chip">Unlimited attempts</span>`}
               </div>
             </div>
           `;
         });
       });
       document.getElementById('examListContent').innerHTML = html || '<p class="text-muted">No exams available at this time.</p>';
+    }
+
+    function confirmLowAttempts(examId, remaining) {
+      if (confirm(`⚠️ Warning: You only have ${remaining} attempt${remaining > 1 ? 's' : ''} remaining for this exam. Do you want to continue?`)) {
+        startExam(examId);
+      }
     }
 
     // ===================== START EXAM =====================
@@ -1137,7 +1202,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       // Check attempts
       const attempts = await SB.query('exam_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}&is_manual=eq.false`);
       if (exam.allowed_attempts && attempts.length >= exam.allowed_attempts) {
-        toast(`You have used all ${exam.allowed_attempts} attempt(s) for this exam.`, 'error');
+        showOutOfAttemptsModal(exam.title);
         return;
       }
 
@@ -1394,6 +1459,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       }
 
       showResults(score, passed);
+      loadExamList(); // refresh attempt counts
     }
 
     // ── Exam Progress Save/Restore ───────────────────────────
