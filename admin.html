@@ -1355,28 +1355,25 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const vatusaExamName = VATUSA_EXAM_MAP[trainingType];
       let vatusaHtml = '';
       try {
-        const grades = await VATUSA.getExamGrades(cid);
-        const vatusaKeywords = vatusaExamName ? (VATUSA_EXAM_KEYWORDS[vatusaExamName] || [vatusaExamName.toLowerCase()]) : [];
-        let relevant = vatusaExamName
-          ? grades.filter(g => {
-              const name = (g.exam_name || g.exam_id || g.name || JSON.stringify(g)).toLowerCase();
-              return vatusaKeywords.some(kw => name.includes(kw));
-            })
-          : grades;
-        // Fallback: show all if filter returned nothing but grades exist
-        if (!relevant.length && grades.length) relevant = grades;
-        if (relevant.length) {
+        const transcript = await VATUSA.getExamGrades(cid);
+        // transcript is { BASIC: [], S1: [...], S2: [{attempt,time_finished,grade}], ... }
+        const key = vatusaExamName || null;
+        const keyAttempts = key ? (transcript[key] || []) : [];
+        const basicAttempts = (vatusaExamName === 'S1') ? (transcript['BASIC'] || []) : [];
+        const allAttempts = [...basicAttempts, ...keyAttempts];
+
+        if (allAttempts.length) {
           vatusaHtml = `
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Exam</th><th>Score</th><th>Result</th><th>Date</th></tr></thead>
+                <thead><tr><th>Attempt</th><th>Grade</th><th>Result</th><th>Date</th></tr></thead>
                 <tbody>
-                  ${relevant.map(g => `
+                  ${allAttempts.map((a, i) => `
                     <tr>
-                      <td>${g.exam_name || g.exam_id || '—'}</td>
-                      <td>${g.score !== undefined && g.score !== null ? g.score + '%' : '—'}</td>
-                      <td><span class="badge ${g.passed || g.pass ? 'badge-green' : 'badge-red'}">${g.passed || g.pass ? 'Pass' : 'Fail'}</span></td>
-                      <td>${formatDate(g.date || g.created_at)}</td>
+                      <td>Attempt ${a.attempt || i+1}</td>
+                      <td>${a.grade !== undefined ? a.grade + '%' : '—'}</td>
+                      <td><span class="badge ${a.grade >= 70 ? 'badge-green' : 'badge-red'}">${a.grade >= 70 ? 'Pass' : 'Fail'}</span></td>
+                      <td>${a.time_finished ? formatDate(new Date(a.time_finished * 1000)) : '—'}</td>
                     </tr>`).join('')}
                 </tbody>
               </table>
