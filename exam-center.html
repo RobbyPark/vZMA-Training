@@ -1133,7 +1133,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     async function loadExamList() {
       const exams = await SB.query('exams', '?is_published=eq.true&order=created_at.asc');
-      const attempts = await SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&is_manual=eq.false`);
+      const attempts = await SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&is_manual=eq.false&_=${Date.now()}`);
       const attemptCountMap = {};
       const passedExamIds = new Set();
       attempts.forEach(a => {
@@ -1200,7 +1200,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const questions = await SB.query('exam_questions', `?exam_id=eq.${examId}&order=sort_order.asc`);
 
       // Check attempts
-      const attempts = await SB.query('exam_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}&is_manual=eq.false`);
+      const attempts = await SB.query('exam_attempts', `?exam_id=eq.${examId}&cid=eq.${currentStudent.cid}&is_manual=eq.false&_=${Date.now()}`);
       if (exam.allowed_attempts && attempts.length >= exam.allowed_attempts) {
         showOutOfAttemptsModal(exam.title);
         return;
@@ -1546,7 +1546,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     // ===================== MY GRADES =====================
     async function loadMyGrades() {
       if (!currentStudent) return;
-      const attempts = await SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&order=submitted_at.desc`);
+      const attempts = await SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&order=submitted_at.desc&_=${Date.now()}`);
       if (!attempts.length) {
         document.getElementById('myGradesContent').innerHTML = '<p class="text-muted">No exam grades yet.</p>';
         return;
