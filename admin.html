@@ -1108,14 +1108,20 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </optgroup>
         </select>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Requested Date <span style="font-size:.75rem;color:var(--gray-400);">(optional, defaults to today)</span></label>
+          <input type="date" class="form-input" id="addRequestedDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Training Start Date <span style="font-size:.75rem;color:var(--gray-400);">(optional)</span></label>
+          <input type="date" class="form-input" id="addStartDate">
+        </div>
+      </div>
       <div class="flex gap-2 mt-4">
         <button class="btn btn-primary" id="addStudentBtn" onclick="confirmAddStudent()" disabled>Add to Queue</button>
         <button class="btn btn-secondary" onclick="closeModal('addStudentModal')">Cancel</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Remove Student Modal -->
   <div class="modal-backdrop" id="removeModal">
     <div class="modal">
       <div class="modal-header">
@@ -1761,6 +1767,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('addCid').value = '';
       document.getElementById('addStudentCidStatus').innerHTML = '';
       document.getElementById('addTrainingType').value = '';
+      document.getElementById('addRequestedDate').value = '';
+      document.getElementById('addStartDate').value = '';
       document.getElementById('addStudentBtn').disabled = true;
       openModal('addStudentModal');
     }
@@ -1800,14 +1808,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       if (!pendingAddStudent) { toast('Enter a valid CID.', 'error'); return; }
       const trainingType = document.getElementById('addTrainingType').value;
       if (!trainingType) { toast('Select a training type.', 'error'); return; }
+      const requestedDate = document.getElementById('addRequestedDate').value;
+      const startDate = document.getElementById('addStartDate').value;
       await SB.insert('training_queue', {
         first_name: pendingAddStudent.first_name,
         last_name: pendingAddStudent.last_name,
         cid: pendingAddStudent.cid,
         training_type: trainingType,
         queue_type: pendingAddStudent.queue_type,
-        status: 'waiting',
-        requested_at: new Date().toISOString(),
+        status: startDate ? 'training' : 'waiting',
+        requested_at: requestedDate ? new Date(requestedDate).toISOString() : new Date().toISOString(),
+        training_started_at: startDate ? new Date(startDate).toISOString() : null,
         sort_order: 999
       });
       toast(`${pendingAddStudent.first_name} ${pendingAddStudent.last_name} added to ${pendingAddStudent.queue_type} queue.`);
