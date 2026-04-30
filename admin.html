@@ -1730,32 +1730,42 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const notes = document.getElementById('removeNotes').value.trim();
       const removalNotes = reason === 'custom' ? notes : (reason || 'Removed silently');
 
-      const [entry] = await SB.query('training_queue', `?id=eq.${state.currentRemoveId}`);
-      await SB.update('training_queue', `id=eq.${state.currentRemoveId}`, { status: 'removed', removed_at: new Date().toISOString() });
-      await SB.insert('removed_students', {
-        queue_entry_id: state.currentRemoveId,
-        first_name: entry.first_name, last_name: entry.last_name,
-        cid: entry.cid, training_type: entry.training_type,
-        queue_type: entry.queue_type, joined_at: entry.requested_at,
-        removed_at: new Date().toISOString(), removal_notes: removalNotes
-      });
+      try {
+        const [entry] = await SB.query('training_queue', `?id=eq.${state.currentRemoveId}`);
+        if (!entry) { toast('Could not find queue entry.', 'error'); return; }
 
-      if (!silent) {
+        await SB.update('training_queue', `id=eq.${state.currentRemoveId}`, { status: 'removed', removed_at: new Date().toISOString() });
+
         try {
-          const ctrl = await VATUSA.getController(entry.cid);
-          if (ctrl?.email) {
-            const studentName = `${entry.first_name} ${entry.last_name}`;
-            if (reason === 'ineligibility') await EM.sendRemovalIneligibility(ctrl.email, studentName);
-            else if (reason === 'inactivity') await EM.sendRemovalInactivity(ctrl.email, studentName);
-          }
-        } catch(e) { console.error('Removal email error:', e); }
-        toast('Student removed and email sent.');
-      } else {
-        toast('Student removed silently.');
-      }
+          await SB.insert('removed_students', {
+            queue_entry_id: state.currentRemoveId,
+            first_name: entry.first_name, last_name: entry.last_name,
+            cid: entry.cid, training_type: entry.training_type,
+            queue_type: entry.queue_type, joined_at: entry.requested_at,
+            removed_at: new Date().toISOString(), removal_notes: removalNotes
+          });
+        } catch(e) { console.error('removed_students insert error:', e); }
 
-      closeModal('removeModal');
-      loadQueues();
+        if (!silent) {
+          try {
+            const ctrl = await VATUSA.getController(entry.cid);
+            if (ctrl?.email) {
+              const studentName = `${entry.first_name} ${entry.last_name}`;
+              if (reason === 'ineligibility') await EM.sendRemovalIneligibility(ctrl.email, studentName);
+              else if (reason === 'inactivity') await EM.sendRemovalInactivity(ctrl.email, studentName);
+            }
+          } catch(e) { console.error('Removal email error:', e); }
+          toast('Student removed and email sent.');
+        } else {
+          toast('Student removed silently.');
+        }
+
+        closeModal('removeModal');
+        loadQueues();
+      } catch(e) {
+        console.error('Remove error:', e);
+        toast('Error removing student.', 'error');
+      }
     }
 
     // Add Student manually
