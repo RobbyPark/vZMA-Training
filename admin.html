@@ -1818,6 +1818,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       }, 800);
     }
 
+    function localDateToISO(dateStr) {
+      if (!dateStr) return new Date().toISOString();
+      const [y, m, d] = dateStr.split('-').map(Number);
+      return new Date(y, m - 1, d, 12, 0, 0).toISOString();
+    }
+
     async function confirmAddStudent() {
       if (!pendingAddStudent) { toast('Enter a valid CID.', 'error'); return; }
       const trainingType = document.getElementById('addTrainingType').value;
@@ -1831,8 +1837,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         training_type: trainingType,
         queue_type: pendingAddStudent.queue_type,
         status: startDate ? 'training' : 'waiting',
-        requested_at: requestedDate ? new Date(requestedDate).toISOString() : new Date().toISOString(),
-        training_started_at: startDate ? new Date(startDate).toISOString() : null,
+        requested_at: localDateToISO(requestedDate),
+        training_started_at: startDate ? localDateToISO(startDate) : null,
         sort_order: 999
       });
       toast(`${pendingAddStudent.first_name} ${pendingAddStudent.last_name} added to ${pendingAddStudent.queue_type} queue.`);
@@ -2895,8 +2901,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         cid: pendingCompStudent.cid,
         training_type: trainingType,
         trainer_name: trainer || null,
-        training_started_at: startDate ? new Date(startDate).toISOString() : null,
-        completed_at: endDate ? new Date(endDate).toISOString() : new Date().toISOString(),
+        training_started_at: startDate ? localDateToISO(startDate) : null,
+        completed_at: endDate ? localDateToISO(endDate) : new Date().toISOString(),
       });
       toast('Completed training record added.');
       closeModal('addCompletedModal');
@@ -2948,8 +2954,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         cid: pendingRemStudent.cid,
         training_type: trainingType,
         queue_type: queueType,
-        joined_at: joinedDate ? new Date(joinedDate).toISOString() : null,
-        removed_at: removedDate ? new Date(removedDate).toISOString() : new Date().toISOString(),
+        joined_at: joinedDate ? localDateToISO(joinedDate) : null,
+        removed_at: removedDate ? localDateToISO(removedDate) : new Date().toISOString(),
         removal_notes: notes || null,
       });
       toast('Removed student record added.');
@@ -2982,8 +2988,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       await SB.update('completed_training', `id=eq.${editingCompletedId}`, {
         training_type: trainingType,
         trainer_name: trainer || null,
-        training_started_at: startDate ? new Date(startDate).toISOString() : null,
-        completed_at: endDate ? new Date(endDate).toISOString() : null,
+        training_started_at: startDate ? localDateToISO(startDate) : null,
+        completed_at: endDate ? localDateToISO(endDate) : null,
         notes: notes || null,
       });
       toast('Record updated.');
@@ -3026,8 +3032,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       await SB.update('removed_students', `id=eq.${editingRemovedId}`, {
         training_type: trainingType,
         queue_type: queueType,
-        joined_at: joinedDate ? new Date(joinedDate).toISOString() : null,
-        removed_at: removedDate ? new Date(removedDate).toISOString() : null,
+        joined_at: joinedDate ? localDateToISO(joinedDate) : null,
+        removed_at: removedDate ? localDateToISO(removedDate) : null,
         removal_notes: notes || null,
       });
       toast('Record updated.');
