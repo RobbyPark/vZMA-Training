@@ -1526,9 +1526,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     async function confirmReject(silent = false) {
       const prefab = document.getElementById('rejectPrefab').value;
       const custom = document.getElementById('rejectCustomMsg').value.trim();
-      if (!prefab) { toast('Please select or write a reason.', 'error'); return; }
-      if (prefab === 'custom' && !custom) { toast('Please write a custom reason.', 'error'); return; }
-      const reason = prefab === 'custom' ? custom : (REJECT_MESSAGES[prefab] || prefab);
+      if (!silent && !prefab) { toast('Please select or write a reason.', 'error'); return; }
+      if (!silent && prefab === 'custom' && !custom) { toast('Please write a custom reason.', 'error'); return; }
+      const reason = prefab === 'custom' ? custom : (REJECT_MESSAGES[prefab] || prefab || 'Rejected silently');
       try {
         await SB.update('training_requests', `id=eq.${state.currentRejectId}`, {
           status: 'rejected', rejected_at: new Date().toISOString(), rejection_reason: reason
@@ -1726,9 +1726,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     async function confirmRemove(silent = false) {
       const reason = document.getElementById('removeReason').value;
-      if (!reason) { toast('Select a reason.', 'error'); return; }
+      if (!silent && !reason) { toast('Select a reason.', 'error'); return; }
       const notes = document.getElementById('removeNotes').value.trim();
-      const removalNotes = reason === 'custom' ? notes : reason;
+      const removalNotes = reason === 'custom' ? notes : (reason || 'Removed silently');
 
       const [entry] = await SB.query('training_queue', `?id=eq.${state.currentRemoveId}`);
       await SB.update('training_queue', `id=eq.${state.currentRemoveId}`, { status: 'removed', removed_at: new Date().toISOString() });
@@ -1956,11 +1956,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     async function confirmExamReject(silent = false) {
       const prefab = document.getElementById('examRejectPrefab').value;
       const custom = document.getElementById('examRejectCustomMsg').value.trim();
-      if (!prefab) { toast('Select a reason.', 'error'); return; }
-      if (prefab === 'custom' && !custom) { toast('Please write a custom reason.', 'error'); return; }
+      if (!silent && !prefab) { toast('Select a reason.', 'error'); return; }
+      if (!silent && prefab === 'custom' && !custom) { toast('Please write a custom reason.', 'error'); return; }
 
       const ineligibilityMsg = `You are currently not eligible to complete the requested exam. Please review the T01 documentation through the ZMA website for more information.`;
-      const reason = prefab === 'ineligibility' ? ineligibilityMsg : custom;
+      const reason = prefab === 'ineligibility' ? ineligibilityMsg : (custom || 'Rejected silently');
 
       await SB.update('exam_requests', `id=eq.${state.currentExamRejectId}`, {
         status: 'rejected', resolved_at: new Date().toISOString(), rejection_reason: reason
