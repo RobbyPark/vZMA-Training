@@ -162,6 +162,11 @@ const VATUSA = {
 // ============================================================
 const EM = {
 
+  _decode(str) {
+    if (!str) return str;
+    return str.replace(/&#x2F;/g,'/').replace(/&#x27;/g,"'").replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  },
+
   // Shared professional shell — injected into the master template
   _wrap(headerText, bodyHtml) {
     return `
@@ -225,6 +230,7 @@ const EM = {
 
   // ── 2a. Queue approval (added to waiting list) ──────────
   async sendQueueApproval(toEmail, toName, trainingType) {
+    trainingType = this._decode(trainingType);
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${toName}</strong>,</p>
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
@@ -244,6 +250,7 @@ const EM = {
 
   // ── 2. Approval WITH exam password ──────────────────────
   async sendApprovalWithExam(toEmail, toName, trainingType, examPassword) {
+    trainingType = this._decode(trainingType);
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${toName}</strong>,</p>
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
@@ -283,6 +290,7 @@ const EM = {
 
   // ── 3. Approval WITHOUT exam password ───────────────────
   async sendApprovalNoExam(toEmail, toName, trainingType) {
+    trainingType = this._decode(trainingType);
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${toName}</strong>,</p>
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
@@ -321,20 +329,6 @@ const EM = {
   },
 
   // ── 5. Training completion ───────────────────────────────
-  async sendCompletion(toEmail, toName, trainingType) {
-    const body = `
-      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${toName}</strong>,</p>
-      <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
-        Congratulations on completing your <strong>${trainingType}</strong> training with ZMA Miami ARTCC! We are proud of the hard work and dedication you have shown throughout this process.
-      </p>
-      <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
-        If you have any questions about next steps, please reach out at <a href="mailto:ta@zmaartcc.net" style="color:#1e4d8c;font-weight:600;">ta@zmaartcc.net</a> or in the Miami ARTCC Discord.
-      </p>
-      <p style="margin:0;font-size:15px;color:#334155;line-height:1.6;">Best regards,<br><strong>ZMA Training Team</strong></p>`;
-
-    return this._send(toEmail, 'ZMA ARTCC — Training Completed', 'Training Completed', body);
-  },
-
   // ── 6. Exam password request approved ───────────────────
   async sendExamPasswordApproved(toEmail, toName, examTitle, examPassword) {
     const body = `
@@ -373,6 +367,7 @@ const EM = {
 
   // ── 8. Trainer assigned — sent to STUDENT ───────────────
   async sendTrainerAssignedStudent(toEmail, studentName, trainerName, trainingType) {
+    trainingType = this._decode(trainingType);
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${studentName}</strong>,</p>
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
@@ -414,6 +409,7 @@ const EM = {
 
   // ── 9. Trainer assigned — sent to TRAINER ───────────────
   async sendTrainerAssignedTrainer(toEmail, trainerName, studentName, trainingType) {
+    trainingType = this._decode(trainingType);
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${trainerName}</strong>,</p>
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
@@ -484,6 +480,7 @@ const EM = {
 
   // ── 12. Training completion (updated) ───────────────────
   async sendCompletion(toEmail, studentName, trainingType) {
+    trainingType = this._decode(trainingType);
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${studentName}</strong>,</p>
 
