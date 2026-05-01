@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Training Thread — ZMA ARTCC</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+    :root {
+      --blue-900:#0a1628;--blue-600:#1e4d8c;--blue-50:#eff6ff;
+      --white:#ffffff;--gray-50:#f8fafc;--gray-100:#f1f5f9;
+      --gray-200:#e2e8f0;--gray-400:#94a3b8;--gray-500:#64748b;
+      --gray-700:#334155;--gray-800:#1e293b;
+      --green-500:#22c55e;--green-100:#dcfce7;
+      --red-500:#ef4444;--red-100:#fee2e2;
+      --radius:10px;--shadow:0 4px 12px rgba(0,0,0,.08);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:15px}
+    body{font-family:'DM Sans',sans-serif;background:var(--gray-50);color:var(--gray-800);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+
+    nav{background:var(--white);border-bottom:1px solid var(--gray-200);padding:0 32px;height:64px;display:flex;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .nav-badge{background:var(--blue-600);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-right:12px}
+    .nav-title{font-size:1rem;font-weight:600;color:var(--blue-900)}
+
+    main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px}
+
+    .card{background:var(--white);border:1px solid var(--gray-200);border-radius:16px;padding:40px;max-width:480px;width:100%;box-shadow:var(--shadow);text-align:center}
+
+    .icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.6rem}
+    .icon-blue{background:var(--blue-50)}
+    .icon-green{background:var(--green-100)}
+    .icon-red{background:var(--red-100)}
+    .icon-gray{background:var(--gray-100)}
+
+    h1{font-size:1.3rem;font-weight:700;color:var(--blue-900);margin-bottom:8px}
+    .subtitle{font-size:.9rem;color:var(--gray-500);line-height:1.6;margin-bottom:28px}
+
+    .info-box{background:var(--blue-50);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;text-align:left}
+    .info-row{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;margin-bottom:6px}
+    .info-row:last-child{margin-bottom:0}
+    .info-label{color:var(--gray-500);font-weight:500}
+    .info-value{color:var(--gray-800);font-weight:600}
+
+    .timer-box{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius);padding:12px 16px;margin-bottom:24px;font-size:.82rem;color:var(--gray-500);display:flex;align-items:center;gap:8px}
+    .timer-box.urgent{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+    .timer-box.expired{background:var(--red-100);border-color:#fecaca;color:var(--red-500)}
+
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 28px;border-radius:var(--radius);font-size:.95rem;font-weight:600;cursor:pointer;border:none;width:100%;transition:opacity .15s}
+    .btn-primary{background:var(--blue-600);color:#fff}
+    .btn-primary:hover{opacity:.9}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+    .btn-success{background:#16a34a;color:#fff}
+
+    .status{display:none;margin-top:20px;padding:14px 18px;border-radius:var(--radius);font-size:.88rem;font-weight:500;line-height:1.5}
+    .status-success{background:var(--green-100);color:#16a34a;border:1px solid #bbf7d0}
+    .status-error{background:var(--red-100);color:var(--red-500);border:1px solid #fecaca}
+
+    footer{text-align:center;padding:16px;font-size:.72rem;color:var(--gray-400);border-top:1px solid var(--gray-200);background:var(--white)}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-badge">ZMA ARTCC</span>
+    <span class="nav-title">Training Thread Setup</span>
+  </nav>
+
+  <main>
+    <div class="card" id="mainCard">
+      <div class="icon icon-blue" id="cardIcon">🎓</div>
+      <h1 id="cardTitle">Create Your Training Thread</h1>
+      <p class="subtitle" id="cardSubtitle">Click the button below to create your private Discord training thread. Once created, please post your availability within 96 hours; otherwise, your training assignment will be removed.</p>
+
+      <div class="info-box" id="infoBox" style="display:none;">
+        <div class="info-row"><span class="info-label">Training Program</span><span class="info-value" id="infoType">—</span></div>
+        <div class="info-row"><span class="info-label">Assigned Trainer</span><span class="info-value" id="infoTrainer">—</span></div>
+      </div>
+
+      <div class="timer-box" id="timerBox">
+        <span>⏱</span>
+        <span id="timerText">Loading...</span>
+      </div>
+
+      <button class="btn btn-primary" id="createBtn" onclick="createThread()" disabled>
+        Create My Discord Thread
+      </button>
+
+      <div class="status" id="statusBox"></div>
+    </div>
+  </main>
+
+  <footer>For simulation purposes only. All content is used exclusively within the virtual Miami ARTCC (ZMA). Not affiliated with real-world aviation.</footer>
+
+  <script>
+    const WORKER_URL = 'https://zma-thread.parknavy01.workers.dev/create-thread';
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    const trainer = params.get('trainer');
+    const type = params.get('type');
+    const expires = parseInt(params.get('expires') || '0');
+
+    let threadCreated = false;
+
+    function formatTimeLeft(ms) {
+      if (ms <= 0) return null;
+      const h = Math.floor(ms / 3600000);
+      const m = Math.floor((ms % 3600000) / 60000);
+      if (h > 0) return `${h}h ${m}m remaining`;
+      return `${m} minutes remaining`;
+    }
+
+    function init() {
+      if (!cid || !expires) {
+        showError('Invalid link. Please use the link provided in your email.');
+        return;
+      }
+
+      const now = Date.now();
+      const timeLeft = expires - now;
+
+      // Show info box
+      if (type || trainer) {
+        document.getElementById('infoBox').style.display = 'block';
+        document.getElementById('infoType').textContent = type ? decodeURIComponent(type) : '—';
+        document.getElementById('infoTrainer').textContent = trainer ? decodeURIComponent(trainer) : '—';
+      }
+
+      if (timeLeft <= 0) {
+        // Expired
+        document.getElementById('timerBox').className = 'timer-box expired';
+        document.getElementById('timerText').textContent = 'This link has expired.';
+        document.getElementById('createBtn').disabled = true;
+        document.getElementById('cardTitle').textContent = 'Link Expired';
+        document.getElementById('cardSubtitle').textContent = 'This link has expired. Please contact ta@zmaartcc.net for assistance.';
+        document.getElementById('cardIcon').textContent = '⏰';
+        return;
+      }
+
+      // Show timer
+      const timerBox = document.getElementById('timerBox');
+      const timerText = document.getElementById('timerText');
+      timerBox.className = timeLeft < 3600000 * 12 ? 'timer-box urgent' : 'timer-box';
+      timerText.textContent = 'You have ' + formatTimeLeft(timeLeft) + ' to create your thread.';
+      document.getElementById('createBtn').disabled = false;
+
+      // Live countdown
+      const interval = setInterval(() => {
+        const left = expires - Date.now();
+        if (left <= 0) {
+          clearInterval(interval);
+          timerBox.className = 'timer-box expired';
+          timerText.textContent = 'This link has expired.';
+          document.getElementById('createBtn').disabled = true;
+        } else {
+          timerBox.className = left < 3600000 * 12 ? 'timer-box urgent' : 'timer-box';
+          timerText.textContent = 'You have ' + formatTimeLeft(left) + ' to create your thread.';
+        }
+      }, 30000);
+    }
+
+    async function createThread() {
+      if (threadCreated) return;
+      const btn = document.getElementById('createBtn');
+      btn.disabled = true;
+      btn.textContent = 'Creating thread...';
+
+      const url = `${WORKER_URL}?cid=${encodeURIComponent(cid)}&trainer=${encodeURIComponent(trainer||'')}&type=${encodeURIComponent(type||'')}&expires=${expires}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.success) {
+          threadCreated = true;
+          btn.className = 'btn btn-success';
+          btn.textContent = '✓ Thread Created!';
+          showSuccess(`Your training thread "<strong>${data.thread_name}</strong>" has been created in Discord. Please check your Discord for the thread and post your availability within 96 hours.`);
+          document.getElementById('timerBox').style.display = 'none';
+        } else if (data.error === 'expired') {
+          showError('This link has expired. Please contact ta@zmaartcc.net for assistance.');
+          btn.textContent = 'Link Expired';
+        } else if (data.error === 'no_discord') {
+          showError('Your VATSIM account is not linked to Discord. Please link it at <a href="https://vatsim.net" target="_blank">vatsim.net</a> and try again.');
+          btn.disabled = false;
+          btn.textContent = 'Create My Discord Thread';
+        } else {
+          showError('Something went wrong. Please try again or contact ta@zmaartcc.net.');
+          btn.disabled = false;
+          btn.textContent = 'Create My Discord Thread';
+        }
+      } catch(e) {
+        showError('Could not connect. Please try again or contact ta@zmaartcc.net.');
+        btn.disabled = false;
+        btn.textContent = 'Create My Discord Thread';
+      }
+    }
+
+    function showSuccess(msg) {
+      const box = document.getElementById('statusBox');
+      box.className = 'status status-success';
+      box.innerHTML = '✓ ' + msg;
+      box.style.display = 'block';
+    }
+
+    function showError(msg) {
+      const box = document.getElementById('statusBox');
+      box.className = 'status status-error';
+      box.innerHTML = '✕ ' + msg;
+      box.style.display = 'block';
+      document.getElementById('createBtn').disabled = true;
+    }
+
+    init();
+  </script>
+</body>
+</html>

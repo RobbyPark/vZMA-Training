@@ -1673,7 +1673,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         try {
           const studentCtrl = await VATUSA.getController(state.currentTrainerStudentCid);
           if (studentCtrl?.email) {
-            await EM.sendTrainerAssignedStudent(studentCtrl.email, state.currentTrainerStudentName, trainerName, state.currentTrainerTrainingType);
+            await EM.sendTrainerAssignedStudent(studentCtrl.email, state.currentTrainerStudentName, trainerName, state.currentTrainerTrainingType, state.currentTrainerStudentCid);
           }
           if (trainerCid) {
             const trainerCtrl = await VATUSA.getController(trainerCid);
