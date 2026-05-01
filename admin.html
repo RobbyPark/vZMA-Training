@@ -1659,6 +1659,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     async function confirmTrainerAssign(silent = false) {
+      // Prevent double-click
+      document.querySelectorAll('#trainerModal .btn').forEach(b => b.disabled = true);
       const sel = document.getElementById('trainerSelect');
       const trainerId = sel.value;
       const trainerName = sel.options[sel.selectedIndex].textContent;
