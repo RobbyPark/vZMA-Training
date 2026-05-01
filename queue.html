@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Queue — ZMA Miami ARTCC</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+    :root {
+      --blue-900:#0a1628;--blue-600:#1e4d8c;--blue-50:#eff6ff;
+      --white:#ffffff;--gray-50:#f8fafc;--gray-100:#f1f5f9;
+      --gray-200:#e2e8f0;--gray-400:#94a3b8;--gray-500:#64748b;
+      --gray-700:#334155;--gray-800:#1e293b;
+      --radius:10px;--shadow-sm:0 1px 3px rgba(0,0,0,.06);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:15px}
+    body{font-family:'DM Sans',sans-serif;background:var(--gray-50);color:var(--gray-800);-webkit-font-smoothing:antialiased;min-height:100vh}
+    nav{background:var(--white);border-bottom:1px solid var(--gray-200);padding:0 32px;height:64px;display:flex;align-items:center;box-shadow:var(--shadow-sm)}
+    .nav-badge{background:var(--blue-600);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-right:12px}
+    .nav-title{font-size:1rem;font-weight:600;color:var(--blue-900)}
+    .nav-right{margin-left:auto;font-size:.78rem;color:var(--gray-400);display:flex;align-items:center;gap:6px}
+    .live-dot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .page{max-width:760px;margin:40px auto;padding:0 24px 80px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+    .stat{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px 20px;text-align:center;box-shadow:var(--shadow-sm)}
+    .stat-num{font-size:1.8rem;font-weight:700;color:var(--blue-600);line-height:1;margin-bottom:4px}
+    .stat-label{font-size:.72rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.08em}
+    .section{margin-bottom:28px}
+    .section-header{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-400);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+    .section-header::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+    .queue-table{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+    table{width:100%;border-collapse:collapse}
+    thead th{background:var(--gray-50);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);padding:10px 16px;text-align:left;border-bottom:1px solid var(--gray-200)}
+    tbody tr{border-bottom:1px solid var(--gray-100)}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:var(--gray-50)}
+    td{padding:12px 16px;font-size:.88rem;color:var(--gray-700)}
+    td.pos{font-weight:700;color:var(--gray-400);width:40px;text-align:center}
+    td.name{font-weight:600;color:var(--gray-800)}
+    td.date{color:var(--gray-400);font-size:.82rem}
+    .badge{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:100px}
+    .badge-waiting{background:var(--gray-100);color:var(--gray-500)}
+    .badge-training{background:#dcfce7;color:#16a34a}
+    .empty{padding:32px;text-align:center;color:var(--gray-400);font-size:.88rem}
+    footer{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.82);backdrop-filter:blur(4px);text-align:center;padding:6px 16px;font-size:.72rem;color:rgba(255,255,255,.45)}
+  </style>
+</head>
+<body>
+  <nav>
+    <span class="nav-badge">ZMA ARTCC</span>
+    <span class="nav-title">Training Queue</span>
+    <div class="nav-right"><div class="live-dot"></div><span id="lastUpdated">Loading...</span></div>
+  </nav>
+  <div class="page">
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total</div></div>
+      <div class="stat"><div class="stat-num" id="statWaiting">—</div><div class="stat-label">Waiting</div></div>
+      <div class="stat"><div class="stat-num" id="statTraining">—</div><div class="stat-label">In Training</div></div>
+    </div>
+    <div id="content"></div>
+  </div>
+  <footer>For simulation purposes only. All content is used exclusively within the virtual Miami ARTCC (ZMA). Not affiliated with real-world aviation.</footer>
+  <script src="js/config.js"></script>
+  <script>
+    function fmt(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+    function section(label,students){
+      const rows=students.length?students.map((s,i)=>`<tr><td class="pos">${i+1}</td><td class="name">${s.first_name} ${s.last_name}</td><td>${s.training_type||'—'}</td><td class="date">${fmt(s.requested_at)}</td><td><span class="badge ${s.status==='training'?'badge-training':'badge-waiting'}">${s.status==='training'?'In Training':'Waiting'}</span></td></tr>`).join(''):`<tr><td colspan="5" class="empty">No students in this queue.</td></tr>`;
+      return`<div class="section"><div class="section-header">${label} &nbsp;${students.length} student${students.length!==1?'s':''}</div><div class="queue-table"><table><thead><tr><th>#</th><th>Name</th><th>Training Type</th><th>Requested</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    }
+    async function load(){
+      const h={'apikey':CONFIG.SUPABASE_KEY,'Authorization':'Bearer '+CONFIG.SUPABASE_KEY,'Cache-Control':'no-cache'};
+      const [hr,vr]=await Promise.all([fetch(`${CONFIG.SUPABASE_URL}/rest/v1/training_queue?queue_type=eq.home&status=not.in.(completed,removed)&order=sort_order.asc,requested_at.asc`,{headers:h}),fetch(`${CONFIG.SUPABASE_URL}/rest/v1/training_queue?queue_type=eq.visitor&status=not.in.(completed,removed)&order=sort_order.asc,requested_at.asc`,{headers:h})]);
+      const home=await hr.json(),visitor=await vr.json(),all=[...home,...visitor];
+      document.getElementById('statTotal').textContent=all.length;
+      document.getElementById('statWaiting').textContent=all.filter(s=>s.status==='waiting').length;
+      document.getElementById('statTraining').textContent=all.filter(s=>s.status==='training').length;
+      document.getElementById('content').innerHTML=section('Home Controller Queue',home)+section('Visitor Queue',visitor);
+      document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    }
+    load();setInterval(load,60000);
+  </script>
+</body>
+</html>
