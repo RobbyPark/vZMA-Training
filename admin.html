@@ -1492,6 +1492,13 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           requested_at: req.requested_at || new Date().toISOString(),
         });
         toast(`${firstName} ${lastName} approved and added to ${queueType} queue.`);
+        // Send approval email
+        try {
+          const ctrl = await VATUSA.getController(cid);
+          if (ctrl?.email) {
+            await EM.sendQueueApproval(ctrl.email, `${firstName} ${lastName}`, trainingType);
+          }
+        } catch(e) { console.error('Approval email error:', e); }
         loadQueues();
       } catch (e) { console.error(e); toast('Error approving request', 'error'); }
     }
@@ -1709,7 +1716,10 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         cid, training_type: trainingType, trainer_name: trainerName,
         training_started_at: requestedAt, completed_at: new Date().toISOString()
       });
-      if (email) await EM.sendCompletion(email, `${firstName} ${lastName}`, trainingType);
+      try {
+        const toEmail = email || (await VATUSA.getController(cid))?.email;
+        if (toEmail) await EM.sendCompletion(toEmail, `${firstName} ${lastName}`, trainingType);
+      } catch(e) { console.error('Completion email error:', e); }
       toast('Marked complete.');
       loadQueues();
     }
