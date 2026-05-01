@@ -366,8 +366,11 @@ const EM = {
   },
 
   // ── 8. Trainer assigned — sent to STUDENT ───────────────
-  async sendTrainerAssignedStudent(toEmail, studentName, trainerName, trainingType) {
+  async sendTrainerAssignedStudent(toEmail, studentName, trainerName, trainingType, cid) {
     trainingType = this._decode(trainingType);
+    const expires = Date.now() + (96 * 60 * 60 * 1000); // 96 hours from now
+    const threadUrl = `https://robbypark.github.io/vZMA-Training/create-thread.html?cid=${cid}&trainer=${encodeURIComponent(trainerName)}&type=${encodeURIComponent(trainingType)}&expires=${expires}`;
+
     const body = `
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${studentName}</strong>,</p>
       <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
@@ -392,7 +395,15 @@ const EM = {
       <table width="100%" cellpadding="0" cellspacing="0" style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;margin-bottom:24px;">
         <tr><td style="padding:16px 20px;">
           <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px;">⚠ Action Required Within 96 Hours</div>
-          <div style="font-size:14px;color:#78350f;line-height:1.6;">A Discord thread will be created within 24 hours. Please provide your availability in the Discord thread within <strong>96 hours</strong>; otherwise, you will be unassigned and removed from the training queue.</div>
+          <div style="font-size:14px;color:#78350f;line-height:1.6;">Please click the button below to create your private Discord training thread. You have <strong>96 hours</strong> to create your thread and accept your training — otherwise your assignment will be removed.</div>
+        </td></tr>
+      </table>
+
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+        <tr><td align="center">
+          <a href="${threadUrl}" style="display:inline-block;background:#1e4d8c;color:#ffffff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:.01em;">
+            Create My Discord Thread
+          </a>
         </td></tr>
       </table>
 
