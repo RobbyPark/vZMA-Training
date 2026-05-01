@@ -223,6 +223,25 @@ const EM = {
     } catch(e) { console.error('Confirmation email error:', e); return false; }
   },
 
+  // ── 2a. Queue approval (added to waiting list) ──────────
+  async sendQueueApproval(toEmail, toName, trainingType) {
+    const body = `
+      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Hello <strong>${toName}</strong>,</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
+        Your request to join the ZMA training queue for <strong>${trainingType}</strong> has been approved. During this waiting time, please ensure that you review all materials and are fully prepared to begin training once you are assigned a trainer.
+      </p>
+      <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
+        You should have a thorough understanding of all required
+        <a href="https://docs.google.com/spreadsheets/d/1jNdQUqyKbeZa6OU1Ls02p0aRNfrI2TN6rE1SxlhE9Wo/edit?gid=1564061930#gid=1564061930" style="color:#1e4d8c;font-weight:600;">competencies</a>
+        for your rating before beginning training. If you have any questions regarding the training content, please be sure to ask within the ZMA Discord or email
+        <a href="mailto:training@zmaartcc.net" style="color:#1e4d8c;font-weight:600;">training@zmaartcc.net</a>.
+      </p>
+      <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">Thank you in advance for your patience.</p>
+      <p style="margin:0;font-size:15px;color:#334155;line-height:1.6;">Best regards,<br><strong>ZMA Training Team</strong></p>`;
+
+    return this._send(toEmail, `ZMA ARTCC — Training Queue Approved: ${trainingType}`, 'Training Queue Approved', body);
+  },
+
   // ── 2. Approval WITH exam password ──────────────────────
   async sendApprovalWithExam(toEmail, toName, trainingType, examPassword) {
     const body = `
