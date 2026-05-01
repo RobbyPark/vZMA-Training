@@ -1729,7 +1729,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           console.warn('markComplete - no email found for', cid);
         }
         // Remove In Training Discord role
-        fetch(`https://zma-thread.parknavy01.workers.dev/remove-role?cid=${cid}`).catch(e => console.warn('Role removal error:', e));
+        try {
+          const roleRes = await fetch(`https://zma-thread.parknavy01.workers.dev/remove-role?cid=${cid}`);
+          const roleData = await roleRes.json();
+          console.log('Role removal result:', roleData);
+        } catch(e) { console.warn('Role removal error:', e); }
       } catch(e) { console.error('Completion email error:', e); }
       toast('Marked complete.');
       loadQueues();
