@@ -1717,8 +1717,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         training_started_at: requestedAt, completed_at: new Date().toISOString()
       });
       try {
-        const toEmail = email || (await VATUSA.getController(cid))?.email;
-        if (toEmail) await EM.sendCompletion(toEmail, `${firstName} ${lastName}`, trainingType);
+        const ctrl = await VATUSA.getController(cid);
+        console.log('markComplete - cid:', cid, 'email param:', email, 'vatusa email:', ctrl?.email);
+        const toEmail = email || ctrl?.email;
+        if (toEmail) {
+          const result = await EM.sendCompletion(toEmail, `${firstName} ${lastName}`, trainingType);
+          console.log('sendCompletion result:', result);
+        } else {
+          console.warn('markComplete - no email found for', cid);
+        }
       } catch(e) { console.error('Completion email error:', e); }
       toast('Marked complete.');
       loadQueues();
