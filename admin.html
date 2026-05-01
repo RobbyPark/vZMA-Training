@@ -1675,11 +1675,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           if (studentCtrl?.email) {
             await EM.sendTrainerAssignedStudent(studentCtrl.email, state.currentTrainerStudentName, trainerName, state.currentTrainerTrainingType, state.currentTrainerStudentCid);
           }
-          if (trainerCid) {
-            const trainerCtrl = await VATUSA.getController(trainerCid);
-            if (trainerCtrl?.email) {
-              await EM.sendTrainerAssignedTrainer(trainerCtrl.email, trainerName, state.currentTrainerStudentName, state.currentTrainerTrainingType);
-            }
+          // Build trainer VATUSA email from their name: firstname.lastname@vatusa.net
+          const nameParts = trainerName.trim().toLowerCase().split(' ');
+          if (nameParts.length >= 2) {
+            const trainerEmail = `${nameParts[0]}.${nameParts[nameParts.length - 1]}@vatusa.net`;
+            await EM.sendTrainerAssignedTrainer(trainerEmail, trainerName, state.currentTrainerStudentName, state.currentTrainerTrainingType);
           }
         } catch(e) { console.error('Trainer assign email error:', e); }
         toast('Trainer assigned and emails sent.');
