@@ -994,7 +994,16 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <div class="tab-content" id="tab-admin">
           <div class="page-header"><h1>Admin Dashboard</h1></div>
 
-          <!-- Training Stats -->
+          <!-- PIN Reset -->
+          <div class="card mb-4">
+            <div class="card-header"><span class="card-title">Reset Student PIN</span></div>
+            <p class="text-muted" style="margin-bottom:12px;font-size:.875rem;">Enter a student's CID to reset their exam center PIN. They will be prompted to create a new one on next login.</p>
+            <div class="flex gap-2">
+              <input class="form-input" id="pinResetCid" type="text" placeholder="Enter CID..." style="max-width:200px;">
+              <button class="btn btn-danger" onclick="resetStudentPin()">Reset PIN</button>
+            </div>
+            <div id="pinResetStatus" style="margin-top:8px;font-size:.85rem;"></div>
+          </div>
           <div class="card mb-4">
             <div class="card-header"><span class="card-title">Training Statistics</span></div>
             <div id="trainingStatsGrid"></div>
@@ -2900,6 +2909,20 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // ===================== ADMIN TAB =====================
+    async function resetStudentPin() {
+      const cid = document.getElementById('pinResetCid').value.trim();
+      const statusEl = document.getElementById('pinResetStatus');
+      if (!cid) { statusEl.innerHTML = '<span style="color:var(--red-500);">Please enter a CID.</span>'; return; }
+      const existing = await SB.query('student_pins', `?cid=eq.${cid}`);
+      if (!existing.length) {
+        statusEl.innerHTML = '<span style="color:var(--gray-500);">No PIN found for this CID — student has not yet set one.</span>';
+        return;
+      }
+      await SB.delete('student_pins', `cid=eq.${cid}`);
+      statusEl.innerHTML = '<span style="color:var(--green-500);">✓ PIN reset. Student will be prompted to create a new one on next login.</span>';
+      document.getElementById('pinResetCid').value = '';
+    }
+
     async function loadAdmin() {
       loadTrainingStats();
       loadTrainers();

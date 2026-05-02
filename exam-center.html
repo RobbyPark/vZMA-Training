@@ -811,12 +811,35 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <p>Enter your VATSIM CID to access the exam center. You must be a current home or visiting member of ZMA ARTCC.</p>
         </div>
         <div class="card">
-          <div class="form-group">
-            <label class="form-label">VATSIM CID</label>
-            <input type="text" class="form-input" id="loginCid" placeholder="e.g. 1234567" inputmode="numeric">
-            <div class="cid-status" id="loginCidStatus"></div>
+          <!-- Step 1: CID -->
+          <div id="stepCid">
+            <div class="form-group">
+              <label class="form-label">VATSIM CID</label>
+              <input type="text" class="form-input" id="loginCid" placeholder="e.g. 1234567" inputmode="numeric" onkeydown="if(event.key==='Enter')attemptLogin()">
+              <div class="cid-status" id="loginCidStatus"></div>
+            </div>
+            <button class="btn btn-primary btn-lg" id="loginBtn" onclick="attemptLogin()">Continue</button>
           </div>
-          <button class="btn btn-primary btn-lg" id="loginBtn" onclick="attemptLogin()">Access Exam Center</button>
+
+          <!-- Step 2: PIN (shown after CID verified) -->
+          <div id="stepPin" style="display:none;">
+            <div class="form-group">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <button onclick="resetToStep1()" style="background:none;border:none;color:var(--blue-600);cursor:pointer;font-size:.85rem;padding:0;">← Back</button>
+                <span id="pinStudentName" style="font-size:.9rem;font-weight:600;color:var(--gray-700);"></span>
+              </div>
+              <label class="form-label" id="pinLabel">Enter your PIN</label>
+              <input type="password" class="form-input" id="pinInput" placeholder="3-4 digit PIN" inputmode="numeric" maxlength="4" onkeydown="if(event.key==='Enter')submitPin()">
+              <div class="cid-status" id="pinStatus"></div>
+            </div>
+            <div id="pinConfirmGroup" style="display:none;">
+              <div class="form-group">
+                <label class="form-label">Confirm PIN</label>
+                <input type="password" class="form-input" id="pinConfirm" placeholder="Re-enter PIN" inputmode="numeric" maxlength="4" onkeydown="if(event.key==='Enter')submitPin()">
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg" id="pinBtn" onclick="submitPin()">Access Exam Center</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1002,6 +1025,30 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     let timeLeft = 0;
 
     // ===================== LOGIN =====================
+    let pendingLoginStudent = null;
+    let isNewPin = false;
+
+    async function hashPin(pin) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(pin + 'zma_salt_2026');
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function resetToStep1() {
+      pendingLoginStudent = null;
+      isNewPin = false;
+      document.getElementById('stepCid').style.display = 'block';
+      document.getElementById('stepPin').style.display = 'none';
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinConfirm').value = '';
+      document.getElementById('pinStatus').innerHTML = '';
+      document.getElementById('loginCidStatus').innerHTML = '';
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = false;
+      btn.textContent = 'Continue';
+    }
+
     async function attemptLogin() {
       const cid = document.getElementById('loginCid').value.trim();
       if (!cid) return;
@@ -1013,39 +1060,89 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         if (!membership) {
           status.className = 'cid-status not-found';
           status.innerHTML = 'You are not a home or visiting member of ZMA ARTCC.';
-          btn.disabled = false; btn.textContent = 'Access Exam Center';
+          btn.disabled = false; btn.textContent = 'Continue';
           return;
         }
         const ctrl = membership.controller;
-        currentStudent = {
-          cid,
+        pendingLoginStudent = {
+          cid: String(cid),
           name: `${ctrl.fname} ${ctrl.lname}`,
           rating: ctrl.rating,
           ratingName: VATUSA.ratingName(ctrl.rating),
         };
-        document.getElementById('loginView').style.display = 'none';
-        document.getElementById('mainView').style.display = 'block';
-        document.getElementById('studentNameBadge').textContent = `${currentStudent.name} — ${currentStudent.ratingName}`;
-        document.getElementById('requestRating').value = currentStudent.ratingName;
-        loadExamList();
-        loadMyGrades();
-        loadMyPasswords();
-        loadRequestableExams();
-      } catch (e) {
+        // Check if PIN exists
+        const existing = await SB.query('student_pins', `?cid=eq.${cid}`);
+        isNewPin = existing.length === 0;
+        document.getElementById('stepCid').style.display = 'none';
+        document.getElementById('stepPin').style.display = 'block';
+        document.getElementById('pinStudentName').textContent = pendingLoginStudent.name;
+        if (isNewPin) {
+          document.getElementById('pinLabel').textContent = 'Create a PIN (3-4 digits)';
+          document.getElementById('pinConfirmGroup').style.display = 'block';
+          document.getElementById('pinBtn').textContent = 'Create PIN & Enter';
+          document.getElementById('pinStatus').innerHTML = '<span style="color:var(--blue-600);font-size:.82rem;">First time here! Please create a PIN to secure your account.</span>';
+        } else {
+          document.getElementById('pinLabel').textContent = 'Enter your PIN';
+          document.getElementById('pinConfirmGroup').style.display = 'none';
+          document.getElementById('pinBtn').textContent = 'Access Exam Center';
+          document.getElementById('pinStatus').innerHTML = '';
+        }
+        document.getElementById('pinInput').focus();
+      } catch(e) {
         status.className = 'cid-status not-found';
         status.innerHTML = 'Verification failed. Please try again.';
-        btn.disabled = false; btn.textContent = 'Access Exam Center';
+        btn.disabled = false; btn.textContent = 'Continue';
       }
+    }
+
+    async function submitPin() {
+      const pin = document.getElementById('pinInput').value.trim();
+      const statusEl = document.getElementById('pinStatus');
+      const btn = document.getElementById('pinBtn');
+      if (!pin || pin.length < 3 || pin.length > 4 || !/^\d+$/.test(pin)) {
+        statusEl.innerHTML = '<span style="color:var(--red-500);">PIN must be 3 or 4 digits.</span>';
+        return;
+      }
+      if (isNewPin) {
+        const confirm = document.getElementById('pinConfirm').value.trim();
+        if (pin !== confirm) {
+          statusEl.innerHTML = '<span style="color:var(--red-500);">PINs do not match. Please try again.</span>';
+          return;
+        }
+        btn.disabled = true; btn.textContent = 'Saving...';
+        const hashed = await hashPin(pin);
+        await SB.insert('student_pins', { cid: pendingLoginStudent.cid, pin_hash: hashed, created_at: new Date().toISOString() });
+      } else {
+        btn.disabled = true; btn.textContent = 'Verifying...';
+        const hashed = await hashPin(pin);
+        const result = await SB.query('student_pins', `?cid=eq.${pendingLoginStudent.cid}`);
+        if (!result.length || result[0].pin_hash !== hashed) {
+          statusEl.innerHTML = '<span style="color:var(--red-500);">Incorrect PIN. Please try again.</span>';
+          btn.disabled = false; btn.textContent = 'Access Exam Center';
+          document.getElementById('pinInput').value = '';
+          document.getElementById('pinInput').focus();
+          return;
+        }
+      }
+      currentStudent = pendingLoginStudent;
+      pendingLoginStudent = null;
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('mainView').style.display = 'block';
+      document.getElementById('studentNameBadge').textContent = `${currentStudent.name} — ${currentStudent.ratingName}`;
+      document.getElementById('requestRating').value = currentStudent.ratingName;
+      loadExamList();
+      loadMyGrades();
+      loadMyPasswords();
+      loadRequestableExams();
     }
 
     function logout() {
       currentStudent = null;
+      pendingLoginStudent = null;
       seenPasswordExamIds = new Set();
       document.getElementById('loginCid').value = '';
       document.getElementById('loginCidStatus').innerHTML = '';
-      const btn = document.getElementById('loginBtn');
-      btn.disabled = false;
-      btn.textContent = 'Access Exam Center';
+      resetToStep1();
       document.getElementById('loginView').style.display = 'block';
       document.getElementById('mainView').style.display = 'none';
       document.getElementById('examTakingView').style.display = 'none';
