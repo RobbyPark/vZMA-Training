@@ -929,6 +929,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             </div>
           </div>
 
+          <!-- Certifications Pending Review -->
+          <div id="certReviewSection" style="display:none;margin-bottom:32px;">
+            <div style="background:linear-gradient(135deg,#1e4d8c,#2563eb);border-radius:12px;padding:20px 24px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                <span style="font-size:1.1rem;">🎓</span>
+                <span style="font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.8);">Certifications Pending Review</span>
+                <span id="certReviewCount" style="background:rgba(255,255,255,.2);color:#fff;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:auto;"></span>
+              </div>
+              <div id="certReviewBody"></div>
+            </div>
+          </div>
+
           <!-- Exam list by category -->
           <div id="adminExamList"></div>
 
@@ -2067,10 +2079,70 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     // ===================== EXAM CENTER (Admin) =====================
+    async function loadCertReview() {
+      // Get all exams that require cert review
+      const certExams = state.exams.filter(e => e.requires_cert_review);
+      if (!certExams.length) { document.getElementById('certReviewSection').style.display = 'none'; return; }
+
+      const examIds = certExams.map(e => e.id);
+      const attempts = await SB.query('exam_attempts',
+        `?exam_id=in.(${examIds.join(',')})&passed=eq.true&cert_reviewed=not.eq.true&order=submitted_at.desc`
+      );
+
+      if (!attempts.length) { document.getElementById('certReviewSection').style.display = 'none'; return; }
+
+      const examMap = Object.fromEntries(state.exams.map(e => [e.id, e]));
+      document.getElementById('certReviewSection').style.display = 'block';
+      document.getElementById('certReviewCount').textContent = `${attempts.length} pending`;
+
+      document.getElementById('certReviewBody').innerHTML = `
+        <div style="background:#fff;border-radius:8px;overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f8fafc;">
+                <th style="padding:10px 16px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;border-bottom:1px solid #e2e8f0;">Name</th>
+                <th style="padding:10px 16px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;border-bottom:1px solid #e2e8f0;">CID</th>
+                <th style="padding:10px 16px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;border-bottom:1px solid #e2e8f0;">Exam</th>
+                <th style="padding:10px 16px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;border-bottom:1px solid #e2e8f0;">Grade</th>
+                <th style="padding:10px 16px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;border-bottom:1px solid #e2e8f0;">Attempt</th>
+                <th style="padding:10px 16px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;border-bottom:1px solid #e2e8f0;">Date</th>
+                <th style="padding:10px 16px;border-bottom:1px solid #e2e8f0;"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${attempts.map(a => `
+                <tr id="cert-row-${a.id}" style="border-bottom:1px solid #f1f5f9;">
+                  <td style="padding:12px 16px;font-size:.88rem;font-weight:600;color:#1e293b;">${a.student_name || '—'}</td>
+                  <td style="padding:12px 16px;font-size:.88rem;color:#64748b;">${a.cid}</td>
+                  <td style="padding:12px 16px;font-size:.88rem;color:#334155;">${a.exam_title || examMap[a.exam_id]?.title || '—'}</td>
+                  <td style="padding:12px 16px;"><span style="background:#dcfce7;color:#16a34a;font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:100px;">${a.score}%</span></td>
+                  <td style="padding:12px 16px;font-size:.88rem;color:#64748b;">#${a.attempt_number || 1}</td>
+                  <td style="padding:12px 16px;font-size:.82rem;color:#94a3b8;">${formatDate(a.submitted_at)}</td>
+                  <td style="padding:12px 16px;">
+                    <button class="btn btn-primary btn-sm" onclick="markCertReviewed('${a.id}')">Reviewed</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    async function markCertReviewed(attemptId) {
+      await SB.update('exam_attempts', `id=eq.${attemptId}`, { cert_reviewed: true });
+      const row = document.getElementById(`cert-row-${attemptId}`);
+      if (row) row.remove();
+      // Hide section if no more rows
+      const remaining = document.querySelectorAll('#certReviewBody tbody tr').length;
+      if (!remaining) document.getElementById('certReviewSection').style.display = 'none';
+      else document.getElementById('certReviewCount').textContent = `${remaining} pending`;
+      toast('Marked as reviewed.');
+    }
+
     async function loadAdminExams() {
       state.exams = await SB.query('exams', '?order=created_at.desc');
       renderAdminExamList();
       populateStatsExamSelect();
+      loadCertReview();
     }
 
     function renderAdminExamList() {
@@ -2420,6 +2492,21 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             <span class="checkbox-label">Allow students to request this exam password from the Exam Center</span>
           </label>
         </div>
+        <div class="form-group">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="eb_cert_review" ${exam?.requires_cert_review?'checked':''}>
+            <span class="checkbox-label">Passing this exam requires certification review</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prerequisites <span style="font-size:.75rem;color:var(--gray-400);">(student must pass these exams before requesting this one)</span></label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--gray-200);border-radius:var(--radius);background:var(--gray-50);max-height:160px;overflow-y:auto;">
+            ${state.exams.filter(e => e.id !== examId).map(e => `
+              <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer;">
+                <input type="checkbox" class="eb_prerequisite" value="${e.id}" ${(exam?.prerequisites||[]).includes(e.id)?'checked':''}> ${e.title}
+              </label>`).join('') || '<span style="font-size:.82rem;color:var(--gray-400);">No other exams available.</span>'}
+          </div>
+        </div>
         <hr class="section-divider">
         <div class="flex items-center gap-3 mb-4">
           <span class="card-title">Questions</span>
@@ -2662,7 +2749,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         allowed_attempts: parseInt(document.getElementById('eb_allowed_attempts').value) || null,
         password: document.getElementById('eb_password').value.trim(),
         allow_password_request: document.getElementById('eb_allow_request').checked,
+        requires_cert_review: document.getElementById('eb_cert_review').checked,
         training_types: [...document.querySelectorAll('.eb_training_type:checked')].map(cb => cb.value),
+        prerequisites: [...document.querySelectorAll('.eb_prerequisite:checked')].map(cb => cb.value),
         is_published: publish,
         updated_at: new Date().toISOString(),
       };

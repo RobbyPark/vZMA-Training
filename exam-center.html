@@ -920,6 +920,20 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
   </div>
 
+  <!-- Locked Exam Modal -->
+  <div id="lockedExamModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:14px;max-width:440px;width:90%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🔒</div>
+      <h2 style="font-size:1.1rem;font-weight:700;color:var(--blue-900);margin-bottom:8px;">Exam Locked</h2>
+      <p style="font-size:.9rem;color:var(--gray-500);margin-bottom:16px;">You must pass the following exam(s) before you can access this one:</p>
+      <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;font-size:.88rem;color:#92400e;font-weight:600;margin-bottom:20px;" id="lockedExamPrereqList"></div>
+      <button onclick="document.getElementById('lockedExamModal').style.display='none'"
+        style="width:100%;padding:10px;background:var(--blue-600);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;">
+        OK
+      </button>
+    </div>
+  </div>
+
   <!-- Out of Attempts Modal -->
   <div id="outOfAttemptsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
     <div style="background:#fff;border-radius:14px;max-width:480px;width:90%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;">
@@ -1126,6 +1140,11 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       return '';
     }
 
+    function showLockedExamModal(prereqNames) {
+      document.getElementById('lockedExamPrereqList').textContent = prereqNames;
+      document.getElementById('lockedExamModal').style.display = 'flex';
+    }
+
     function showOutOfAttemptsModal(examTitle) {
       document.getElementById('outOfAttemptsTitle').textContent = examTitle;
       document.getElementById('outOfAttemptsModal').style.display = 'flex';
@@ -1161,18 +1180,25 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             ? `${remaining} of ${ex.allowed_attempts} attempt${ex.allowed_attempts > 1 ? 's' : ''} remaining`
             : 'Unlimited attempts';
 
+          const prereqs = ex.prerequisites || [];
+          const prereqsMet = prereqs.length === 0 || prereqs.every(pid => passedExamIds.has(pid));
+          const prereqNames = prereqs.length > 0 && !prereqsMet
+            ? prereqs.map(pid => { const e = exams.find(x => x.id === pid); return e ? e.title : pid; })
+            : [];
+
           let onclick = '';
-          if (noAttemptsLeft) onclick = `showOutOfAttemptsModal('${ex.title.replace(/'/g,"\\'")}')`;
+          if (!prereqsMet) onclick = `showLockedExamModal('${prereqNames.map(n => n.replace(/'/g,"\\'")).join(', ')}')`;
+          else if (noAttemptsLeft) onclick = `showOutOfAttemptsModal('${ex.title.replace(/'/g,"\\'")}')`;
           else if (remaining !== null && remaining <= 3) onclick = `confirmLowAttempts('${ex.id}', ${remaining})`;
           else onclick = `startExam('${ex.id}')`;
 
           html += `
-            <div class="exam-card" onclick="${onclick}" style="${noAttemptsLeft ? 'opacity:.6;' : ''}">
+            <div class="exam-card" onclick="${onclick}" style="${!prereqsMet || noAttemptsLeft ? 'opacity:.6;' : ''}">
               <div style="display:flex;align-items:center;gap:8px;">
-                <div class="exam-card-title" style="flex:1;">${ex.title}</div>
+                <div class="exam-card-title" style="flex:1;">${!prereqsMet ? '🔒 ' : ''}${ex.title}</div>
                 ${hasPassed ? '<span style="background:#dcfce7;color:#16a34a;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #bbf7d0;">✓ Passed</span>' : ''}
               </div>
-              <div class="text-muted" style="font-size:.875rem;margin-top:4px;">${ex.description || 'No description'}</div>
+              <div class="text-muted" style="font-size:.875rem;margin-top:4px;">${!prereqsMet ? `<span style="color:#f59e0b;font-size:.8rem;">⚠ Requires: ${prereqNames.join(', ')}</span>` : (ex.description || 'No description')}</div>
               <div class="exam-card-meta">
                 <span class="exam-meta-chip">${ex.time_limit ? ex.time_limit + ' min' : 'No time limit'}</span>
                 <span class="exam-meta-chip">Pass: ${ex.passing_grade}%</span>
@@ -1578,23 +1604,50 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     // ===================== REQUEST PASSWORD =====================
     async function loadRequestableExams() {
-      const exams = await SB.query('exams', '?is_published=eq.true&allow_password_request=eq.true&order=created_at.asc');
+      const [exams, attempts] = await Promise.all([
+        SB.query('exams', '?is_published=eq.true&allow_password_request=eq.true&order=created_at.asc'),
+        SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&passed=eq.true`)
+      ]);
+      const passedExamIds = new Set(attempts.map(a => a.exam_id));
       const sel = document.getElementById('requestExamSelect');
       sel.innerHTML = '<option value="">Choose an exam...</option>';
       exams.forEach(e => {
+        const prereqs = e.prerequisites || [];
+        const locked = prereqs.length > 0 && !prereqs.every(pid => passedExamIds.has(pid));
         const opt = document.createElement('option');
         opt.value = e.id;
         opt.dataset.title = e.title;
-        opt.textContent = e.title;
+        opt.dataset.locked = locked ? 'true' : 'false';
+        opt.dataset.prereqs = JSON.stringify(prereqs);
+        opt.textContent = locked ? `🔒 ${e.title}` : e.title;
+        opt.style.color = locked ? '#94a3b8' : '';
         sel.appendChild(opt);
       });
+
+      // Store exams for prereq name lookup
+      sel.dataset.exams = JSON.stringify(exams.map(e => ({ id: e.id, title: e.title })));
     }
 
     async function submitExamRequest() {
       const sel = document.getElementById('requestExamSelect');
       const examId = sel.value;
       if (!examId) { toast('Select an exam.', 'error'); return; }
-      const examTitle = sel.options[sel.selectedIndex].dataset.title;
+
+      const selectedOpt = sel.options[sel.selectedIndex];
+
+      // Check prerequisites
+      if (selectedOpt.dataset.locked === 'true') {
+        const allExams = JSON.parse(sel.dataset.exams || '[]');
+        const prereqIds = JSON.parse(selectedOpt.dataset.prereqs || '[]');
+        const prereqNames = prereqIds.map(pid => {
+          const ex = allExams.find(e => e.id === pid);
+          return ex ? ex.title : pid;
+        });
+        toast(`You must pass the following exam(s) first: ${prereqNames.join(', ')}`, 'error');
+        return;
+      }
+
+      const examTitle = selectedOpt.dataset.title;
       // Check if already pending
       const existing = await SB.query('exam_requests', `?cid=eq.${currentStudent.cid}&exam_id=eq.${examId}&status=eq.pending`);
       if (existing.length) { toast('You already have a pending request for this exam.', 'error'); return; }
