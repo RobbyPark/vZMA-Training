@@ -2501,7 +2501,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <div class="form-group">
           <label class="form-label">Prerequisites <span style="font-size:.75rem;color:var(--gray-400);">(student must pass these exams before requesting this one)</span></label>
           <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--gray-200);border-radius:var(--radius);background:var(--gray-50);max-height:160px;overflow-y:auto;">
-            ${state.exams.filter(e => e.id !== examId).map(e => `
+            ${state.exams.filter(e => e.id !== exam?.id).map(e => `
               <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer;">
                 <input type="checkbox" class="eb_prerequisite" value="${e.id}" ${(exam?.prerequisites||[]).includes(e.id)?'checked':''}> ${e.title}
               </label>`).join('') || '<span style="font-size:.82rem;color:var(--gray-400);">No other exams available.</span>'}
