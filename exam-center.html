@@ -839,6 +839,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
               </div>
             </div>
             <button class="btn btn-primary btn-lg" id="pinBtn" onclick="submitPin()">Access Exam Center</button>
+            <p style="margin-top:14px;font-size:.78rem;color:var(--gray-400);text-align:center;">Forgot your PIN? Email <a href="mailto:ta@zmaartcc.net" style="color:var(--blue-600);">ta@zmaartcc.net</a> to have it reset.</p>
           </div>
         </div>
       </div>
@@ -1076,6 +1077,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         document.getElementById('stepCid').style.display = 'none';
         document.getElementById('stepPin').style.display = 'block';
         document.getElementById('pinStudentName').textContent = pendingLoginStudent.name;
+        document.getElementById('pinBtn').disabled = false;
         if (isNewPin) {
           document.getElementById('pinLabel').textContent = 'Create a PIN (3-4 digits)';
           document.getElementById('pinConfirmGroup').style.display = 'block';
