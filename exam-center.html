@@ -1151,10 +1151,14 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     }
 
     async function loadExamList() {
-      const exams = await SB.query('exams', '?is_published=eq.true&order=created_at.asc');
-      const attempts = await SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&is_manual=eq.false`);
+      const [exams, attempts, overrides] = await Promise.all([
+        SB.query('exams', '?is_published=eq.true&order=created_at.asc'),
+        SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&is_manual=eq.false`),
+        SB.query('prerequisite_overrides', `?cid=eq.${currentStudent.cid}`)
+      ]);
       const attemptCountMap = {};
       const passedExamIds = new Set();
+      const overriddenExamIds = new Set(overrides.map(o => o.exam_id));
       attempts.forEach(a => {
         attemptCountMap[a.exam_id] = (attemptCountMap[a.exam_id] || 0) + 1;
         if (a.passed) passedExamIds.add(a.exam_id);
@@ -1181,7 +1185,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
             : 'Unlimited attempts';
 
           const prereqs = ex.prerequisites || [];
-          const prereqsMet = prereqs.length === 0 || prereqs.every(pid => passedExamIds.has(pid));
+          const prereqsMet = prereqs.length === 0 || prereqs.every(pid => passedExamIds.has(pid) || overriddenExamIds.has(pid));
           const prereqNames = prereqs.length > 0 && !prereqsMet
             ? prereqs.map(pid => { const e = exams.find(x => x.id === pid); return e ? e.title : pid; })
             : [];
@@ -1604,16 +1608,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     // ===================== REQUEST PASSWORD =====================
     async function loadRequestableExams() {
-      const [exams, attempts] = await Promise.all([
+      const [exams, attempts, overrides] = await Promise.all([
         SB.query('exams', '?is_published=eq.true&allow_password_request=eq.true&order=created_at.asc'),
-        SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&passed=eq.true`)
+        SB.query('exam_attempts', `?cid=eq.${currentStudent.cid}&passed=eq.true`),
+        SB.query('prerequisite_overrides', `?cid=eq.${currentStudent.cid}`)
       ]);
       const passedExamIds = new Set(attempts.map(a => a.exam_id));
+      const overriddenExamIds = new Set(overrides.map(o => o.exam_id));
       const sel = document.getElementById('requestExamSelect');
       sel.innerHTML = '<option value="">Choose an exam...</option>';
       exams.forEach(e => {
         const prereqs = e.prerequisites || [];
-        const locked = prereqs.length > 0 && !prereqs.every(pid => passedExamIds.has(pid));
+        const locked = prereqs.length > 0 && !prereqs.every(pid => passedExamIds.has(pid) || overriddenExamIds.has(pid));
         const opt = document.createElement('option');
         opt.value = e.id;
         opt.dataset.title = e.title;

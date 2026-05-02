@@ -944,6 +944,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <!-- Exam list by category -->
           <div id="adminExamList"></div>
 
+          <!-- Prerequisite Override -->
+          <div class="section-divider"></div>
+          <div class="page-header"><h1 style="font-size:1.1rem;">Prerequisite Override</h1></div>
+          <div class="card mb-4">
+            <label class="form-label">Search by CID</label>
+            <div class="flex gap-2">
+              <input class="form-input" id="overrideCidInput" type="text" placeholder="Enter CID..." style="max-width:200px;">
+              <button class="btn btn-primary" onclick="loadLockedExams()">Search</button>
+            </div>
+          </div>
+          <div id="lockedExamsArea"></div>
+
           <!-- Student Attempt Lookup -->
           <div class="section-divider"></div>
           <div class="page-header"><h1 style="font-size:1.1rem;">Student Attempt Lookup</h1></div>
@@ -2242,6 +2254,89 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>
         </div>
       `;
+    }
+
+    // ── Prerequisite Override ────────────────────────────────
+    async function loadLockedExams() {
+      const cid = document.getElementById('overrideCidInput').value.trim();
+      if (!cid) { toast('Enter a CID.', 'error'); return; }
+      const area = document.getElementById('lockedExamsArea');
+      area.innerHTML = '<p class="text-muted">Loading...</p>';
+
+      const [exams, attempts, overrides] = await Promise.all([
+        SB.query('exams', '?is_published=eq.true'),
+        SB.query('exam_attempts', `?cid=eq.${cid}&passed=eq.true`),
+        SB.query('prerequisite_overrides', `?cid=eq.${cid}`),
+      ]);
+
+      const passedExamIds = new Set(attempts.map(a => a.exam_id));
+      const overriddenExamIds = new Set(overrides.map(o => o.exam_id));
+
+      // Only show exams with prerequisites that the student hasn't met
+      const locked = exams.filter(ex => {
+        const prereqs = ex.prerequisites || [];
+        if (!prereqs.length) return false;
+        const met = prereqs.every(pid => passedExamIds.has(pid) || overriddenExamIds.has(pid));
+        return !met;
+      });
+
+      const ctrl = await VATUSA.getController(cid);
+      const studentName = ctrl ? `${ctrl.fname} ${ctrl.lname}` : cid;
+
+      if (!locked.length) {
+        area.innerHTML = '<div class="card"><p class="text-muted">No locked exams found for this student.</p></div>';
+        return;
+      }
+
+      const examMap = Object.fromEntries(exams.map(e => [e.id, e]));
+
+      area.innerHTML = `
+        <div class="card">
+          <div class="card-header"><span class="card-title">Locked Exams — ${studentName} (${cid})</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Exam</th><th>Requires</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                ${locked.map(ex => {
+                  const prereqs = ex.prerequisites || [];
+                  const prereqList = prereqs.map(pid => {
+                    const passed = passedExamIds.has(pid);
+                    const overridden = overriddenExamIds.has(pid);
+                    const name = examMap[pid]?.title || pid;
+                    return `<span style="font-size:.78rem;padding:2px 8px;border-radius:100px;margin-right:4px;${passed||overridden ? 'background:#dcfce7;color:#16a34a;' : 'background:#fee2e2;color:#dc2626;'}">${passed ? '✓' : overridden ? '⚡' : '✗'} ${name}</span>`;
+                  }).join('');
+                  const alreadyOverridden = overriddenExamIds.has(ex.id);
+                  return `<tr>
+                    <td style="font-weight:600;">${ex.title}</td>
+                    <td>${prereqList}</td>
+                    <td>${alreadyOverridden ? '<span class="badge badge-green">Overridden</span>' : '<span class="badge badge-red">Locked</span>'}</td>
+                    <td>
+                      ${!alreadyOverridden
+                        ? `<button class="btn btn-primary btn-sm" onclick="overridePrerequisite('${cid}','${ex.id}','${ex.title.replace(/'/g,"\\'")}')">Unlock</button>`
+                        : `<button class="btn btn-danger btn-sm" onclick="removeOverride('${cid}','${ex.id}')">Remove Override</button>`
+                      }
+                    </td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    async function overridePrerequisite(cid, examId, examTitle) {
+      await SB.insert('prerequisite_overrides', {
+        cid, exam_id: examId, exam_title: examTitle,
+        created_at: new Date().toISOString()
+      });
+      toast(`Prerequisite overridden for ${examTitle}.`);
+      loadLockedExams();
+    }
+
+    async function removeOverride(cid, examId) {
+      await SB.delete('prerequisite_overrides', `cid=eq.${cid}&exam_id=eq.${examId}`);
+      toast('Override removed.');
+      loadLockedExams();
     }
 
     // ── Add Exam Attempts ────────────────────────────────────
