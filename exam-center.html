@@ -944,6 +944,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
   </div>
 
+  <!-- Student Attempt Review Modal -->
+  <div id="studentReviewModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:14px;max-width:620px;width:90%;max-height:82vh;overflow-y:auto;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;">
+      <button onclick="document.getElementById('studentReviewModal').style.display='none'"
+        style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--gray-400);">&times;</button>
+      <h2 style="font-size:1.1rem;font-weight:700;color:var(--blue-900);margin-bottom:4px;" id="studentReviewTitle">Review</h2>
+      <p style="font-size:.8rem;color:var(--gray-400);margin-bottom:20px;">Questions you answered incorrectly on this attempt.</p>
+      <div id="studentReviewBody"></div>
+    </div>
+  </div>
+
   <!-- Locked Exam Modal -->
   <div id="lockedExamModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
     <div style="background:#fff;border-radius:14px;max-width:440px;width:90%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;text-align:center;">
@@ -1680,7 +1691,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         document.getElementById('myGradesContent').innerHTML = '<p class="text-muted">No exam grades yet.</p>';
         return;
       }
-      // Load exam titles
       const examIds = [...new Set(attempts.map(a => a.exam_id))];
       const exams = await Promise.all(examIds.map(id => SB.query('exams', `?id=eq.${id}`).then(r => r[0])));
       const examMap = {};
@@ -1689,20 +1699,78 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('myGradesContent').innerHTML = `
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Exam</th><th>Score</th><th>Passed</th><th>Date</th></tr></thead>
+            <thead><tr><th>Exam</th><th>Score</th><th>Passed</th><th>Date</th><th></th></tr></thead>
             <tbody>
               ${attempts.map(a => `
                 <tr>
-                  <td>${examMap[a.exam_id]?.title || 'Unknown Exam'}</td>
+                  <td>${examMap[a.exam_id]?.title || a.exam_title || 'Unknown Exam'}</td>
                   <td>${a.score !== null ? a.score + '%' : '—'}</td>
                   <td><span class="badge ${a.passed?'badge-green':'badge-red'}">${a.passed?'Pass':'Fail'}</span>${a.is_manual?'<span class="text-muted" style="font-size:.75rem;margin-left:6px;">Manual</span>':''}</td>
                   <td>${formatDate(a.submitted_at)}</td>
+                  <td><button class="btn btn-ghost btn-sm" onclick="showStudentAttemptReview('${a.id}','${a.exam_id}')">Review</button></td>
                 </tr>
               `).join('')}
             </tbody>
           </table>
         </div>
       `;
+    }
+
+    async function showStudentAttemptReview(attemptId, examId) {
+      document.getElementById('studentReviewModal').style.display = 'flex';
+      document.getElementById('studentReviewBody').innerHTML = '<p class="text-muted" style="padding:16px;">Loading...</p>';
+
+      const [attempt] = await SB.query('exam_attempts', `?id=eq.${attemptId}`);
+      const questions = await SB.query('exam_questions', `?exam_id=eq.${examId}&order=sort_order.asc`);
+
+      const wrongQs = questions.filter(q => !isAnswerCorrect(q, (attempt.answers||{})[q.id], attempt.question_overrides));
+
+      document.getElementById('studentReviewTitle').textContent = `${attempt.exam_title || 'Exam'} — ${attempt.score}%`;
+
+      if (!wrongQs.length) {
+        document.getElementById('studentReviewBody').innerHTML = '<p class="text-muted" style="padding:16px;text-align:center;">🎉 All questions answered correctly!</p>';
+        return;
+      }
+
+      const optionText = (q) => { const m = {}; (q.options||[]).forEach(o => m[o.id]=o.text); return m; };
+      const fmt = (q, ans) => {
+        const oMap = optionText(q);
+        if (ans === undefined || ans === null || ans === '') return '<em style="color:var(--gray-400);">No answer</em>';
+        if (q.question_type === 'true_false') return ans;
+        if (q.question_type === 'short_response') return ans;
+        if (q.question_type === 'multiple_choice_single') return oMap[ans] || ans;
+        if (q.question_type === 'multiple_choice_multi') return (Array.isArray(ans)?ans:[]).map(id=>oMap[id]||id).join(', ') || '<em>No answer</em>';
+        if (q.question_type === 'matching') return ans ? Object.entries(ans).map(([l,r])=>`${oMap[l]||l} → ${oMap[r]||r}`).join('<br>') : '<em>No answer</em>';
+        return String(ans);
+      };
+      const fmtCorrect = (q) => {
+        const oMap = optionText(q);
+        if (q.question_type === 'true_false') return q.correct_answers;
+        if (q.question_type === 'short_response') return q.correct_text || '—';
+        if (q.question_type === 'multiple_choice_single') return oMap[(q.correct_answers||[])[0]] || (q.correct_answers||[])[0] || '—';
+        if (q.question_type === 'multiple_choice_multi') return (q.correct_answers||[]).map(id=>oMap[id]||id).join(', ');
+        if (q.question_type === 'matching') return (q.correct_answers||[]).map(p=>`${oMap[p.left_id]||p.left_id} → ${oMap[p.right_id]||p.right_id}`).join('<br>');
+        return '—';
+      };
+
+      let html = `<p style="font-size:.85rem;color:var(--gray-500);margin-bottom:16px;">${wrongQs.length} question${wrongQs.length>1?'s':''} answered incorrectly</p>`;
+      wrongQs.forEach((q, i) => {
+        html += `
+          <div style="border:1px solid var(--gray-200);border-radius:10px;padding:16px;margin-bottom:12px;">
+            <div style="font-weight:600;font-size:.9rem;color:var(--gray-900);margin-bottom:10px;">${i+1}. ${q.question_text}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;">
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:4px;">Your Answer</div>
+                <div style="font-size:.85rem;color:var(--gray-800);">${fmt(q,(attempt.answers||{})[q.id])}</div>
+              </div>
+              <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;">
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#16a34a;margin-bottom:4px;">Correct Answer</div>
+                <div style="font-size:.85rem;color:var(--gray-800);">${fmtCorrect(q)}</div>
+              </div>
+            </div>
+          </div>`;
+      });
+      document.getElementById('studentReviewBody').innerHTML = html;
     }
 
     // ===================== REQUEST PASSWORD =====================
