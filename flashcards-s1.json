@@ -1,0 +1,739 @@
+{
+  "id": "s1",
+  "name": "S1 Study Set",
+  "description": "",
+  "cards": [
+    {
+      "id": 1778021611326.78,
+      "term": "What does CRAFT stand for?",
+      "definition": "C- Clearance Limit\nR- Route\nA- Altitude\nF- Frequency\nT- Transponder",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8079,
+      "term": "When are you required to append the \"heavy\" suffix to an aircraft callsign?",
+      "definition": "ensure that you append \"Heavy\" to an aircraft's callsign if their Maximum Takeoff Weight (MTOW) is 300,000 lbs or greater. These aircraft will show as orange aircraft symbols on the ASDE-X.\n\nNote: the 757 will show as an orange aircraft symbol on the ASDE-X, however, it is NOT a \"heavy\" aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9285,
+      "term": "When issuing a clearance to KLAX",
+      "definition": "what is required to be stated after the airport name?,\"Airport\" (ex: AAL311 cleared to the Los Angeles AIRPORT...) 7110.65 4-2-1",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3098,
+      "term": "What does RVSM stand for and what does it mean (include the RVSM altitude stratum)?",
+      "definition": "RVSM stands for Reduced Vertical Separation Minimum.\nIt means aircraft can be separated by 1,000 feet vertically (instead of 2,000 feet) between FL290 and FL410, as long as they meet specific equipment and certification requirements.\n\n7110.65 2-1-29",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8066,
+      "term": "What does the mnemonic NEODD SWEVEN mean in relation to altitude assignments?",
+      "definition": "NEODD SWEVEN helps remember direction-based cruising altitudes (FAA JO 7110.65, 4-5-2):\nNEODD → North/East (0°-179°) = Odd altitudes/flight levels\nSWEVEN → South/West (180°-359°) = Even altitudes/flight levels\n\nThis is based off of the magnetic heading from the departure airport to the destination airport.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5146,
+      "term": "How are direction of flight rules applied ABOVE FL410?",
+      "definition": "(0 through 179 heading): ODD flight levels at intervals of 4,000 feet beginning with FL 450\nEX: FL 450, FL 490, FL 530\n\n(180 through 359): ODD flight levels at intervals of 4,000 feet beginning with FL 430\nEX: FL 430, FL 470, FL 510",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7344,
+      "term": "True or false: DEL/GND is responsible for amending altitudes to abide by NEODD SWEVEN",
+      "definition": "False. It is Miami Center's responsibility.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7275,
+      "term": "Which airways are low-altitude airways (AOB 17",
+      "definition": "500ft MSL)? Are they pronounced phonetically or normally?,V (pronounced victor) and T (pronounced tango) airways are the low altitude airways.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6516,
+      "term": "Can a /A aircraft fly on a T airway?",
+      "definition": "No. T airways link many GNSS (RNAV) waypoints together. Therefore, a /A aircraft (being only DME capable, not GNSS capable) cannot fly on this airway.\n\n- Tip: GNSS (RNAV) airways and waypoints are depicted as blue on IFR charts",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.0369,
+      "term": "Which airways are high-altitude airways (AOA 18",
+      "definition": "000ft MSL) Are they pronounced phonetically or normally?,Q and J (pronounced normally: \"cue\" and \"jay\")",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8367,
+      "term": "Can a /A aircraft fly on a J airway?",
+      "definition": "Yes. J airways link many intersections and ground-based NAVAIDs together (no GNSS/RNAV required)\n\n- Tip: These airways and fixes that don't require GNSS to navigate to (DME can be used instead) are depicted as black on IFR charts",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4675,
+      "term": "In aviation",
+      "definition": "how are the numbers 3 5 and 9 supposed to be pronounced?,Tree, fife, and niner",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5564,
+      "term": "What are you required to do on initial contact with an aircraft?",
+      "definition": "Identify yourself.\n\ne.g., \"AAL123, Fort Lauderdale Ground, go ahead.\"",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8296,
+      "term": "Do VFR flights have to abide by direction of flight rules?",
+      "definition": "Yes, but only above 3,000ft MSL. \n\nAbove 3,000ft MSL, VFR aircraft must follow NEODD SWEVEN with the exception that they must also add 500 feet\n\ne.g., 3,500 (NEODD), 4,500 (SWEVEN)\n\nThis ensures that even IFR and VFR aircraft are at least separated by 500ft.\n\nKeep in mind that VFR aircraft are not permitted to fly in Class A airspace, therefore the highest altitude a VFR flight may cruise at is 17,500 (NEODD)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9487,
+      "term": "Is FL360 a valid altitude for an aircraft traveling from KTPA to KJFK?",
+      "definition": "No. This aircraft is traveling eastbound, so the cruising altitude must be odd.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9011,
+      "term": "Is FL430 a valid altitude for an aircraft traveling from KFLL to KMSY?",
+      "definition": "Yes. Airspace above FL410 is non-RVSM. therefore, aircraft must be separated by 2,000ft rather than 1,000ft. 7110.65 2-1-29",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.288,
+      "term": "What is the Q77 rule? Is DEL/GND responsible for amending altitudes to abide by this rule?",
+      "definition": "Aircraft on or east of the Q77/V267 airway must be cleared northbound at ODD altitudes and southbound at EVEN altitudes. Aircraft west of the Q77/V267 airway must be cleared northbound at EVEN altitudes and southbound at ODD altitudes.\n\nhttps://pasteboard.co/8UWDqJt49YQj.jpg\n\nNo, DEL/GND is not responsible for amending altitudes to abide by the Q77 rule. It is Miami Center's responsibility.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9062,
+      "term": "Is FL340 a valid altitude for an aircraft flying from KFLL to KJAX?",
+      "definition": "No. The Fort Lauderdale SOP (Appendix 3) states that aircraft must be at or below (AOB) FL310. Also, the aircraft must be at an odd altitude due to the Q77 rule.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.322,
+      "term": "An IFR C172 is departing KTPA (North ops). What is their initial altitude?",
+      "definition": "1,600ft TPA SOP",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.099,
+      "term": "What should you do if an aircraft requests a final cruising altitude lower than the initial altitude?",
+      "definition": "Inform the controller above you that the aircraft is departing with an altitude lower than the normal initial altitude.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9753,
+      "term": "True or false: DEL/GND controllers are responsible for abiding by the routing and altitude restrictions detailed in R07 ZMA ROUTE TABLES",
+      "definition": "True, this is one of the only and most common scenarios where you will be amending an altitude/routing on an aircraft's flight plan.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6,
+      "term": "Is an IFR aircraft allowed to cruise at FL190 to KFLL from KTPA?",
+      "definition": "Yes. TPA SOP",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.713,
+      "term": "What is lowest usable flight level?",
+      "definition": "As the local altimeter setting decreases, the lowest usable flight level increases. 7110.65 4-5-4",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5103,
+      "term": "If the altimeter setting is 29.65",
+      "definition": "what is the lowest usable flight level?,FL190 7110.65 4-5-4",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.1191,
+      "term": "If the altimeter setting is 30.02",
+      "definition": "what is the lowest usable flight level?,FL180 7110.65 4-5-4",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4155,
+      "term": "What does \"+TSRA\" mean in a METAR?",
+      "definition": "Heavy thunderstorm and rain",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6558,
+      "term": "What does \"HZ\" mean in a metar?",
+      "definition": "Haze",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6455,
+      "term": "What does \"FG\" mean in a metar?",
+      "definition": "Fog",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.974,
+      "term": "What does \"AUTO\" indicate in a METAR?",
+      "definition": "AUTO indicates that the report was generated with no human intervention.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.49,
+      "term": "What date was this METAR recorded?\n\nKFLL 092053Z 14010KT 10SM FEW025CB FEW050 BKN180 BKN250 31/26 A2991",
+      "definition": "The 9th of the month.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.0154,
+      "term": "What time was this METAR recorded?\n\nKEYW 152053Z 18005KT 10SM FEW024 32/27 A2991",
+      "definition": "2053z",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7651,
+      "term": "What date was this METAR recorded?\n\nKPGD 272127Z 31010KT 10SM BKN042 33/24 A2992",
+      "definition": "The 27th of the month.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6963,
+      "term": "What time was this METAR recorded?\n\nKVNC 010010Z AUTO 29007G15KT 270V340 10SM CLR A2994",
+      "definition": "0010z",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8215,
+      "term": "What is the reported ceiling?\n\nKPBI 031115Z 06005KT 10SM -RA SCT035 SCT075 BKN090 BKN250 29/27 A2993",
+      "definition": "9,000 ft. The Ceiling is defined as the lowest broken (BKN) or overcast (OVC) level of clouds.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7827,
+      "term": "What is the reported wind?\n\nKMIA 092053Z 14009G16KT 10SM SCT025 SCT055 SCT130 BKN250 32/26 A2992",
+      "definition": "The wind is 140 at 9 gusting 16 knots.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5002,
+      "term": "What does \"BR\" mean in a METAR?",
+      "definition": "Mist",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3704,
+      "term": "What is the temperature?\n\nKRSW 092132Z 18010KT 1 1/2SM TSRA BR SCT035 BKN042 OVC070 27/26 A2993",
+      "definition": "27 C",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5598,
+      "term": "What does \"CB\" mean in a METAR?",
+      "definition": "Cumulonimbus",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.687,
+      "term": "What is the dew point?\n\nKLAL 092110Z 11010KT 2SM TSRA BR BKN008 BKN015 29/26 A2999",
+      "definition": "26 C",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7412,
+      "term": "In a METAR",
+      "definition": "is visibility reported in nautical miles or statute miles?,Statute miles (SM)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8416,
+      "term": "What is the altitude stratum of Class A airspace?",
+      "definition": "18,000 MSL - FL600",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3518,
+      "term": "True or False: VFR aircraft cannot operate in class A airspace.",
+      "definition": "True. Aircraft in class A airspace are required to be on an IFR flight plan.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.496,
+      "term": "Name 2 class C airspaces in ZMA airspace.",
+      "definition": "KSRQ, KFLL, KRSW, and KPBI",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4578,
+      "term": "What are controllers required to state in the clearance for a VFR aircraft departing a class B airspace?",
+      "definition": "\"...cleared out of the (airport) class bravo airspace...\"",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3875,
+      "term": "What is the controller required to include in every VFR clearance?",
+      "definition": "\"maintain VFR at or below (SOP Altitude)\" Miami ARTCC SOP",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.518,
+      "term": "Generally",
+      "definition": "what altitude does class D airspace extend to?,Surface to 2,500ft",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8887,
+      "term": "Are VFR aircraft required to file a flight plan?",
+      "definition": "No. Only IFR aircraft are required to file. However, the controller is expected to create a flight plan for the VFR aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7664,
+      "term": "What information should you obtain from VFR aircraft?",
+      "definition": "Aircraft type (suffix not required), intended VFR cruising altitude, direction of flight or arrival field, and flight following status. D1 SOP 15.15",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9006,
+      "term": "If you didn't get a piece of information you need from a VFR aircraft",
+      "definition": "what do you do?,\"N123AB, say aircraft type/destination field/direction of flight/intended altitude/flight following status\"",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7642,
+      "term": "What does \"L\" stand for when it precedes a callsign (ex: LN154GA)",
+      "definition": "MEDEVAC 7110.65 2-3-5",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2803,
+      "term": "What does \"VM\" stand for when it precedes a callsign (ex: VM813)",
+      "definition": "Marine 7110.65 2-3-5",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2532,
+      "term": "What does \"R\" stand for when it precedes a callsign (ex:R519)",
+      "definition": "Army 7110.65 2-3-5",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2576,
+      "term": "What is the appropriate way to read this callsign: AAL8",
+      "definition": "American eight 7110.65 2-4-20",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.0945,
+      "term": "What is the appropriate way to read this callsign: DAL17",
+      "definition": "Delta seventeen 7110.65 2-4-20",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4949,
+      "term": "What is the appropriate way to read this callsign: MXY891",
+      "definition": "Moxy eight ninety-one 7110.65 2-4-20",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2683,
+      "term": "What is the appropriate way to read this callsign: FDX5906",
+      "definition": "FedEx fifty-nine zero six.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9136,
+      "term": "What are the three different types of SIDs?",
+      "definition": "PNAV, Hybrid, and radar vectored",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4055,
+      "term": "What type of SID is the GLADZ# departure out of KFLL?",
+      "definition": "Hybrid (R02 Departure Reference Sheet)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.199,
+      "term": "What type of SID is the CSHEL# departure?",
+      "definition": "PNAV or Hybrid depending on what runway you depart. PNAV - 24 Hybrid - 06 (R02 Departure Reference Sheet)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.1992,
+      "term": "What type of SID is the BNICE# departure out of KFLL?",
+      "definition": "PNAV (R02 Departure Reference Sheet)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5728,
+      "term": "What type of SID is the LGTNG# departure out of KTPA?",
+      "definition": "Radar vectored (R02 Departure Reference Sheet)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9402,
+      "term": "What does /A equipment suffix indicate?",
+      "definition": "Non-RVSM, DME, Mode-C Transponder",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3167,
+      "term": "What does DME stand for?",
+      "definition": "Distance Measuring Equipment",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.1985,
+      "term": "What does /L equipment suffix indicate?",
+      "definition": "RVSM, GNSS, Mode-C Transponder",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9138,
+      "term": "What does /G equipment suffix indicate?",
+      "definition": "Non-RVSM, GNSS, Mode-C Transponder",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3684,
+      "term": "What is a climb-via SID?",
+      "definition": "A climb-via SID is one where there are both published crossing restrictions, and a published top altitude. \n\nN02 Utilization of Climb via SID\nFAA JO 7110.65 4-3 and 4-5",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4502,
+      "term": "What does \"climb-via SID except maintain\" mean to you as a ground/delivery controller?",
+      "definition": "It means the SID has published crossing restrictions, but no published top altitude. Therefore, we must issue an interim altitude.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.323,
+      "term": "When are you required to include \"expect FLXXX 10 minutes after departure\" in a clearance?",
+      "definition": "When the aircraft's final altitude was amended, when you issue an interim altitude, or when it's not already published on the chart.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6265,
+      "term": "What SIDs at FLL are NOT climb-via?",
+      "definition": "DORRL(M2000), GLADZ(M4000), MAYNR(M4000)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9412,
+      "term": "What is special about the REGAE# SID at FLL?",
+      "definition": "It has no published top altitude and we must issue \"Climb via SID except maintain 4,000\"",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3796,
+      "term": "True or False: You are working TPA DEL and Miami center and TPA APP are closed. If Jacksonville center is online",
+      "definition": "you should utilize their frequency as the departure frequency.,False. If TPA APP and Miami center are closed, the departure frequency is advisory or unicom. Jacksonville center does not control TPA APP airspace.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4387,
+      "term": "Is the following flight plan information valid?\n\nKFLL - MMUN A320/L FL360\nGLADZ3 LULLS Y196 CANOA UB879 NOSAT NOSA1B",
+      "definition": "Yes",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8704,
+      "term": "Is the following flight plan information valid?\n\nKFLL - MKJS A319/L FL320\nREGAE2 URSUS UL780 TASNO UM221 NIBEO ADSEL LENAR7",
+      "definition": "No. Incorrect altitude for direction of flight.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4045,
+      "term": "Is the following flight plan information valid?\nKTPA - KEYW PC12/G FL290\nGANDY8 SABEE RSW KARTR GIGIH",
+      "definition": "No for 2 reasons: \n1. PC12 is a prop and the GANDY8 departure is a jet only as depicted on the chart. \n2. /G is non-RVSM and FL290 is within RVSM airspace.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7827,
+      "term": "Is the following flight plan information valid?\n\nKFLL - MYNN AT46/G 170\nFLL1 BEECH RAJAY",
+      "definition": "Yes",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.031,
+      "term": "Is the following flight plan information valid?\n\nKFLL - KATL B738/L FL380\nGANDY8 SABEE RSW KARTR GIGIH",
+      "definition": "No for 2 reasons: \n1. The route filed is not in compliance with the routing requirements in the FLL SOP. \n2. Once routed on the proper route as per the SOP, the Q77 rule will force the aircraft to be at an odd altitude.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3718,
+      "term": "Is the following flight plan information valid?\n\nKLAL - KMTH C172/A 050\nLAL V157 LBV V529 FAMIN V157 CARNU",
+      "definition": "Yes",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2039,
+      "term": "Is the following flight plan information valid?\n\nKPBI - KPIT B738/L FL380\nTBIRD5 MATLK Q87 VIYAP Q69 RICCS LEJOY DEMME5",
+      "definition": "No. The Q77 rule is in effect and requires an odd flight level.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.509,
+      "term": "Is the following flight plan information valid?\n\nKSUA - KPIE C182/A 060\nTBIRD V531 ODDEL TOOTH PIE",
+      "definition": "No. TOOTH is an RNAV waypoint and /A is unable to navigate to RNAV waypoints.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.36,
+      "term": "Is the following flight plan information valid?\n\nKEYW - KORF A319/L FL320\nCARNU SHEDS HIBAC BAHAA GARIC ISO DRONE2",
+      "definition": "No. The cruising altitude is incorrect for direction of flight.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5427,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_D_DEP is your departure frequency)\n\nhttps://gyazo.com/e3b847d99d5fb9e65bbab07956a1694d,AAL1448, Fort Lauderdale ground, cleared to the Charleston international airport via the AGERS1 departure, DUCEN transition, then as filed. Climb via the SID. Departure frequency 124.850, squawk 7676.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.5596,
+      "term": "Is an aircraft required to readback the entire clearance?",
+      "definition": "The aircraft is only required to readback the entire clearance if there was an amendment made. If the clearance issued was as filed, the aircraft only needs to read back the squawk code.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.723,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_V_APP is your departure frequency)\n\nhttps://gyazo.com/b8ace974d1a7bb529291496c52890913,JBU372, Fort Lauderdale ground, cleared to the LaGuardia airport via the HROCK2 departure, KPASA transition, then as filed. Climb via the SID. Departure frequency 124.850, squawk 6064.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4639,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)\n\nhttps://gyazo.com/7c99eaabda882cf9bc0ff41d840dd765,AAL2391, Tampa ground, cleared to the Austin international airport via the DORMR2 departure, FROOT transition, then as filed. Maintain 6,000, expect FL360 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 6623.\n\nNote: TPA does not use climb via the SID. Reference N02.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.171,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)\n\nhttps://gyazo.com/4844372c5538707b51935c61329b92b7,SWA380, Tampa ground, cleared to the New Orleans international airport via the DORMR2 departure, FROOT transition, then as filed. Maintain 6,000, expect FL350 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 6623.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7922,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)\n\nhttps://gyazo.com/ef529e581e9065c9ba957d37384d63a1,DAL1227, Tampa ground, cleared to the Atlanta international airport via the BAYPO1 departure, CAMJO transition, then as filed. Maintain 6,000, expect FL380 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 6023.\n\nNotes: Since the aircraft did not file an RNAV SID or any SID for that matter, we needed to assign the appropriate SID. Since CAMJO is a transition on the BAYPO1 departure, that is the easiest and best SID to assign. Before issuing the clearance, it is best practice to contact the pilot and ask if they are able to accept the BAYPO1 departure. If they are, you may amend the flight plan and issue the clearance. If they are not, coordinate with the departure controller to find a suitable alternative.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.349,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency and TPA is in NORTH operations)\n\nhttps://gyazo.com/ef906317080aa2618491a53f328a5d13,N4725G, Tampa ground, expect a full route clearance, advise ready to copy.\n\nN4725G: ready to copy.\n\nN4725G, cleared to the ocean reef club airport via the Tampa 7 departure, radar vectors PAIRS (papa, alpha, india, romeo, sierra) V35 CURVE (charlie, uniform, romeo, victor, echo) direct ocean reef club. Maintain 1,600, expect 5,000 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 0013.\n\nNotes: The filed route has many issues including the SID and STAR are jet only, and there are many RNAV waypoints which /A aircraft are unable to navigate to. Given this information, we need to issue a full route clearance. The route issue was found on skyvector using their routes feature. Other routes may work in this case, as long as there are no RNAV waypoints. Before we can issue the clearance, we must ask the pilot if they are ready to copy the full route clearance. Once they are ready, you may issue the clearance. Pay close attention to the phraseology used. After a waypoint is said, you then provide the nato phonetic spelling of the fix. Also, when there is a WAYPOINT AIRWAY WAYPOINT, we do not say anything in between. However, when we have WAYPOINT WAYPOINT, we say direct in between. See example below. Lastly, notice the change in the initial altitude. Per the TPA SOP, 3,000 feet is to be issued to prop aircraft. \n\nex.\nWAYPOINT AIRWAY WAYPOINT\n- PAIRS V35 CURVE \nPhraseology: PAIRS V thirty five CURVE\n\nWAYPOINT WAYPOINT\n- PAIRS DCT CURVE\nPhraseology: PARIS direct CURVE",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8655,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper VFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency and TPA is in north operations)\n\nhttps://gyazo.com/c878798cbe5ba6edfa156b62a410fcc5,N77MN, Tampa ground, cleared out of the Tampa class bravo airspace to the south. Maintain VFR at or below 1,600. departure frequency 118.150. Squawk 0014. \n\nNotes: Since TPA is a bravo airspace, we must clear them out of the bravo and it is preferred that you clear them in a specific direction (to the south in this case). Also, regardless if the aircraft is or is not requesting flight following, a departure frequency and squawk code are always provided at class B and class C airports.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4722,
+      "term": "A VFR aircraft calls you and gives you all the information you need",
+      "definition": "EXCEPT their equipment suffix. Do you need to ask the aircraft for their equipment suffix?,No. Equipment suffix does not matter for VFR aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.1135,
+      "term": "Using proper phraseology",
+      "definition": "issue a proper VFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_V_APP is your departure frequency)\n\nhttps://gyazo.com/412df516d11811105e8ee47f211cb627,N533AP, Fort Lauderdale ground, Maintain VFR at or below 2,000. Departure frequency 124.850. Squawk 4726.\n\nNotes: Because this is a charlie airspace, we always issue a departure frequency and squawk code even if they are not requesting flight following.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7334,
+      "term": "What is a movement area?",
+      "definition": "Runways, taxiways, and other areas of an airport which are used for taxiing, or hover taxiing, air taxiing, takeoff, and landing of aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.95,
+      "term": "What is a non-movement area?",
+      "definition": "A non-movement area is a designated area where aircraft can taxi without being in contact with the tower. For example, the ramp at an FBO is often a non-movement area.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7312,
+      "term": "Is a pilot required to provide you the current ATIS code or is it assumed they have it automatically?",
+      "definition": "The pilot is required to inform the controller of the current information.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.0764,
+      "term": "What do you do if an aircraft does not call up with the ATIS code for taxi?",
+      "definition": "Issue the altimeter.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7402,
+      "term": "What field of the flight strip does the ATIS code indication go? Use D06 Flight Strip Handling to answer.",
+      "definition": "Field 11",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4995,
+      "term": "Which of the following is proper phraseology:\n\n1. Taxi to runway 10L via T5 B\n2. Taxi T5 B 10L\n3. Runway 10L",
+      "definition": "taxi via T5 B\n4. Runway 10L via T5 B,Option 3 is correct. (Runway 10L, taxi via T5 B)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.0664,
+      "term": "Which of the following is proper phraseology:\n\n1. Ramp",
+      "definition": "taxi via J Q T8\n2. Taxi to the ramp via J Q T8\n3. Ramp via J Q T8\n4. Taxi J Q T8,Option 2 is correct. (Taxi to the ramp via J Q T8)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.0972,
+      "term": "What is the system called depicted in the image?\n\nhttps://gyazo.com/92f4259d11d363919a0c2b2c292cdeed",
+      "definition": "ASDE-x system",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.1614,
+      "term": "What does an ASDE-x do with respect to ground control?",
+      "definition": "An ASDE-x provides information such as:\n1. A ground radar display for CAB controllers.\n2. Provides information about the aircraft such as type and weight class.\n3. Indicates the transponder status of an aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2004,
+      "term": "In the following image",
+      "definition": "NKS1340 is pushed back and ready for taxi. They call you with the following request: \"Fort Lauderdale ground, NKS1340 with information alpha, requesting taxi 10R\". How do you respond?\n\nhttps://gyazo.com/59b98db129a509b01b12454696d4829e,Your response should be similar to: \"NKS1340, Fort Lauderdale ground, runway 10R taxi via T8 Q J\"\n\nNotes: remember, if you have already established 2-way radio communication, you should not identify yourself again.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9104,
+      "term": "When issuing a taxi clearance that requires an aircraft to hold short of a runway",
+      "definition": "are you permitted to issue the whole taxi clearance or only the taxi clearance up to the hold short point?,If the aircraft is instructed to hold short of the runway, you are only permitted to issue the taxi clearance up to the runway hold short point. 7110.65 3-7-2 a 1\n\nTPA Ex: \nFDX311 is at the cargo ramp and is taxing to runway 1L via J W. \n\n\nCorrect: FDX311, runway 1L taxi via J, hold short runway 1R.\n\nIncorrect: FDX311, runway 1L taxi via J W, hold short runway 1R.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.1848,
+      "term": "N407NL is requesting a hover taxi to 10L. Issue this instruction with proper phraseology. Assume the aircraft has already provided the proper ATIS information.\n\nhttps://gyazo.com/6d5ceb15c63940cceb0e0b94c1d79059",
+      "definition": "N407NL, Fort Lauderdale ground, runway 10L hover taxi via E B.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2917,
+      "term": "N407NL is requesting air taxi to 10L. Issue this instruction with proper phraseology. Assume the aircraft has already provided the proper ATIS information.\n\nhttps://gyazo.com/6d5ceb15c63940cceb0e0b94c1d79059",
+      "definition": "First, you must coordinate with the Tower controller.\n\nGND: Fort Lauderdale Tower, Fort Lauderdale ground. \nTWR: Fort Lauderdale Tower go ahead.\nGND: N407NL at Signature, requesting air taxi runway 10L.\nTWR: Approved (or denied)\n\nN407NL, Fort Lauderdale ground, air taxi via direct to runway 10L. Land and contact Fort Lauderdale Tower, 119.300.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.2397,
+      "term": "N407NL is requesting depart from the ramp. Issue this instruction with proper phraseology. Assume the aircraft has already provided the proper ATIS information.\n\nhttps://gyazo.com/6d5ceb15c63940cceb0e0b94c1d79059",
+      "definition": "As a ground controller, you do not have permission to depart an aircraft. Before you hand the aircraft to tower, coordinate the request first. \n\nGND: Fort Lauderdale Tower, Fort Lauderdale ground. \nTWR: Fort Lauderdale Tower go ahead.\nGND: N407NL at Signature, requesting departure from the ramp.\nTWR: Approved (or denied)\n\nIf approved, hand the aircraft to tower frequency. If denied, inform the aircraft that they are unable a departure form the ramp and then ask the aircraft if they would prefer hover or air taxi.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.3079,
+      "term": "What is a crossing blanket?",
+      "definition": "Ground control may cross those runways without coordination with local control. If ground control has been granted crossing blankets, and has an aircraft who will enter and cross a runway when landing traffic is within a 2nm final for that runway, ground control shall announce to local control that they are \"crossing [rwy]\" about 15 seconds prior to the aircraft entering the runway. (review airport SOP's)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6133,
+      "term": "Utilizing proper phraseology",
+      "definition": "issue a crossing clearance to AAL2391. You do not have blankets.\n\nhttps://gyazo.com/921fda2ea0767259c2f62fdd7b2eb3a2,GND: local, ground\nTWR: local\nGND: Cross runway 10 at charlie\nTWR: Cross runway 10 at charlie\nGND: [operating initials]\n\nGND: AAL2391, cross runway 10 at charlie.\nAAL2391: Cross runway 10 at charlie AAL2391.\n\n**once the aircraft has crossed the runway**\n\nGND: Runway 10 crossing complete\nTWR: [operating initials]",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.745,
+      "term": "If during a runway crossing instruction",
+      "definition": "tower says, \"crossing observed\", must you still announce to tower when the crossing is complete?,No. If the tower controller says \"crossing observed\" it is understood that the tower controller is aware that the crossing is complete.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.1196,
+      "term": "Is a ground controller required to handoff all aircraft to tower or is the pilot expected to switch automatically?",
+      "definition": "Ground is required to handoff all aircraft to tower.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.121,
+      "term": "What airport(s) in ZMA airspace have ASDE-x systems?",
+      "definition": "KMIA and KFLL",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7283,
+      "term": "Utilizing proper phraseology",
+      "definition": "issue a crossing clearance to SWA380 and NKS8633. You do not have blankets.\n\nhttps://gyazo.com/f8ca5ac34237c5de5c7a87a343e19e26,GND: local, ground\nTWR: local\nGND: Cross runway 10 at charlie with 2\nTWR: Cross runway 10 at charlie with 2\nGND: [operating initials]\n\nGND: SWA380, cross runway 10 at charlie.\nSWA380: Cross runway 10 at charlie SWA380\n\nGND: NKS9633, cross runway 10 at charlie.\nNKS9633: cross runway 10 at charlie NKS9633\n\n\n**once both aircraft have crossed the runway**\n\nGND: Runway 10 crossing complete\nTWR: [operating initials]",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.116,
+      "term": "During a runway crossing",
+      "definition": "are you allowed to tell an aircraft, \"behind the landing 737, cross runway 10 at charlie\"?,No. Conditional instructions may not be used. 7110.65 3-7-1",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.9229,
+      "term": "Which of the following is not a valid conditional instruction:\n1. Follow\n2. After\n3. Behind",
+      "definition": "2. After",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.058,
+      "term": "True to False: Aircraft can call for pushback at KFLL and if they do",
+      "definition": "you are to issue them a pushback clearance.,False. Push and start is always at the discretion of the pilot (unless stated otherwise [review SOPs]).",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.348,
+      "term": "Tower has provided you with blankets for runway 10. Issue the crossing coordination for NKS8633 using proper phraseology.",
+      "definition": "GND: Local, ground, crossing runway 28 at charlie.\n\nGND: NKS8633, cross runway 28 at charlie. Traffic on a 2 mile final for runway 28. \nNKS8633: Cross runway 28 at charlie. , NKS8633.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.58,
+      "term": "Issue taxi to NKS1448 to runway 10L using the information provided. \n\nhttps://gyazo.com/35b67a8187aba7926fbb3c5437cb1d86",
+      "definition": "GND: NKS1448, Fort Lauderdale ground, verify squawking 2260\nNKS1448: 2260 NKS1448\n\n**once aircraft is squawking the correct code**\n\nGND: NKS1448, runway 10L, taxi via T5 B. Verify information M (or provide local altimeter)\nNKS1448: We have information M, NKS1448\n\nNotes: Notice in Field 11 of the flight strip, there is no indication that NKS1448 has the current ATIS code and when they called us, they did not provide us the current information. That is why we had to ask the pilot to verify information M.",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.646,
+      "term": "In a taxi clearance in KFLL",
+      "definition": "should you include \"T\" in a taxi clearance?,No. Taxilane T is part of the non-movement area. FLL SOP",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7031,
+      "term": "When coordinating a runway crossing",
+      "definition": "can you request two planes to cross at an intersection and one plane to cross at a different intersection during the same coordination call with the local controller?\n\nex: 2 planes are runway 10 at C and 1 is crossing runway 10 at E,Yes. \n\nCoordination Phraseology: \nGND: local, ground\nTWR: local\nGND: Cross runway 10 at charlie with 2 and at E\nTWR: Cross runway 10 at charlie with 2 and at E\nGND: [operating initials]",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.0725,
+      "term": "N535PT is requesting the following:\n\nFort Lauderdale Ground",
+      "definition": "N535PT with information P, request taxi runway 10L for an intersection departure at J5\n\nhttps://gyazo.com/9dc9b78d6601e883d2f00e4f4bad7c59,N535PT, Fort Lauderdale ground, information quebec now current, runway 10L at J5, taxi via L1 L H H4 J J5. \n\n(your instructions should sound similar to this barring any change in taxi routes)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.6523,
+      "term": "What is standard operations flow at KFLL?",
+      "definition": "East operations (FLL SOP)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.4849,
+      "term": "What does sequencing departures mean for a ground controller?",
+      "definition": "Sequencing departures means not handing tower 2 aircraft going to the same first fix. This allows the tower to depart aircraft much faster leading to less delays in busy traffic situations. \n\nFor example, at KFLL, you want to try and avoid having aircraft fly the AGERS# departure and the BNICE# departure 1 after the other in line for departure. Using the SID and RNAV Reference sheet on the ZMA website, LLBOW is the first RNAV fix both aircraft fly, so tower will have to provide extra separation to these aircraft. Whereas, if the first aircraft was on the BNICE# departure and the second aircraft on the FEALX2 departure, tower would not have nearly as much separation requirement because the BNICE# departures first RNAV fix is LLBOW and the FEALX# departures first RNAV fix is MRLEE (off 10L).",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.8435,
+      "term": "Are all gates at KRSW push and start at pilots discretion?",
+      "definition": "No. Gates B7, B9, C8, C9, and D10A all require a push clearance (RSW SOP)",
+      "image": ""
+    },
+    {
+      "id": 1778021611326.7478,
+      "term": "Further studying/practicing/useful documents:",
+      "definition": "Useful documents:\n- SOP (for applicable airport)\n- N02 Utilization of Climb via SID\n- R02 Departure Reference Sheet\n- R07 ZMA Route Tables\n- 7110.65\n\nFurther practice/studying:\n- S1 Theory 1 Google Slides (ZMA ARTCC Training Academy)\n- Clearance Practice (ZMA ARTCC Training Academy)\n- VATUSA Academy",
+      "image": ""
+    }
+  ]
+}
