@@ -1,0 +1,961 @@
+{
+  "id": "s3",
+  "name": "S3 Study Set",
+  "description": "",
+  "cards": [
+    {
+      "id": 1778021330888.5935,
+      "term": "What is the purpose of a TRACON controller?",
+      "definition": "Manage the initial climb of aircraft into the enroute environment and descend arrival aircraft to the approach phase.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7642,
+      "term": "What section(s) of the 7110.65 is primary used for S3 concepts?",
+      "definition": "Section 5, Radar and Section 4, IFR",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4587,
+      "term": "What is the radar separation for TRACON controller?",
+      "definition": "1,000 ft vertical, and 3nm lateral",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.563,
+      "term": "At what point can you lower the separation requirement between planes? And",
+      "definition": "what is the lowered separation?,2.5 nautical miles (NM) separation is authorized between aircraft established on the final approach course within 10 NM of the landing runway.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.0295,
+      "term": "Are you permitted to utilize 2.5 nm separation if the leading aircraft is a heavy?",
+      "definition": "No. The weight class must be at or below the preceding aircraft's class.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.206,
+      "term": "What is a vector?",
+      "definition": "A heading direction provided to an aircraft. For example, AAL311 fly heading 310...",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2544,
+      "term": "True or false: You are required to provide a reason for the vector.",
+      "definition": "True. When initiating a vector, advise the pilot of the purpose. 7110.65 5-6-2",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4688,
+      "term": "What does descend via mean?",
+      "definition": "An aircraft will descend and follow all vertical and speed guidance provided on an arrival (STAR).",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9075,
+      "term": "If an aircraft was told descend via by the center controller",
+      "definition": "are you required to repeat that instruction once you talk to the aircraft?,No.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6465,
+      "term": "In general",
+      "definition": "how how does the TPA TRACON extend?,AOB 12,000ft",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4626,
+      "term": "What is TPA Finals box altitudes? hint: there are 3",
+      "definition": "026 - 050\nSFC - 050\n030 - 050",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6602,
+      "term": "In general",
+      "definition": "how how does the RSW TRACON extend?,AOB 10,000ft",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3955,
+      "term": "In general",
+      "definition": "how how does the PBI TRACON extend over the PBI area?,AOB 12,000ft",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9883,
+      "term": "What TRACON(s) does RSW border?",
+      "definition": "TPA TRACON",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5144,
+      "term": "What TRACON(s) does TPA border?",
+      "definition": "RSW, F11 (MCO), and JAX",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2375,
+      "term": "What center(s) overlay TPA TRACON?",
+      "definition": "Miami domestic center and Jacksonville center.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8845,
+      "term": "Are what point does a TRACON controller have control over an arriving aircraft?",
+      "definition": "Once the plane enter the boundaries of the airspace.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.589,
+      "term": "True or false: TPA APP has control for turns and descents 10nm from the TRACON boundary with Miami Center.",
+      "definition": "False. TPA APP has control for turns and descents 5nm from the TRACON boundary. ZMA-TPA LOA",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7747,
+      "term": "When an aircraft checks into APP's frequency",
+      "definition": "what are you required to tell them?,What approach to expect and what the local altimeter setting is.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9084,
+      "term": "When stating the altimeter",
+      "definition": "are you required to cite the source of the altimeter? For example: TAMPA altimeter 3001 or just altimeter 3001.,You are not required to cite the source of the altimeter. ex: ...altimeter 3001\n\nNote: In C1 training, you will be required to cite the source, so it is good practice to cite it anyways.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3752,
+      "term": "True or false: Once you have provided the approach to expect and the altimeter",
+      "definition": "you are required to update the data block of the aircraft to reflect the expected approach.,True. You should place the appropriate scratchpad entry into the data block. Reference SOPs for the proper data block entry.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7527,
+      "term": "What does \"descend via\" mean?",
+      "definition": "The aircraft will descend via the arrival procedure and follow all charted altitude AND speed constraints.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8828,
+      "term": "An aircraft was provided a descend via (DVIA) clearance from MIA CTR into the PBI TRACON. The aircraft is currently at 9",
+      "definition": "000ft descending to 4,000ft on the DVIA. Once the aircraft is inside your airspace, you need to provide the aircraft a vector for sequencing purposes. Other than providing the reason for the vector, what else must you provide the aircraft?,An altitude instruction. Since you never provided a hard altitude to the aircraft, just a DVIA, you need to provide them an altitude constraint once you provide the vector. For example: AAL311, turn left heading 130, vectors for sequencing, descend and maintain 6,000",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.0461,
+      "term": "What type of data block is this called: https://gyazo.com/4bbc18d31c8c9ea826fc5f498ace3f1c",
+      "definition": "This is a partial data block (PDB), showing the altitude and ground speed. The altitude is displayed in hundreds of feet MSL, and the ground speed is displayed in tens of knots. The altitude field will time share with scratchpads and the owning sector ID for an inbound inter-facility handoff or a recently-accepted outbound inter-facility handoff.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.0728,
+      "term": "What type of data block is this called: https://gyazo.com/a92e724c788099071578de76a7505210",
+      "definition": "This is a full data block. (FDB) The white color indicates that it is owned by you, or you were the previous owner. The second line of the data block alternates between displaying altitude and ground speed, and destination airport (or scratchpad) and aircraft type. The altitude field will also time share with the owning sector ID for an inbound inter-facility handoff or a recently-accepted outbound inter-facility handoff.\n\nNote: by clicking a PDB that another controller owns, we can turn it into a FDB to show more information.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.0662,
+      "term": "What type of data block is this called: \nhttps://gyazo.com/fef74f32761d1088b8a6c9d6d99ef675",
+      "definition": "This track is coasting, meaning radar data is no longer being received.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.022,
+      "term": "When an aircraft initially checks into your frequency from both the TWR or the CTR",
+      "definition": "does the aircraft have to provide their current altitude?,Yes, they do. This is called mode C altitude verification",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1748,
+      "term": "If any aircraft on departure does not provide you their altitude",
+      "definition": "what is the phraseology to ask their their altitude?,N123AB, say altitude",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2886,
+      "term": "What is the margin of error for mode C verification?",
+      "definition": "Less than 300ft of variation between that data tag reported altitude and the pilot reported altitude.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8726,
+      "term": "If an aircraft reports their altitude and it varies by 400ft from the reported data block altitude what are you required to do?",
+      "definition": "Provide them the altimeter then request their altitude again. \n\nEx: N123AB, Tampa altimeter 3004, verify altitude.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6526,
+      "term": "What are the 4 cases that you need to verify a mode C altitude?",
+      "definition": "1. Initial track start.\n2. Track start from coast/frozen status.\n3. During and after an unreliable Mode C readout.\n4. Accepting an interfacility handoff",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.182,
+      "term": "What is the proper traffic information phraseology for AAL2193? https://gyazo.com/e7c9a1b8f7df0c9c31f7169d38d8e472",
+      "definition": "AAL2193, traffic eleven o'clock, one zero miles, opposite direction, north-west bound A319 at seven thousand.\n\nAAL725, traffic eleven o'clock, one zero miles, opposite direction, south-east bound A319 at six thousand.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1582,
+      "term": "What is merging target procedures?",
+      "definition": "When two aircraft appear to be merging with 1,000ft separation, a traffic advisory must be issued to both aircraft before the targets merge. If a pilot requests vectors to avoid merging with that aircraft, you must honor that request. 7110.65 5-1-4",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8987,
+      "term": "What is the minimum IFR altitude (MIA)?",
+      "definition": "The MIA is lowest altitude for IFR operations that provides 1,000 feet of clearance above the highest obstacle in non-mountainous areas and 2,000 feet above the highest obstacle in designated mountainous areas.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5842,
+      "term": "What is the minimum vector altitude (MVA)?",
+      "definition": "Lowest MSL altitude that an IFR aircraft can be vectored.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2546,
+      "term": "What is the minimum safe altitude (MSA)?",
+      "definition": "MSA is the minimum altitude at which it is safe for any aircraft to fly due to the presence of terrain or an obstruction.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1028,
+      "term": "What is the minimum safe altitude (MSA) as depicted on a procedure chart?",
+      "definition": "Lowest altitude that provides at least 1,000ft of clearance within 25nm of the centered radio aid.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6184,
+      "term": "What is the minimum en-route altitude (MEA)?",
+      "definition": "The minimum altitude that provides both obstacle clearance and acceptable navigation/signal coverage.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.472,
+      "term": "What is the minimum obstacle clearance altitude (MOCA)",
+      "definition": "The lowest altitude that provides obstacle clearance for an entire route segment, and ensure acceptable navigation signal coverage within 25nm of a VOR.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.908,
+      "term": "What is the off route obstruction clearance altitude (OROCA)?",
+      "definition": "The lowest of route altitude that provides obstruction clearance of 1,000ft in mountainous areas, and 2,000ft in mountainous areas. OROCA does not guarantee signal coverage.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7234,
+      "term": "What is the minimum crossing altitude (MCO)?",
+      "definition": "The lowest altitude that a nav fix can be crossed on an airway that will allow for an aircraft to clear all obstacles while preforming a standard climb rate.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.742,
+      "term": "What are the 4 main types of approaches used on VATSIM?",
+      "definition": "ILS, RNAV, Visual, and LOC",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.905,
+      "term": "What type of guidance does a LOC provide?",
+      "definition": "Only lateral guidance through the localizer",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1533,
+      "term": "What type of guidance does an ILS approach provide?",
+      "definition": "Both a glideslope (vertical) and a localizer (lateral)",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8691,
+      "term": "What is an approach gate?",
+      "definition": "An imaginary point used by air traffic control (ATC) to guide aircraft to the final approach course. It's located along the final approach course, one nautical mile (NM) from the final approach fix (FAF), and at least five nautical miles from the landing threshold.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.425,
+      "term": "What is the standard intercept degree for an ILS?",
+      "definition": "Less than 30 degrees",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.392,
+      "term": "Within 1nm from the approach gate",
+      "definition": "what is the required intercept angle?,20 degrees of less",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6401,
+      "term": "What are the weather requirements to be vectored inside of the approach gate?",
+      "definition": "- Ceiling 500ft or more above the MVA (minimum vectoring altitude)\n- Visibility of 3 statute miles or more",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1565,
+      "term": "What is an intermediate fix?",
+      "definition": "A navigational point that marks the beginning of the intermediate approach segment",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5747,
+      "term": "What type of approach is this? https://aeronav.faa.gov/d-tpp/2412/00416IL1L.PDF",
+      "definition": "ILS 1L at KTPA",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.094,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "what is the intermediate fix?,LAGOO",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5198,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "what is the initial approach fix?,LAGOO",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5605,
+      "term": "What symbol represents the FAF on a non-precision approach (NPFAF)?",
+      "definition": "The Maltese Cross",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6838,
+      "term": "What symbol represents the FAF on a precision approach?",
+      "definition": "A lightning bolt pointing to the location on the profile view",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3389,
+      "term": "On the ILS Y or LOC Y Runway 8 at Bob Hope (KBUR)",
+      "definition": "what is the non-precision FAF (NPFAF) and the precision FAF (PFAF)?,NPFAF - BUDDE at 3,000\nPFAF - at or above 3,000 at the point of the lightning bolt",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.259,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "where should the pilot intercept the glideslope? And how do you know?,SELMN at 2600ft because of the lightning bolt pointing at that section",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6233,
+      "term": "Do the FAF and the glideslope indicator always occur at the same place on an ILS approach?",
+      "definition": "No.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7776,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "what is depicted at the IF/IAF of LAGOO?,Hold in lieu of procedure turn",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1445,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "what are the missed approach instructions?,Climb to 500 then climbing left turn to 3000 direct PIE VORTAC and hold, continue climb-in-hold to 3000 (TACAN aircraft climb to 500 then climbing left turn to 4000 direct PIE VORTAC then on PIE VORTAC R-276 to LAFAL/PIE 8 DME and hold W, RT, 096 inbound.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.948,
+      "term": "How would you tell an aircraft to preform the published missed approach?",
+      "definition": "**after the aircraft reports going around** N123AB, fly the published missed approach",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2925,
+      "term": "What does this indicate? https://gyazo.com/b1f99010ecc6a015400c3492c5c4df28",
+      "definition": "A 649 foot obstacle.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8975,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "what DME is associated with SLEMN?,9.9 DME",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.31,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "what is the course of this procedure? (ex 036 degrees),007 degrees",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9785,
+      "term": "On the ILS 1L at KTPA",
+      "definition": "if you instructed an aircraft to hold at LAGOO, what equipment would they require?,DME is required based on the note provided in the chart.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1697,
+      "term": "What altitude does this encompass?\n\nhttps://gyazo.com/38a0709413d8b82eb065df40ebde977b",
+      "definition": "At or above (AOB) 2600. Because the line is below 2600, that means anything above 2600 is acceptable.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.202,
+      "term": "What is a PTAC? What does it stand for?",
+      "definition": "A PTAC is an acronym used by ATC to ensure all parts of an approach clearance are provided to the pilot. It stands for Position Turn Altitude Clearance.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9883,
+      "term": "Based on the following position of DAL142",
+      "definition": "what heading should we assign to prepare them for the ILS 1L? hint, this is not the final turn, it is simply a turn to prepare them for the ILS intercept. Since we do not issue turns greater than 90 degrees, we cannot clear this aircraft for the approach from their present position.\n\nhttps://gyazo.com/5e62211e9cb3df1cc75200f2b14b397b,Heading 100. We issue 100 because we want all our heading to be consistent and the easiest way to do that is base it off the airport. Since the airport is offset 10 degrees right (010 and 190 are the approximate runway headings), The vast majority of our normal operation headings will be 010, 190, 280, and 100 other than for the PTAC turns.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4634,
+      "term": "DAL142's is on a 100 heading for the ILS 1L. What would the intercept turn be?",
+      "definition": "Heading 040. The runway heading is 010, so add 30 degree and you get 040 degrees.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7446,
+      "term": "How would you issue the turn for DAL142 using proper phraseology? https://gyazo.com/5e62211e9cb3df1cc75200f2b14b397b",
+      "definition": "DAL142, turn left heading 100 vectors to final.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2253,
+      "term": "Issue a PTAC for DAL142 for the ILS 1L. Remember Position (LAGOO highlighted in green on the image)",
+      "definition": "turn altitude, clearance. https://gyazo.com/2da665611085ab9af0086bea1669ab80,DAL142, 3 miles from LAGOO, turn left heading 040, maintain 2,600 until established on the localizer, cleared ILS runway 1L approach. \n\nBecause LAGOO is outside of the approach gate, we can utilize a 30 degree intercept. Therefore, we issue the 040 heading.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6345,
+      "term": "When are you required to hand aircraft off to TWR by?",
+      "definition": "Before the final approach fix. (Check SOPs for facility specific guidance)",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5688,
+      "term": "Based on the following position of NKS641",
+      "definition": "what heading should we assign to prepare them for the ILS 1L? https://gyazo.com/763521e24e11eb245bd753e38e0cdf7e,Heading 280.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8767,
+      "term": "Utilizing proper phraseology",
+      "definition": "issue the turn to NKS641. https://gyazo.com/763521e24e11eb245bd753e38e0cdf7e,NKS641, turn right heading 280, vectors to final.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8806,
+      "term": "Issue a proper PTAC clearance to NKS641 for the ILS 1L. LAGOO is highlighted green.\n\nhttps://gyazo.com/69afa0d20f796da26d0b0904ac22ff0f",
+      "definition": "NKS641, 3 miles from LAGOO, turn right heading 340, maintain 2,600 until established on the localizer, cleared ILS runway 1L. \n\nNotes: Because LAGOO is outside of the approach gate, we can utilize a 30 degree intercept. Therefore, we issue the 040 heading.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.62,
+      "term": "Based on the following position of SWA4323",
+      "definition": "what heading should we assign to prepare them for the ILS 1L? \n\nhttps://gyazo.com/05a6d945e7cca4140d75ba001e1321f2,Heading 100.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4187,
+      "term": "Using proper phraseology",
+      "definition": "issue the turn to SWA4323 to heading 100. https://gyazo.com/05a6d945e7cca4140d75ba001e1321f2,SWA4323, turn left heading 100, vectors to final.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.125,
+      "term": "Issue a proper PTAC clearance to SWA4323 for the ILS 1L. SELMN is highlighted green.\n\nhttps://gyazo.com/d97d71cfc4b90989475138f3eeb532da",
+      "definition": "SWA4323, 3 miles from SELMN, turn left heading 030, maintain 2,600 until established on the localizer, cleared ILS runway 1L approach. \n\nNotes: Since we are inside the approach gate, we need to be utilizing a 20 degree intercept. Therefore we must use 030 as the intercept heading.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9932,
+      "term": "Can you clear an aircraft direct to a fix on the ILS and clear them for the approach that way?",
+      "definition": "Yes, as long as you are meeting the intercept degrees as outlined in the 7110.65 4-8-1",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8994,
+      "term": "Clear AAL8491 for the ILS 1L at TPA by clearing the aircraft direct to LAGOO.\n\nhttps://gyazo.com/d4f12935ec7aa5ab86f3ef79951c4fa7",
+      "definition": "AAL8491, 13 miles from LAGOO, maintain at or above 2,600 until LAGOO, cleared straight in ILS runway 1L approach.\n\nWe must say straight in because there is a procedure turn at LAGOO. If we do not specify straight in, we are giving the pilot permission to preform the procedure turn.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.0752,
+      "term": "What clearing an aircraft to a fix on an ILS without a hold-in-lieu of procedure turn",
+      "definition": "what is the maximum intercept degree?,90 degrees",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.639,
+      "term": "What clearing an aircraft to a fix on an ILS with a hold-in-lieu of procedure turn",
+      "definition": "what is the maximum intercept degree?,Any degree",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.0151,
+      "term": "Based on the following image",
+      "definition": "what aircraft could we legally clear direct LAGOO for the ILS 1L? \n\nhttps://gyazo.com/b8149c2756e3d6068768e3682689e679 (LAGOO is Highlighted Green),Both ALL901 and LXJ57. LXJ57 is within 90 degrees so can be cleared for the straight in ILS 1L approach. AAL901 is greater than 90 degrees, but LAGOO has a hold-in-lieu of procedure turn published, so we can clear aircraft at greater than 90 degrees, they will just need to fly the hold-in-lieu of procedure turn.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.465,
+      "term": "If you plan tom vector an aircraft over the localizer",
+      "definition": "what must you tell them?,\"vectors through the localizer\"",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1,
+      "term": "Based on the RNAV Y 24 at KRSW",
+      "definition": "what altitude do aircraft have to cross RODDE at?\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757RY24.PDF,At or above 3,000",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7778,
+      "term": "Based on the RNAV Y 24 at KRSW",
+      "definition": "what altitude and speed do aircraft have to cross ODERY at?\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757RY24.PDF,At or above 3,000 and below 210 knots",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9158,
+      "term": "Provided below is the SHFTY arrival and the RNAV Y 24 at KRSW. What do these 2 procedures have in common? \n\nhttps://aeronav.faa.gov/d-tpp/2412/06757RY24.PDF\nhttps://aeronav.faa.gov/d-tpp/2412/00154SHFTY.PDF",
+      "definition": "They both share the fix RODDE.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4705,
+      "term": "Provided below is the SHFTY arrival and the RNAV Y 24 at KRSW. These 2 procedures share the fix RODDE. What does this allow for the approach controller to do?\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757RY24.PDF\nhttps://aeronav.faa.gov/d-tpp/2412/00154SHFTY.PDF",
+      "definition": "This allows for the approach controller to simply tell the aircraft to cross RODDE at or above 3,000 and then clear the for the approach. There is no need to vector the aircraft to the final approach course, or clear them direct to a fix.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3042,
+      "term": "Based on the RNAV Y 24 approach at KRSW",
+      "definition": "what is the final approach fix?\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757RY24.PDF,OMOKY",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3767,
+      "term": "Based on the RNAV Y 24 approach at KRSW",
+      "definition": "could you clear and aircraft direct to OMOKY?\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757RY24.PDF,No. Since OMOKY is only an FAF and not also an IAF. 7110.65 4-8-1 c",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6826,
+      "term": "Clear SWA4921 for the RNAV Y runway 24 at KRSW. \n\nhttps://gyazo.com/24a408cb6dc1adad5db25a538861a633",
+      "definition": "SWA4921, cross RODDE at or above 3,000. Cleared RNAV Y runway 24 approach.\n\nSince RODDE is also on the SHFTY# arrival, we do not need to clear SWA4921 direct RODDE or provide an intercept heading.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1777,
+      "term": "Clear UAL3163 for the RNAV Y runway 24 at KRSW. UAL3163 was vectored off the TYNEE# arrival on a 090 heading for traffic. \n\nhttps://gyazo.com/5d13fe446c98e4374b32c12895026a03",
+      "definition": "UAL3163, 15 miles from NABAC, cross NABAC at or above 3,000, cleared RNAV Y runway 24 approach.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3733,
+      "term": "Clear NKS641 for the RNAV 1R approach at KTPA by using vectors. ANAZE is highlighted green. \n\nhttps://gyazo.com/76e8457994f302a57ae0cb6243369b2b",
+      "definition": "5 miles from the final approach fix, right right heading 340, maintain 2,600 until established on the final approach course, cleared RNAV runway 1R approach.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.398,
+      "term": "What is this type of RNAV approach is this? https://aeronav.faa.gov/d-tpp/2412/00987R1R.PDF",
+      "definition": "A Terminal Arrival Area (TAA) RNAV Approach",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3464,
+      "term": "What is a Terminal Arrival Area (TAA) RNAV Approach?",
+      "definition": "Where a Terminal Arrival Area (TAA) has been established to support RNAV approaches, inform the aircraft of its position relative to the appropriate IAF and issue the approach clearance. Once the aircraft is inside of the altitude arc, they will automatically descend to the published arc altitude. \n\nEssentially, you are clearing an aircraft for the approach with no altitude constraint since the TAA provides the altitude constraints as published.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2932,
+      "term": "At a towered airport",
+      "definition": "what are the 2 main requirements in order to clear an aircraft for the visual approach? (not weather related),- The airport or the runway in sight\n- If the traffic reports the preceding aircraft in sight",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6301,
+      "term": "How would you point out the airport to an aircraft",
+      "definition": "assuming the aircraft (AAL311) is 10 miles south of KTPA, facing directly at the field?,AAL311, Tampa airport is at 12 o'clock 10 miles. Report Tampa airport in sight.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9412,
+      "term": "If an aircraft about to be turned on a base initially assigned an instrument approach reports the runway in sight and requests the visual",
+      "definition": "are you permitted to give them the visual?,Yes. 7110.65 7-4-3 a",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6292,
+      "term": "What is this chart an example of? https://aeronav.faa.gov/d-tpp/2412/00625NORTHBAY_VIS18.PDF",
+      "definition": "Charted visual flight procedure",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2058,
+      "term": "In order to clear an aircraft for this visual approach",
+      "definition": "what 2 things are required other than weather minimums?\n\nhttps://aeronav.faa.gov/d-tpp/2412/00625NORTHBAY_VIS18.PDF,- Operating control tower\n- Has a charted landmark insight",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7004,
+      "term": "AAL311 reports the power station insight. Clear them for the charted visual flight procedure.\n\nhttps://aeronav.faa.gov/d-tpp/2412/00625NORTHBAY_VIS18.PDF",
+      "definition": "AAL311, cleared NORTH BAY VISUAL RWY 18 approach.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9187,
+      "term": "What fix would you use to clear an aircraft for the VOR runway 24 approach at RSW?\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757VT24.PDF",
+      "definition": "MORGN, since it is the IAF.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.459,
+      "term": "N123AB (/A) is currently 5 miles directly south of KRSW at 4",
+      "definition": "000ft. Clear this aircraft for the VOR 24 at RSW.\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757VT24.PDF,N123AB, turn right heading 040, join the Lee County 064 radial direct MORGN. Cross MORGN at or above 1,600. Cleared VOR runway 24 approach into southwest Florida international.\n\nSince the aircraft is /A, we must tell have them intercept the Lee County radial. We cannot clear them direct to MORGN because they will be unable to fly direct to the fix.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.692,
+      "term": "N123AB (/G) is currently 5 miles directly south of KRSW at 4",
+      "definition": "000ft. Clear this aircraft for the VOR 24 at RSW.\n\nhttps://aeronav.faa.gov/d-tpp/2412/06757VT24.PDF,N123AB, proceed direct MORGN, cross MORGN at or above 1,600. Cleared VOR runway 24 approach into southwest Florida international.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.444,
+      "term": "When clearing an aircraft for an approach and the MVA is higher than the altitude published associated with the approach fix",
+      "definition": "should you clear the aircraft for the approach using the published altitude on the chart or the MVA?,You must use the MVA altitude.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.337,
+      "term": "In the very broad sense",
+      "definition": "what locations does the 1-in 1-out rule apply to?,Uncontrolled fields",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4033,
+      "term": "What are the three ways to hold a departure out of an uncontrolled field after issuing an IFR clearance?",
+      "definition": "Issue a: clearance void time, release time or hold for release.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7295,
+      "term": "What is a clearance void time?",
+      "definition": "The issued time at which your clearance is void and after which you may not depart.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3335,
+      "term": "What is a release time?",
+      "definition": "The earliest time in the future the aircraft may depart the uncontrolled field.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5232,
+      "term": "How do you issue a release time?",
+      "definition": "(Aircraft identification) RELEASED FOR DEPARTURE AT (time in hours and/or minutes),\nand if required,\nCLEARANCE VOID IF NOT OFF BY (time), IF NOY OFF BY (time), ADVISE (facility) NOT LATER THAN (time) OF INTENTIONS.\nTIME NOW (time in hours, minutes, and nearest quarter minute).",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.138,
+      "term": "What is a hold for release?",
+      "definition": "\"Hold for release\" instructions must be used when necessary to inform a pilot or a controller that a departure clearance is not valid until additional instructions are received.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4912,
+      "term": "How do you issue a hold for release?",
+      "definition": "HOLD FOR RELEASE, EXPECT (time in hours and/or minutes) DEPARTURE DELAY.\n\n**Once the controller is able to release the aircraft** (ID) RELEASED FOR DEPARTURE. (A clearance void time may be added to this departure release, if applicable)",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3774,
+      "term": "When clearing an IFR aircraft into an uncontrolled field for a visual approach",
+      "definition": "what is the phraseology?,(callsign), cleared visual approach into the {airport}. \n\nNOTE: You DO NOT state the runway you are clearing them for. Since the field is uncontrolled, you have no control over the \"active\" runways. That is the pilots responsibility.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.275,
+      "term": "When clearing an IFR aircraft into an uncontrolled field for an instrument (non-circling) approach",
+      "definition": "what is the phraseology?,Same phraseology as a standard approach clearance for an instrument approach.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1042,
+      "term": "Once the aircraft is established on an approach",
+      "definition": "what should you do one you no longer need to talk to them?,If an IFR aircraft intends to land at an airport not served by a tower, approve a change to the advisory service frequency when you no longer require direct communications.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8333,
+      "term": "What must you also tell IFR aircraft into an uncontrolled field as you switch them to advisory frequency?",
+      "definition": "You must tell them the instructions for reporting the cancelation of their IFR.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4316,
+      "term": "What is the phraseology for telling an aircraft to chance to advisory service frequency and reporting their IFR cancelation?",
+      "definition": "(callsign) report cancellation of IFR on [freq], change to advisory frequency approved.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5137,
+      "term": "When you tell an IFR aircraft to report IFR cancelation going into an uncontrolled field",
+      "definition": "what are their 2 options as to when to cancel?,They can cancel in the air, or on the ground",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3933,
+      "term": "What should you respond with if the pilot requests to cancel their IFR in the air going into an uncontrolled field?",
+      "definition": "(callsign) IFR cancellation received, squawk VFR, change to advisory frequency approved",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9197,
+      "term": "Can you clear 2 IFR aircraft for an approach at an uncontrolled field when the first aircraft has yet to cancel their IFR?",
+      "definition": "No. This is the 1-in 1 out rule. Only 1 IFR aircraft can operate at an uncontrolled field at a time.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.939,
+      "term": "Does the 1-in 1-out rule apply to VFR aircraft on flight following services?",
+      "definition": "No. It only applies to IFR aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6833,
+      "term": "Aircraft A was just cleared for the RNAV approach into an uncontrolled field and is roughly 15 miles away. They stated they will cancel their IFR on the ground. Aircraft B is on the ground in the same uncontrolled field. There are not more aircraft within the vicinity of this airport. You just issued an IFR clearance to aircraft B. What hold/release instruction would be best to utilize here and why?",
+      "definition": "Hold for release. Both other options (release time and a clearance void time) do not guarantee that the arrival aircraft will have canceled their IFR in time. Hold for release prevents the release of the IFR aircraft until you can verify that the arrival has canceled IFR.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.238,
+      "term": "Aircraft A was just cleared for the RNAV 22 into TPF (has not canceled IFR). Aircraft B is 10 miles north of TIYOB and has yet to be cleared for any approach but is expecting the RNAV 22. What would be the most efficient instruction to issue to aircraft B?\n\nhttps://aeronav.faa.gov/d-tpp/2412/00417R22.PDF",
+      "definition": "Have aircraft B hold at TIYOB for the RNAV 22. Since aircraft A is still IFR and has yet to cancel, we cannot clear aircraft A for the approach.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2737,
+      "term": "Aircraft A was just issued the following:\n\nAircraft A",
+      "definition": "RELEASED FOR DEPARTURE AT 0025z. CLEARANCE VOID IF NOT OFF BY 0030z, ADVISE Tampa approach NOT LATER THAN 0032z OF INTENTIONS.\nTIME NOW 0024z.\n\n Aircraft B is 10 miles north of TIYOB and has yet to be cleared for any approach but is expecting the RNAV 22. \n\nCan you clear Aircraft B for the approach?\n\nhttps://aeronav.faa.gov/d-tpp/2412/00417R22.PDF,No. You issued a release time to an aircraft, so the airport is already occupied by an IFR aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.667,
+      "term": "Are controller permitted to tell an aircraft to cancel their IFR and proceed VFR?",
+      "definition": "No.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3953,
+      "term": "What are the 3 different types of SIDs? (S1 training)",
+      "definition": "1. hybrid\n2. radar vectored\n3. PNAV",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.19,
+      "term": "With departures",
+      "definition": "are you required to have aircraft established on their route of flight before handing the aircraft to the next sector?,Yes. Unless otherwise coordinated.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5435,
+      "term": "When should you issue a radar handoff?",
+      "definition": "When the aircraft is on course, issued a climb to the highest possible altitude, and is absolved of any conflicts in your airspace.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9346,
+      "term": "What is a point out?",
+      "definition": "An action taken by a controller to transfer the radar identification of an aircraft to another controller if the aircraft will or may enter the airspace or protected airspace of another controller and radio communications will not be transferred.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6418,
+      "term": "What does point out approved mean?",
+      "definition": "The term used to inform the controller initiating a point out that the aircraft is identified and that approval is granted for the aircraft to enter the receiving controller's airspace, as coordinated, without a communications transfer or the appropriate automated system response.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7017,
+      "term": "In response to a point out",
+      "definition": "the receiving controller states \"radar contact\". What does this mean?,This means that the reviewing controller needs to talk to the plane and you are required to handoff the aircraft to the receiving controller.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.636,
+      "term": "In response to a point out",
+      "definition": "the receiving controller states \"reference traffic, AAL311, 9,000 westbound\". What does this mean?,This means that there is traffic that could be a potential conflict with the aircraft you are pointing out.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6926,
+      "term": "How would you respond to \"reference traffic",
+      "definition": "AAL311, 9,000 westbound\" from another controller after initiating a point out.,Traffic observed and proceed with the initial point out request or ask for a new point out request because that traffic prevents them for doing the initial plan.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8037,
+      "term": "What is a request for control?",
+      "definition": "This is a request made with another controller to request control for typically something specific such as turns or descents.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1135,
+      "term": "You request control for descents on an arrival aircraft with center. Center replies \"your control\". What does this mean?",
+      "definition": "This means you have control for everything. Center is giving you full control over the aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6104,
+      "term": "You request control for descents on an arrival aircraft with center. Center replies \"unable\". What does this mean?",
+      "definition": "This means that center is unable to accommodate that request.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.4563,
+      "term": "An aircraft is at 9",
+      "definition": "000ft, climbing to 12,000ft (top of TRACON). You have another much slower aircraft in front of them on the same route. You go to center and say \"request climb for AAL311 10 miles south of TPA\" . Center replies with \"climb and maintain FL 210\". What does this mean?,This means that center is giving you permission to climb the aircraft to FL210 even though that is outside your airspace.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3428,
+      "term": "Of all things approach related",
+      "definition": "what is a controller first duty priority?,A safety alert.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.0684,
+      "term": "What is a safety alert?",
+      "definition": "A safety alert is issued when an aircraft is in an unsafe proximity to terrain, obstructions, or another aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.1377,
+      "term": "Within safety alerts",
+      "definition": "what are the 2 types of alerts?,Traffic alert and terrain/obstruction alert",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2,
+      "term": "What does a traffic alert call always begin with?",
+      "definition": "\"traffic alert\"",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7263,
+      "term": "AAL311 is at 8",
+      "definition": "000 and has traffic off his 12 o'clock in 5 miles opposite direction same altitude. Issue a traffic alert to AAL311.,\"Traffic alert, AAL311, twelve o'clock, 5 miles opposite direction, level 8,000, advise you turn left heading 100 immediately.\" \n\nNote: your advice to absolve the conflict will vary.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9526,
+      "term": "When should you issue a terrain alert?",
+      "definition": "If you observe an aircraft that you judge to be at an unsafe proximity to the ground other other obstructions.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8098,
+      "term": "What should every terrain/obstruction alert begin with?",
+      "definition": "\"Low altitude alert\"",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.448,
+      "term": "The MVA is 3",
+      "definition": "000 and AAL311 appears to be descending below 3,000. Issue a Low altitude alert to AAL311.,\"Low altitude alert, AAL311, check your altitude immediately, the MVA is your are is 3,000\"\nor",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7341,
+      "term": "\"Low altitude alert",
+      "definition": "AAL311, check your altitude immediately\"",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9604,
+      "term": "Are TRACON controllers required to provide VFR flight following services?",
+      "definition": "No, traffic/work load depending.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.735,
+      "term": "What are the VFR separation minimums?",
+      "definition": "There are none technically. It is best practice to provide as much deconflicting services as possible to VFR aircraft, but since it cannot be guaranteed all traffic is talking to ATC, no true separation is required.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6267,
+      "term": "Who initiates the request for flight following? Pilot or controller?",
+      "definition": "The pilot does",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.913,
+      "term": "Do you radar contact aircraft who want flight following?",
+      "definition": "Yes. And you should provide them a squawk code.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.7402,
+      "term": "Do you issue traffic advisories the same way you would for IFR aircraft to VFR flight following aircraft?",
+      "definition": "Yes.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2063,
+      "term": "If an aircraft requests to cancel VFR flight following",
+      "definition": "what should you respond with?,\"N123AB, radar service terminated, squawk and maintain VFR, frequency change approved\"",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.5579,
+      "term": "If the next controller is not accepting the VFR flight following aircraft handoff",
+      "definition": "what should you do?,Assume the next controller is unable to accommodate the flight following. Implement the following phraseology: \"N123AB, radar services terminated. For further flight following, contact [name and frequency of sector]\".",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.8916,
+      "term": "What are the 2 types of holds that we can issue?",
+      "definition": "Published or unpublished holds.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.162,
+      "term": "What is a published hold?",
+      "definition": "A hold that is depicted on a chart with predefined information.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.3806,
+      "term": "Does a published hold have to be on the route of flight for the aircraft in order to issue the published hold to that aircraft. For example",
+      "definition": "aircraft A is going into TPA via the BLFRG arrival, and is being told to hold at a published hold on the RAYZZ arrival. Is that allowed?,Yes, you can. However, you must specify the location of the hold in the clearance.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.31,
+      "term": "How do you clear an aircraft (AAL311) for the published hold at RAYZZ assuming they are already on the arrival procedure 7 miles west of RAYZZ descending through 13",
+      "definition": "000?\n\nThe current time is 0025z and you expect to have the aircraft hold for 10 minutes. \n\nAlso, for the sake of this exercise, you requested this hold with Miami Center and they approved it. \n\nhttps://aeronav.faa.gov/d-tpp/2412/00416RAYZZ.PDF,AAL311, cleared to RAYZZ, hold south west of RAYZZ as published. Maintain 12,000. Expect further clearance at 0035z.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.2058,
+      "term": "AAL311 has been holding at RAYZZ as published on the RAYZZ arrival. Provide instructions to AAL311 to have them exit the hold and continue on the STAR.",
+      "definition": "AAl311, cleared to Tampa airport, resume the RAYZZ# arrival.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.9,
+      "term": "AAL311 has been holding at RAYZZ as published on the RAYZZ arrival for severe weather over Tampa. AAL311 has requested to divert to SRQ. You are the only controller working TPA APP",
+      "definition": "so there is not need to coordinate this action. Assume the path from RAYZZ direct to SRQ is clear of weather. Provide instructions to AAL311 to have them exit the hold and proceed on route to SRQ.,AAL311, cleared to Sarasota airport via direct Sarasota airport.",
+      "image": ""
+    },
+    {
+      "id": 1778021330888.6663,
+      "term": "Severe weather over TPA is preventing AAL311 from landing. \n\nAAL311 current route: BNGOS4 COREA BLFRG2 (Over DSIDE currently)\n\nAAL311 requests to hold until the weather passes (approximately 20 minutes",
+      "definition": "current time 0154z). You decide to issue an unpublished hold at JSTRM at 6,000 ft. \n\nIssue the unpublished hold.,N123AB, cleared to JSTRM, hold southeast of JSTRM on the 321 radial, ten mile legs, right turns, maintain 10,000, expect further clearance at 0214z. \n\nNote: Most of the values listed above are subject to change. As long as you provided the general phraseology, that is acceptable.",
+      "image": ""
+    }
+  ]
+}
