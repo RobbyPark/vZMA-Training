@@ -2976,14 +2976,30 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       try {
         if (examId) {
           await SB.update('exams', `id=eq.${examId}`, examData);
-          await SB.delete('exam_questions', `exam_id=eq.${examId}`);
+          // Preserve existing question IDs by matching on sort_order
+          const existingQs = await SB.query('exam_questions', `?exam_id=eq.${examId}&order=sort_order.asc`);
+          const newQs = collectExamData();
+          // Update existing questions in place, delete extras, insert new ones
+          for (let i = 0; i < newQs.length; i++) {
+            if (i < existingQs.length) {
+              // Update existing — preserves the ID
+              await SB.update('exam_questions', `id=eq.${existingQs[i].id}`, { ...newQs[i], exam_id: examId });
+            } else {
+              // New question added — insert fresh
+              await SB.insert('exam_questions', { ...newQs[i], exam_id: examId });
+            }
+          }
+          // Delete any questions that were removed
+          for (let i = newQs.length; i < existingQs.length; i++) {
+            await SB.delete('exam_questions', `id=eq.${existingQs[i].id}`);
+          }
         } else {
           const [newExam] = await SB.insert('exams', examData);
           examId = newExam.id;
-        }
-        const questions = collectExamData();
-        if (questions.length) {
-          await SB.insert('exam_questions', questions.map(q => ({ ...q, exam_id: examId })));
+          const questions = collectExamData();
+          if (questions.length) {
+            await SB.insert('exam_questions', questions.map(q => ({ ...q, exam_id: examId })));
+          }
         }
         toast(publish ? 'Exam published.' : 'Exam saved as draft.');
         closeModal('examBuilderModal');
