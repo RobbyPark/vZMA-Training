@@ -1250,7 +1250,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       <div id="fc_cardsList"></div>
 
       <div class="flex gap-2 mt-4">
-        <button class="btn btn-primary" onclick="downloadFlashcardSet()">💾 Download JSON</button>
+        <button class="btn btn-primary" onclick="downloadFlashcardSet()">Download JSON</button>
+        <button class="btn btn-secondary" onclick="saveFlashcardSetOnly()">Save</button>
         <button class="btn btn-secondary" onclick="closeModal('flashcardSetModal')">Cancel</button>
       </div>
     </div>
@@ -3488,6 +3489,14 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       else fcSets.push(set);
       saveFcSetsToStorage();
       return set;
+    }
+
+    function saveFlashcardSetOnly() {
+      const set = saveFlashcardSet();
+      if (!set) return;
+      toast(`"${set.name}" saved. You can download the JSON anytime from the Flashcards tab.`);
+      renderFlashcardSetList();
+      closeModal('flashcardSetModal');
     }
 
     function downloadFlashcardSet() {
