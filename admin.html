@@ -1237,8 +1237,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       <!-- Import from Quizlet -->
       <div class="card" style="margin-bottom:20px;background:var(--blue-50);border-color:#bfdbf7;">
         <div style="font-weight:700;font-size:.85rem;color:var(--blue-600);margin-bottom:8px;">Import from Quizlet</div>
-        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:10px;">Export your Quizlet set as text (tab between term/definition, newline between cards) and paste below.</p>
-        <textarea class="form-textarea" id="fc_quizletImport" placeholder="Term&#9;Definition&#10;Term&#9;Definition&#10;..." style="font-size:.82rem;min-height:100px;"></textarea>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:10px;">Paste your cards below. Use a <strong>comma</strong> between term and definition, and a <strong>semicolon</strong> between cards.</p>
+        <textarea class="form-textarea" id="fc_quizletImport" placeholder="Term, Definition; Term, Definition; ..." style="font-size:.82rem;min-height:100px;"></textarea>
         <button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="importFromQuizlet()">Import Cards</button>
       </div>
 
@@ -3420,14 +3420,18 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     function importFromQuizlet() {
       const text = document.getElementById('fc_quizletImport').value.trim();
-      if (!text) { toast('Paste your Quizlet export text first.', 'error'); return; }
-      const lines = text.split('\n').filter(l => l.trim());
+      if (!text) { toast('Paste your cards first.', 'error'); return; }
+      const rows = text.split(';').filter(r => r.trim());
       let imported = 0;
-      lines.forEach(line => {
-        const parts = line.split('\t');
-        if (parts.length >= 2) {
-          fcCards.push({ id: Date.now() + Math.random(), term: parts[0].trim(), definition: parts[1].trim(), image: '' });
-          imported++;
+      rows.forEach(row => {
+        const commaIdx = row.indexOf(',');
+        if (commaIdx > -1) {
+          const term = row.slice(0, commaIdx).trim();
+          const definition = row.slice(commaIdx + 1).trim();
+          if (term || definition) {
+            fcCards.push({ id: Date.now() + Math.random(), term, definition, image: '' });
+            imported++;
+          }
         }
       });
       document.getElementById('fc_quizletImport').value = '';
