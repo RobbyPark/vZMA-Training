@@ -2497,8 +2497,14 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       wrongQs.forEach((q, i) => {
         const studentAns = (attempt.answers||{})[q.id];
         html += `
-          <div style="border:1px solid var(--gray-200);border-radius:10px;padding:16px;margin-bottom:14px;">
-            <div style="font-weight:600;font-size:.95rem;color:var(--gray-900);margin-bottom:12px;">${i+1}. ${q.question_text}</div>
+          <div id="override-row-${q.id}" style="border:1px solid var(--gray-200);border-radius:10px;padding:16px;margin-bottom:14px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;">
+              <div style="font-weight:600;font-size:.95rem;color:var(--gray-900);">${i+1}. ${q.question_text}</div>
+              <button onclick="overrideQuestion('${attemptId}','${q.id}','${examId}')" 
+                style="flex-shrink:0;background:#fef9c3;border:1px solid #fde68a;color:#92400e;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">
+                ✓ Mark Correct
+              </button>
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;">
                 <div style="font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:4px;">Student's Answer</div>
@@ -2512,6 +2518,53 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           </div>`;
       });
       document.getElementById('attemptDetailBody').innerHTML = html;
+
+      // Store context for override function
+      document.getElementById('attemptDetailBody').dataset.attemptId = attemptId;
+      document.getElementById('attemptDetailBody').dataset.examId = examId;
+      document.getElementById('attemptDetailBody').dataset.totalQuestions = questions.length;
+      document.getElementById('attemptDetailBody').dataset.passingGrade = (await SB.query('exams', `?id=eq.${examId}`))[0]?.passing_grade || 70;
+    }
+
+    async function overrideQuestion(attemptId, questionId, examId) {
+      if (!confirm('Mark this question as correct? This will recalculate the student\'s score.')) return;
+
+      const [attempt] = await SB.query('exam_attempts', `?id=eq.${attemptId}`);
+      const questions = await SB.query('exam_questions', `?exam_id=eq.${examId}&order=sort_order.asc`);
+      const passingGrade = parseInt(document.getElementById('attemptDetailBody').dataset.passingGrade) || 70;
+
+      // Add override
+      const overrides = attempt.question_overrides || {};
+      overrides[questionId] = 1; // 1 = manually marked correct
+
+      // Recalculate score
+      let totalPoints = 0, earnedPoints = 0;
+      questions.forEach(q => {
+        totalPoints += q.points || 1;
+        if (isAnswerCorrect(q, (attempt.answers||{})[q.id], overrides)) {
+          earnedPoints += q.points || 1;
+        }
+      });
+      const newScore = totalPoints > 0 ? Math.round(earnedPoints / totalPoints * 100) : 0;
+      const newPassed = newScore >= passingGrade;
+
+      await SB.update('exam_attempts', `id=eq.${attemptId}`, {
+        question_overrides: overrides,
+        score: newScore,
+        passed: newPassed,
+      });
+
+      toast(`Question overridden. New score: ${newScore}% — ${newPassed ? 'Pass ✓' : 'Fail'}`);
+
+      // Remove the row visually and update title
+      const row = document.getElementById(`override-row-${questionId}`);
+      if (row) {
+        row.style.transition = 'opacity .3s';
+        row.style.opacity = '0';
+        setTimeout(() => row.remove(), 300);
+      }
+      document.getElementById('attemptDetailTitle').textContent =
+        `${attempt.student_name} — ${attempt.exam_title || 'Exam'} (${newScore}%)`;
     }
 
     function isAnswerCorrect(question, answer, overrides) {
