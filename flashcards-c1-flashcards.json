@@ -1,0 +1,469 @@
+{
+  "id": "c1-flashcards",
+  "name": "C1 Study Set",
+  "description": "",
+  "cards": [
+    {
+      "id": 1778019637119.7117,
+      "term": "What is the purpose of an enroute controller?",
+      "definition": "Transfer aircraft to an from the terminal environment through their cruise phase of flight.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6824,
+      "term": "What is the enroute separation for aircraft below FL230?",
+      "definition": "3nm laterally or 1,000ft vertically",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.3943,
+      "term": "What is the enroute separation for aircraft above FL230?",
+      "definition": "5nm laterally or 1,000ft vertically",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.1245,
+      "term": "Aircraft A is at FL235 and aircraft B is at FL230. What is the required lateral separation?",
+      "definition": "5nm",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.3718,
+      "term": "What are the RVSM altitudes?",
+      "definition": "FL290 through FL410",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.1519,
+      "term": "What is aircraft separation above FL410?",
+      "definition": "5nm laterally, and 2,000ft vertically.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.1455,
+      "term": "An aircraft is at FL470. What direction should they be traveling?",
+      "definition": "Westbound.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.4675,
+      "term": "If an aircraft requests deviations for weather, are you required to provide the deviation?",
+      "definition": "Yes.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.2837,
+      "term": "What is the easiest way to identify weather conflicts while controlling center?",
+      "definition": "Utilize the ERAM weather display.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.1958,
+      "term": "What is the general phraseology for a weather deviation.",
+      "definition": "(callsign), deviations right/left of course up to # degrees is approved. When able, (course of action such as proceed direct fix) and advise.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.7878,
+      "term": "Current Altitude: FL320",
+      "definition": "DAL311, cleared to the Atlanta airport via direct WAKKO Q77 SHRKS LAIRI LARZZ SITTH2 arrival. Descend and maintain FL310.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.4292,
+      "term": "What is MIT?",
+      "definition": "Miles in trail. This is the distance from one aircraft to another. For example 25 MIT would indicate that aircraft must be separated by at least 25nm when crossing over the effected fix.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.0505,
+      "term": "19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "20 MIT",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6602,
+      "term": "19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "RIDES",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.4019,
+      "term": "19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "No: EXCL:PROPS indicated that props are excluded.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6162,
+      "term": "19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "F11 TRACON: F11:ZMA means F11 to ZMA",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.1755,
+      "term": "When vectoring to create space for MIT, should you turn aircraft into a head-wind or a tail-wind?",
+      "definition": "Turn into a head-wind. This will cause a decrease in ground speed allow for easier sequencing.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.2012,
+      "term": "What is an AIRMET?",
+      "definition": "An AIRMET is an advisory of significant weather phenomena that describes conditions to aircraft that could be hazardous, specifically those that have limited equipment, instruments, or pilot qualifications. Typically issued to GA aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.879,
+      "term": "What are the 3 types of AIRMETs?",
+      "definition": "AIRMET Sierra",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.8484,
+      "term": "What is an AIRMET Sierra?",
+      "definition": "Instrument flight rules conditions and mountain obscuration. Ceiling must be less than 1,000ft or the visibility less than 3SM and this must be affecting 50% of the area for which it is forecasted.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.2788,
+      "term": "What is an AIRMET Tango?",
+      "definition": "Issued during periods of moderate turbulence. Moderate turbulence is defined as changed in altitude and or attitude occur but the aircraft remains in positive control at all times. AIRMET Tangos are also issued when the surface wind are sustained at speeds greater than 30 knots.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6338,
+      "term": "What is an AIRMET Zulu?",
+      "definition": "Describes moderate icing and freezing levels.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6975,
+      "term": "What is a SIGMET?",
+      "definition": "A weather advisory issued concerning a significant weather event that is significant to the safety of all aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.5994,
+      "term": "Are SIGMETs or AIRMETs more severe?",
+      "definition": "SIGMETs",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.384,
+      "term": "What is a convective SIGMET?",
+      "definition": "An area of severe thunderstorms that affects 3,000 square mile area or greater or a line of thunderstorms at least 60nm long, and/or severe embedded thunderstorms that are expected to last a minimum of 30 minutes.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.372,
+      "term": "What is a non-convective SIGMET?",
+      "definition": "An area of severe turbulence affecting 3,000 square mile area or greater, or severe icing over a 3,000 square mile area or greater, or IMC conditions due to sand, dust, or volcanic ash.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.5159,
+      "term": "What is a PIREP?",
+      "definition": "A pilot report or PIREP is a report of actual weather conditions encountered by an aircraft in flight",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6125,
+      "term": "What altitude does prohibited airspace extend to?",
+      "definition": "Whatever altitude is specified on the chart.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.236,
+      "term": "Can aircraft fly in prohibited airspace?",
+      "definition": "No.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.4958,
+      "term": "What does a prohibited airspace look like on a chart?",
+      "definition": "Blue hashed area. Has \"P-#\" next to it.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.3433,
+      "term": "What is a restricted area?",
+      "definition": "Areas where operations are hazardous to non-participating aircraft. Contain unusual, often invisible, hazards to aircraft (i.e. artillery firing, aerial gunnery, or guided missiles).",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.8926,
+      "term": "Can aircraft fly into restricted areas?",
+      "definition": "Yes, if the airspace is not in use.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.7217,
+      "term": "What does a restricted area look like on a chart?",
+      "definition": "Blue hashed area. Has \"R-#\" next to it.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.8604,
+      "term": "What is a warning area?",
+      "definition": "Provides a warning to aircraft of potential danger in the area. Found as close as 3nm from the coast line.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.9045,
+      "term": "Can aircraft fly into warning areas?",
+      "definition": "Yes.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6458,
+      "term": "What does a warning area look like on a chart?",
+      "definition": "Blue hashed area. Has \"W-#\" next to it.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.5535,
+      "term": "What is a military operations area (MOA)?",
+      "definition": "A military operations area (MOA) is a block of airspace in which military operations are conducted.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.837,
+      "term": "Can aircraft fly into MOA's?",
+      "definition": "VFR aircraft can with extreme caution.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.4448,
+      "term": "What is a military training route (MTR)?",
+      "definition": "Military training routes are depicted on sectional charts to establish flight paths used for military training, usually occurring at high speeds and low altitudes.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.015,
+      "term": "What does an MTR look like on a section chart?",
+      "definition": "A grey line starting with VR or IR.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.1936,
+      "term": "What altitude do controllers begin to issue MACH speeds instead of indicated airspeed?",
+      "definition": "At or above FL240",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.99,
+      "term": "What does a 0.01 MACH chance indicate for knots?",
+      "definition": "Roughly 6 knots.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6328,
+      "term": "If an aircraft is assigned M.78 at FL380 and is beginning their descend with the assigned speed, what will happen to their ground speed?",
+      "definition": "The ground speed will increase.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6138,
+      "term": "If an aircraft is assigned M.78 at FL310 and is beginning to climb to FL380 with the assigned speed, what will happen to their ground speed?",
+      "definition": "The ground speed will decrease.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.804,
+      "term": "If an aircraft is assigned 280 indicated at FL230 and is beginning their descend with the assigned speed, what will happen to their ground speed?",
+      "definition": "Their ground speed will decrease.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.0747,
+      "term": "If an aircraft is assigned 280 indicated at 15,000ft and is beginning their climb to FL230 with the assigned speed, what will happen to their ground speed?",
+      "definition": "Their ground speed will increase.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.0203,
+      "term": "What is the phraseology to ask a pilot their airspeed if they are at FL270?",
+      "definition": "(callsign), say MACH number",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.678,
+      "term": "What is the phraseology to ask a pilot their airspeed if they are at FL210?",
+      "definition": "(callsign), say indicated airspeed",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.8005,
+      "term": "What is the phraseology to assign M.77 to an aircraft.",
+      "definition": "AAL311, maintain Mach .77",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.255,
+      "term": "What document provides detailed information for descent instructions?",
+      "definition": "ZMA Reference Sheet.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.184,
+      "term": "What is the descent instruction for the MIA's CSTAL# arrival east?",
+      "definition": "Descend via",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.4958,
+      "term": "What is the jet descent instruction for EYW arrivals via JANKA?",
+      "definition": "JANKA at 10,000ft",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.851,
+      "term": "What is the descent instruction for JAX arrivals on the QUBEN# arrival?",
+      "definition": "Boundary at FL310.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.5989,
+      "term": "What is the descent instruction for ALYNA# arrival into MCO?",
+      "definition": "SURFR at 14,000ft",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.558,
+      "term": "What is the descent instruction for TPA arrivals on the DADES# arrival via HIBAC?",
+      "definition": "ZINGR at 16,000ft ref ZJX LOA",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.5808,
+      "term": "Issue a descent instruction to an aircraft (AAL311) to cross ZINGR at 16,000ft at MCO.",
+      "definition": "AAL311, cross ZINGR at and maintain 16,000, Orlando altimeter [altimeter].",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.3296,
+      "term": "Issue a descend via instruction to an aircraft (AAL311) on the CSTAL# arrival to MIA in default operations.",
+      "definition": "AAL311, descend via the CSTAL# arrival. Miami landing east, Miami altimeter [altimeter].",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.24,
+      "term": "What are you required to provide anytime you descend an aircraft below the transition altitude?",
+      "definition": "The altimeter.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.57,
+      "term": "When providing the altimeter, are you required to state the source of the altimeter? For example, Orlando altimeter..., or can you just say, altimeter...",
+      "definition": "You must state the source when controller an enroute position.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.5996,
+      "term": "Finish this sentence: An aircraft going from ZMA airspace to MUFH airspace through the fix TANIA, must be at an _____ altitude?",
+      "definition": "Even. Ref ZMA MUFH LOA page 3.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.2961,
+      "term": "WAVEY EMJAY Q167 ZJAAY Q97 EBAYY ZFP BR63V ZQA",
+      "definition": "HANKX 11,000ft",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.876,
+      "term": "Aircraft arriving at Havana must cross the border at what altitude?",
+      "definition": "AOB FL260 in east ops, and AOB FL220 in west ops.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.9915,
+      "term": "True or false, when you issue a descend instructions, you are required to update the data block to reflect the change?",
+      "definition": "True. Keeping the data blocks updated is required for all aspects of center.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.0615,
+      "term": "What is a VCI?",
+      "definition": "A VCI is an indicator that an aircraft is on your frequency. This must be kept up to date with your ERAM data blocks.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6694,
+      "term": "How do you toggle the VCI within the ERAM data block?",
+      "definition": "\"// [CID}\" toggles the VCI",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.109,
+      "term": "True or false, when you hand an aircraft off to the next controller, you may minimize that data block.",
+      "definition": "False. You are required to display the full data block until the aircraft has fully left your airspace.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.4282,
+      "term": "How would you indicate if an aircraft has been told to contact the next controller.",
+      "definition": "If the aircraft has the VCI, then they are on your frequency. If they do not, then they are not on your frequency anymore.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.1277,
+      "term": "What is the hard altitude command in ERAM?",
+      "definition": "QZ [3 digit altitude] [CID]",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.8772,
+      "term": "What is the temp altitude command in ERAM?",
+      "definition": "QQ [3 digit altitude] [CID]",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.8872,
+      "term": "QS /S230 [CID]",
+      "definition": "Adds a speed (230) to their 4th line data block. Once again, this is required if you issue a speed to an aircraft",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.425,
+      "term": "QU RAJAY [CID]",
+      "definition": "This is the command used to update a data block after you have cleared an aircraft direct a fix. In this case, you cleared this aircraft direct RAJAY.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.312,
+      "term": "QU [CID]",
+      "definition": "Displays a route line for an aircraft. (note: QU /M [CID] displays the entire route line)",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.9495,
+      "term": "QB AAL311",
+      "definition": "Assigns a squawk code to an aircraft.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.307,
+      "term": "[sector id] [CID] ex: J30 [CID]",
+      "definition": "This initiates a handoff to the indicated sector",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.6409,
+      "term": "QP J [CID]",
+      "definition": "This adds a range ring around the data tag.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.23,
+      "term": "LA [L-click] [L-click] [enter]",
+      "definition": "This provides a distance from the first click spot to the second click spot.",
+      "image": ""
+    },
+    {
+      "id": 1778019637119.7185,
+      "term": "QP [sector id] [CID]",
+      "definition": "This is an automated pointout. When doing automated pointouts, when possible, you should reflect in the datablock what you want to do with the aircraft. This allows for the pointout to be fully automated rather than include voice communication. For example, if I wanted to descend an aircraft to FL220 in ZJX airspace, I could add a temp altitude (QQ) and then initiate the pointout. ZJX will see this an either accept or message you for denial.",
+      "image": ""
+    }
+  ]
+}
