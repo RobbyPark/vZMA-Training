@@ -1632,7 +1632,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       localStorage.removeItem(saveProgressKey());
     }
 
-    function isAnswerCorrect(q, answer) {
+    function isAnswerCorrect(q, answer, overrides) {
+      // Check manual overrides first
+      if (overrides && overrides[q.id] !== undefined) return overrides[q.id] > 0;
       if (answer === undefined || answer === null || answer === '') return false;
       if (q.question_type === 'true_false') return answer === q.correct_answers;
       if (q.question_type === 'short_response') return answer.toLowerCase().trim() === (q.correct_text||'').toLowerCase().trim();
@@ -1723,7 +1725,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const [attempt] = await SB.query('exam_attempts', `?id=eq.${attemptId}`);
       const questions = await SB.query('exam_questions', `?exam_id=eq.${examId}&order=sort_order.asc`);
 
-      const wrongQs = questions.filter(q => !isAnswerCorrect(q, (attempt.answers||{})[q.id], attempt.question_overrides));
+      const overrides = attempt.question_overrides || {};
+      const wrongQs = questions.filter(q => !isAnswerCorrect(q, (attempt.answers||{})[q.id], overrides));
 
       document.getElementById('studentReviewTitle').textContent = `${attempt.exam_title || 'Exam'} — ${attempt.score}%`;
 
