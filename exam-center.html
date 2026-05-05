@@ -1743,30 +1743,15 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         if (q.question_type === 'matching') return ans ? Object.entries(ans).map(([l,r])=>`${oMap[l]||l} → ${oMap[r]||r}`).join('<br>') : '<em>No answer</em>';
         return String(ans);
       };
-      const fmtCorrect = (q) => {
-        const oMap = optionText(q);
-        if (q.question_type === 'true_false') return q.correct_answers;
-        if (q.question_type === 'short_response') return q.correct_text || '—';
-        if (q.question_type === 'multiple_choice_single') return oMap[(q.correct_answers||[])[0]] || (q.correct_answers||[])[0] || '—';
-        if (q.question_type === 'multiple_choice_multi') return (q.correct_answers||[]).map(id=>oMap[id]||id).join(', ');
-        if (q.question_type === 'matching') return (q.correct_answers||[]).map(p=>`${oMap[p.left_id]||p.left_id} → ${oMap[p.right_id]||p.right_id}`).join('<br>');
-        return '—';
-      };
 
       let html = `<p style="font-size:.85rem;color:var(--gray-500);margin-bottom:16px;">${wrongQs.length} question${wrongQs.length>1?'s':''} answered incorrectly</p>`;
       wrongQs.forEach((q, i) => {
         html += `
           <div style="border:1px solid var(--gray-200);border-radius:10px;padding:16px;margin-bottom:12px;">
             <div style="font-weight:600;font-size:.9rem;color:var(--gray-900);margin-bottom:10px;">${i+1}. ${q.question_text}</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;">
-                <div style="font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:4px;">Your Answer</div>
-                <div style="font-size:.85rem;color:var(--gray-800);">${fmt(q,(attempt.answers||{})[q.id])}</div>
-              </div>
-              <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;">
-                <div style="font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#16a34a;margin-bottom:4px;">Correct Answer</div>
-                <div style="font-size:.85rem;color:var(--gray-800);">${fmtCorrect(q)}</div>
-              </div>
+            <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;">
+              <div style="font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:4px;">Your Answer</div>
+              <div style="font-size:.85rem;color:var(--gray-800);">${fmt(q,(attempt.answers||{})[q.id])}</div>
             </div>
           </div>`;
       });
