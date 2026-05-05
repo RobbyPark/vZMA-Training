@@ -782,6 +782,10 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <button class="sidebar-btn" onclick="switchTab('exam-center')">Exam Center</button>
         </div>
         <div class="sidebar-section" style="margin-top:16px;">
+          <div class="sidebar-label">Academy</div>
+          <button class="sidebar-btn" onclick="switchTab('flashcards')">Flashcards</button>
+        </div>
+        <div class="sidebar-section" style="margin-top:16px;">
           <div class="sidebar-label">Settings</div>
           <button class="sidebar-btn" onclick="switchTab('admin')">Admin</button>
         </div>
@@ -1019,6 +1023,17 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div class="trainer-grid" id="trainerGrid"></div>
         </div>
 
+        <!-- ======================== FLASHCARDS TAB ======================== -->
+        <div class="tab-content" id="tab-flashcards">
+          <div class="page-header" style="margin-bottom:16px;">
+            <div class="flex items-center gap-3">
+              <h1>Flashcard Sets</h1>
+              <button class="btn btn-primary btn-sm" onclick="openFlashcardSetEditor()">+ New Set</button>
+            </div>
+          </div>
+          <div id="flashcardSetList"></div>
+        </div>
+
       </div><!-- /admin-content -->
     </div><!-- /admin-layout -->
   </div>
@@ -1198,6 +1213,49 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     </div>
   </div>
 
+  <!-- Flashcard Set Editor Modal -->
+  <div class="modal-backdrop" id="flashcardSetModal">
+    <div class="modal modal-xl" style="max-height:90vh;overflow-y:auto;">
+      <div class="modal-header">
+        <span class="modal-title" id="flashcardSetModalTitle">New Flashcard Set</span>
+        <button class="modal-close" onclick="closeModal('flashcardSetModal')">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Set Name</label>
+        <input class="form-input" id="fc_setName" placeholder="e.g. S1 Ground Control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Set ID (used in filename, no spaces)</label>
+        <input class="form-input" id="fc_setId" placeholder="e.g. s1-ground" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'-')">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description <span style="font-size:.75rem;color:var(--gray-400);">(optional)</span></label>
+        <input class="form-input" id="fc_setDesc" placeholder="Brief description of this set">
+      </div>
+
+      <!-- Import from Quizlet -->
+      <div class="card" style="margin-bottom:20px;background:var(--blue-50);border-color:#bfdbf7;">
+        <div style="font-weight:700;font-size:.85rem;color:var(--blue-600);margin-bottom:8px;">Import from Quizlet</div>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:10px;">Export your Quizlet set as text (tab between term/definition, newline between cards) and paste below.</p>
+        <textarea class="form-textarea" id="fc_quizletImport" placeholder="Term&#9;Definition&#10;Term&#9;Definition&#10;..." style="font-size:.82rem;min-height:100px;"></textarea>
+        <button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="importFromQuizlet()">Import Cards</button>
+      </div>
+
+      <!-- Cards list -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-weight:700;font-size:.85rem;color:var(--gray-700);">Cards <span id="fc_cardCount" style="color:var(--gray-400);font-weight:400;"></span></div>
+        <button class="btn btn-primary btn-sm" onclick="addFlashcard()">+ Add Card</button>
+      </div>
+      <div id="fc_cardsList"></div>
+
+      <div class="flex gap-2 mt-4">
+        <button class="btn btn-primary" onclick="downloadFlashcardSet()">💾 Download JSON</button>
+        <button class="btn btn-secondary" onclick="closeModal('flashcardSetModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Attempt Detail Modal -->
   <div class="modal-backdrop" id="attemptDetailModal">
     <div class="modal" style="max-width:700px;max-height:80vh;overflow-y:auto;">
@@ -1335,6 +1393,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       if (name === 'exam-requests') loadExamRequests();
       if (name === 'exam-center') loadAdminExams();
       if (name === 'admin') loadAdmin();
+      if (name === 'flashcards') renderFlashcardSetList();
     }
 
     // ===================== MODAL HELPERS =====================
@@ -3299,7 +3358,162 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       loadRemoved();
     }
 
-    // ===================== EDIT REMOVED =====================
+    // ===================== FLASHCARDS =====================
+    let fcCards = []; // current editing session cards
+    let fcEditingId = null;
+    let fcSets = JSON.parse(localStorage.getItem('zma_fc_sets') || '[]');
+
+    function saveFcSetsToStorage() {
+      localStorage.setItem('zma_fc_sets', JSON.stringify(fcSets));
+    }
+
+    function renderFlashcardSetList() {
+      const el = document.getElementById('flashcardSetList');
+      if (!fcSets.length) {
+        el.innerHTML = '<div class="card"><p class="text-muted">No flashcard sets yet. Click "+ New Set" to create one.</p></div>';
+        return;
+      }
+      el.innerHTML = fcSets.map(s => `
+        <div class="card mb-3" style="display:flex;align-items:center;gap:16px;">
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:1rem;color:var(--blue-900);">${s.name}</div>
+            <div style="font-size:.8rem;color:var(--gray-400);">${s.description || ''} &nbsp;·&nbsp; ${s.cards.length} cards &nbsp;·&nbsp; <code style="font-size:.75rem;">flashcards-${s.id}.html</code></div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="editFlashcardSet('${s.id}')">Edit</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadSetById('${s.id}')">↓ JSON</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteFlashcardSet('${s.id}')">Delete</button>
+        </div>`).join('');
+    }
+
+    function openFlashcardSetEditor(id = null) {
+      fcEditingId = id;
+      fcCards = [];
+      if (id) {
+        const set = fcSets.find(s => s.id === id);
+        if (set) {
+          document.getElementById('fc_setName').value = set.name;
+          document.getElementById('fc_setId').value = set.id;
+          document.getElementById('fc_setDesc').value = set.description || '';
+          fcCards = JSON.parse(JSON.stringify(set.cards));
+          document.getElementById('flashcardSetModalTitle').textContent = `Edit: ${set.name}`;
+        }
+      } else {
+        document.getElementById('fc_setName').value = '';
+        document.getElementById('fc_setId').value = '';
+        document.getElementById('fc_setDesc').value = '';
+        document.getElementById('flashcardSetModalTitle').textContent = 'New Flashcard Set';
+      }
+      document.getElementById('fc_quizletImport').value = '';
+      renderFcCards();
+      openModal('flashcardSetModal');
+    }
+
+    function editFlashcardSet(id) { openFlashcardSetEditor(id); }
+
+    function deleteFlashcardSet(id) {
+      if (!confirm('Delete this flashcard set?')) return;
+      fcSets = fcSets.filter(s => s.id !== id);
+      saveFcSetsToStorage();
+      renderFlashcardSetList();
+    }
+
+    function importFromQuizlet() {
+      const text = document.getElementById('fc_quizletImport').value.trim();
+      if (!text) { toast('Paste your Quizlet export text first.', 'error'); return; }
+      const lines = text.split('\n').filter(l => l.trim());
+      let imported = 0;
+      lines.forEach(line => {
+        const parts = line.split('\t');
+        if (parts.length >= 2) {
+          fcCards.push({ id: Date.now() + Math.random(), term: parts[0].trim(), definition: parts[1].trim(), image: '' });
+          imported++;
+        }
+      });
+      document.getElementById('fc_quizletImport').value = '';
+      renderFcCards();
+      toast(`Imported ${imported} cards.`);
+    }
+
+    function addFlashcard() {
+      fcCards.push({ id: Date.now() + Math.random(), term: '', definition: '', image: '' });
+      renderFcCards();
+      // Scroll to last card
+      const list = document.getElementById('fc_cardsList');
+      setTimeout(() => list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+    }
+
+    function removeFlashcard(idx) {
+      fcCards.splice(idx, 1);
+      renderFcCards();
+    }
+
+    function renderFcCards() {
+      document.getElementById('fc_cardCount').textContent = `(${fcCards.length})`;
+      document.getElementById('fc_cardsList').innerHTML = fcCards.map((c, i) => `
+        <div style="border:1px solid var(--gray-200);border-radius:10px;padding:14px 16px;margin-bottom:10px;background:#fff;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span style="font-size:.75rem;font-weight:700;color:var(--gray-400);">#${i+1}</span>
+            <button onclick="removeFlashcard(${i})" style="margin-left:auto;background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:1.1rem;">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;">
+            <div>
+              <label style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);display:block;margin-bottom:4px;">Term</label>
+              <textarea class="form-textarea" style="min-height:60px;font-size:.875rem;" onchange="fcCards[${i}].term=this.value" placeholder="Term">${c.term}</textarea>
+            </div>
+            <div>
+              <label style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);display:block;margin-bottom:4px;">Definition</label>
+              <textarea class="form-textarea" style="min-height:60px;font-size:.875rem;" onchange="fcCards[${i}].definition=this.value" placeholder="Definition">${c.definition}</textarea>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-500);display:block;margin-bottom:4px;">Image URL <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+            <input class="form-input" style="font-size:.82rem;" value="${c.image||''}" onchange="fcCards[${i}].image=this.value" placeholder="https://... or leave blank">
+            ${c.image ? `<img src="${c.image}" style="max-height:60px;margin-top:6px;border-radius:6px;object-fit:cover;" onerror="this.style.display='none'">` : ''}
+          </div>
+        </div>`).join('');
+    }
+
+    function saveFlashcardSet() {
+      const name = document.getElementById('fc_setName').value.trim();
+      const id = document.getElementById('fc_setId').value.trim();
+      if (!name || !id) { toast('Please fill in Set Name and Set ID.', 'error'); return null; }
+      // Sync any unsaved textarea values
+      document.querySelectorAll('#fc_cardsList textarea, #fc_cardsList input').forEach((el, i) => {
+        const row = el.closest('div[style*="border:1px"]');
+        if (!row) return;
+      });
+      const set = { id, name, description: document.getElementById('fc_setDesc').value.trim(), cards: fcCards.filter(c => c.term || c.definition) };
+      const existing = fcSets.findIndex(s => s.id === id);
+      if (existing >= 0) fcSets[existing] = set;
+      else fcSets.push(set);
+      saveFcSetsToStorage();
+      return set;
+    }
+
+    function downloadFlashcardSet() {
+      const set = saveFlashcardSet();
+      if (!set) return;
+      const json = JSON.stringify(set, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `flashcards-${set.id}.json`;
+      a.click();
+      toast(`Downloaded flashcards-${set.id}.json — upload this to your GitHub repo.`);
+      renderFlashcardSetList();
+    }
+
+    function downloadSetById(id) {
+      const set = fcSets.find(s => s.id === id);
+      if (!set) return;
+      const blob = new Blob([JSON.stringify(set, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `flashcards-${set.id}.json`;
+      a.click();
+    }
+
+    // ===================== END FLASHCARDS =====================
     function openEditRemovedModal(r) {
       editingRemovedId = r.id;
       document.getElementById('editRemName').value = `${r.first_name} ${r.last_name}`;
