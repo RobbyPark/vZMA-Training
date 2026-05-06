@@ -1731,30 +1731,69 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       document.getElementById('studentReviewTitle').textContent = `${attempt.exam_title || 'Exam'} — ${attempt.score}%`;
 
       if (!wrongQs.length) {
-        document.getElementById('studentReviewBody').innerHTML = '<p class="text-muted" style="padding:16px;text-align:center;">🎉 All questions answered correctly!</p>';
+        document.getElementById('studentReviewBody').innerHTML = '<p class="text-muted" style="padding:16px;text-align:center;">All questions answered correctly!</p>';
         return;
       }
 
-      const optionText = (q) => { const m = {}; (q.options||[]).forEach(o => m[o.id]=o.text); return m; };
-      const fmt = (q, ans) => {
-        const oMap = optionText(q);
-        if (ans === undefined || ans === null || ans === '') return '<em style="color:var(--gray-400);">No answer</em>';
-        if (q.question_type === 'true_false') return ans;
-        if (q.question_type === 'short_response') return ans;
-        if (q.question_type === 'multiple_choice_single') return oMap[ans] || ans;
-        if (q.question_type === 'multiple_choice_multi') return (Array.isArray(ans)?ans:[]).map(id=>oMap[id]||id).join(', ') || '<em>No answer</em>';
-        if (q.question_type === 'matching') return ans ? Object.entries(ans).map(([l,r])=>`${oMap[l]||l} → ${oMap[r]||r}`).join('<br>') : '<em>No answer</em>';
+      const oMap = (q) => { const m = {}; (q.options||[]).forEach(o => m[o.id]=o.text); return m; };
+
+      const fmtStudentAns = (q, ans) => {
+        const m = oMap(q);
+        if (ans === undefined || ans === null || ans === '') return '<em style="color:var(--gray-400);">No answer selected</em>';
+        if (q.question_type === 'true_false') return `<strong>${ans.charAt(0).toUpperCase() + ans.slice(1)}</strong>`;
+        if (q.question_type === 'short_response') return `<em>${ans}</em>`;
+        if (q.question_type === 'multiple_choice_single') return m[ans] || ans;
+        if (q.question_type === 'multiple_choice_multi') return (Array.isArray(ans)?ans:[]).map(id=>m[id]||id).join(', ') || '<em style="color:var(--gray-400);">No answer selected</em>';
+        if (q.question_type === 'matching') return ans ? Object.entries(ans).map(([l,r])=>`${m[l]||l} → ${m[r]||r}`).join('<br>') : '<em style="color:var(--gray-400);">No answer selected</em>';
         return String(ans);
+      };
+
+      const renderChoices = (q, studentAns) => {
+        const m = oMap(q);
+        if (q.question_type === 'true_false') {
+          return ['true','false'].map(v => {
+            const selected = studentAns === v;
+            return `<div style="padding:8px 12px;border-radius:6px;margin-bottom:4px;font-size:.85rem;border:1px solid ${selected?'#fecaca':'var(--gray-200)'};background:${selected?'#fef2f2':'var(--gray-50)'};color:${selected?'#dc2626':'var(--gray-700)'};">
+              ${selected ? '✗ ' : ''}${v.charAt(0).toUpperCase()+v.slice(1)}
+            </div>`;
+          }).join('');
+        }
+        if (q.question_type === 'multiple_choice_single' || q.question_type === 'multiple_choice_multi') {
+          const selArr = q.question_type === 'multiple_choice_multi' ? (Array.isArray(studentAns)?studentAns:[]) : (studentAns ? [studentAns] : []);
+          return (q.options||[]).map(opt => {
+            const selected = selArr.includes(opt.id);
+            return `<div style="padding:8px 12px;border-radius:6px;margin-bottom:4px;font-size:.85rem;border:1px solid ${selected?'#fecaca':'var(--gray-200)'};background:${selected?'#fef2f2':'var(--gray-50)'};color:${selected?'#dc2626':'var(--gray-700)'};">
+              ${selected ? '✗ ' : ''}${opt.text}
+            </div>`;
+          }).join('');
+        }
+        return '';
+      };
+
+      const typeLabel = (q) => {
+        if (q.question_type === 'multiple_choice_multi') return '<span style="font-size:.72rem;font-weight:700;background:#fef9c3;color:#92400e;padding:2px 8px;border-radius:100px;margin-left:8px;">Select all that apply</span>';
+        if (q.question_type === 'short_response') return '<span style="font-size:.72rem;font-weight:700;background:#eff6ff;color:#1e4d8c;padding:2px 8px;border-radius:100px;margin-left:8px;">Short response</span>';
+        return '';
       };
 
       let html = `<p style="font-size:.85rem;color:var(--gray-500);margin-bottom:16px;">${wrongQs.length} question${wrongQs.length>1?'s':''} answered incorrectly</p>`;
       wrongQs.forEach((q, i) => {
+        const studentAns = (attempt.answers||{})[q.id];
+        const hasChoices = ['multiple_choice_single','multiple_choice_multi','true_false'].includes(q.question_type);
         html += `
-          <div style="border:1px solid var(--gray-200);border-radius:10px;padding:16px;margin-bottom:12px;">
-            <div style="font-weight:600;font-size:.9rem;color:var(--gray-900);margin-bottom:10px;">${i+1}. ${q.question_text}</div>
+          <div style="border:1px solid var(--gray-200);border-radius:10px;padding:16px;margin-bottom:14px;">
+            <div style="font-weight:600;font-size:.9rem;color:var(--gray-900);margin-bottom:6px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+              ${i+1}. ${q.question_text} ${typeLabel(q)}
+            </div>
+            ${q.image_url ? `<img src="${q.image_url}" style="max-width:100%;max-height:160px;border-radius:8px;object-fit:contain;margin-bottom:10px;" onerror="this.style.display='none'">` : ''}
+            ${hasChoices ? `
+              <div style="margin-bottom:10px;">
+                <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-500);margin-bottom:6px;">Answer Choices</div>
+                ${renderChoices(q, studentAns)}
+              </div>` : ''}
             <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;">
               <div style="font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:4px;">Your Answer</div>
-              <div style="font-size:.85rem;color:var(--gray-800);">${fmt(q,(attempt.answers||{})[q.id])}</div>
+              <div style="font-size:.85rem;color:var(--gray-800);">${fmtStudentAns(q, studentAns)}</div>
             </div>
           </div>`;
       });
