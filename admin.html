@@ -2554,7 +2554,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       };
 
       const renderChoices = (q, studentAns) => {
-        const m = oMap(q);
+        const m = optionText(q);
         if (q.question_type === 'true_false') {
           return ['true','false'].map(v => {
             const selected = studentAns === v;
