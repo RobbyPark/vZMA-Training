@@ -47,8 +47,8 @@
     },
     {
       "id": 1778021187397.3032,
-      "term": "If an aircraft requests deviations for weather",
-      "definition": "are you required to provide the deviation?,Yes.",
+      "term": "If an aircraft requests deviations for weather, are you required to provide the deviation?",
+      "definition": "Yes.",
       "image": ""
     },
     {
@@ -77,32 +77,32 @@
     },
     {
       "id": 1778021187397.7188,
-      "term": "Based on this NTML entry",
-      "definition": "what is the current MIT?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA,20 MIT",
+      "term": "Based on this NTML entry, what is the current MIT?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "20 MIT",
       "image": ""
     },
     {
       "id": 1778021187397.7974,
-      "term": "Based on this NTML entry",
-      "definition": "what is the affected fix?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA,RIDES",
+      "term": "Based on this NTML entry, what is the affected fix?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "RIDES",
       "image": ""
     },
     {
       "id": 1778021187397.0017,
-      "term": "Based on this NTML entry",
-      "definition": "are prop aircraft subjected to this restriction?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA,No: EXCL:PROPS indicated that props are excluded.",
+      "term": "Based on this NTML entry, are prop aircraft subjected to this restriction?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "No: EXCL:PROPS indicated that props are excluded.",
       "image": ""
     },
     {
       "id": 1778021187397.4294,
-      "term": "Based on this NTML entry",
-      "definition": "what airspace is requesting this MIT?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA,F11 TRACON: F11:ZMA means F11 to ZMA",
+      "term": "Based on this NTML entry, what airspace is requesting this MIT?\n\n19/2359 MCO via RIDES 20 MIT EXCL:PROPS VOLUME:VOLUME 2359-0400 F11:ZMA",
+      "definition": "F11 TRACON: F11:ZMA means F11 to ZMA",
       "image": ""
     },
     {
       "id": 1778021187397.0002,
-      "term": "When vectoring to create space for MIT",
-      "definition": "should you turn aircraft into a head-wind or a tail-wind?,Turn into a head-wind. This will cause a decrease in ground speed allow for easier sequencing.",
+      "term": "When vectoring to create space for MIT, should you turn aircraft into a head-wind or a tail-wind?",
+      "definition": "Turn into a head-wind. This will cause a decrease in ground speed allow for easier sequencing.",
       "image": ""
     },
     {
@@ -257,26 +257,26 @@
     },
     {
       "id": 1778021187397.2996,
-      "term": "If an aircraft is assigned M.78 at FL380 and is beginning their descend with the assigned speed",
-      "definition": "what will happen to their ground speed?,The ground speed will increase.",
+      "term": "If an aircraft is assigned M.78 at FL380 and is beginning their descend with the assigned speed, what will happen to their ground speed?",
+      "definition": "The ground speed will increase.",
       "image": ""
     },
     {
       "id": 1778021187397.9438,
-      "term": "If an aircraft is assigned M.78 at FL310 and is beginning to climb to FL380 with the assigned speed",
-      "definition": "what will happen to their ground speed?,The ground speed will decrease.",
+      "term": "If an aircraft is assigned M.78 at FL310 and is beginning to climb to FL380 with the assigned speed, what will happen to their ground speed?",
+      "definition": "The ground speed will decrease.",
       "image": ""
     },
     {
       "id": 1778021187397.408,
-      "term": "If an aircraft is assigned 280 indicated at FL230 and is beginning their descend with the assigned speed",
-      "definition": "what will happen to their ground speed?,Their ground speed will decrease.",
+      "term": "If an aircraft is assigned 280 indicated at FL230 and is beginning their descend with the assigned speed, what will happen to their ground speed?",
+      "definition": "Their ground speed will decrease.",
       "image": ""
     },
     {
       "id": 1778021187397.5369,
-      "term": "If an aircraft is assigned 280 indicated at 15",
-      "definition": "000ft and is beginning their climb to FL230 with the assigned speed, what will happen to their ground speed?,Their ground speed will increase.",
+      "term": "If an aircraft is assigned 280 indicated at 15,000ft and is beginning their climb to FL230 with the assigned speed, what will happen to their ground speed?",
+      "definition": "Their ground speed will increase.",
       "image": ""
     },
     {
@@ -335,8 +335,8 @@
     },
     {
       "id": 1778021187397.8665,
-      "term": "Issue a descent instruction to an aircraft (AAL311) to cross ZINGR at 16",
-      "definition": "000ft at MCO.,AAL311, cross ZINGR at and maintain 16,000, Orlando altimeter [altimeter].",
+      "term": "Issue a descent instruction to an aircraft (AAL311) to cross ZINGR at 16,000ft at MCO.",
+      "definition": "AAL311, cross ZINGR at and maintain 16,000, Orlando altimeter [altimeter].",
       "image": ""
     },
     {
@@ -353,14 +353,14 @@
     },
     {
       "id": 1778021187397.6956,
-      "term": "When providing the altimeter",
-      "definition": "are you required to state the source of the altimeter? For example, Orlando altimeter..., or can you just say, altimeter...,You must state the source when controller an enroute position.",
+      "term": "When providing the altimeter are you required to state the source of the altimeter? For example, Orlando altimeter..., or can you just say, altimeter...",
+      "definition": "You must state the source when controller an enroute position.",
       "image": ""
     },
     {
       "id": 1778021187397.7788,
-      "term": "Finish this sentence: An aircraft going from ZMA airspace to MUFH airspace through the fix TANIA",
-      "definition": "must be at an _____ altitude?,Even. Ref ZMA MUFH LOA page 3.",
+      "term": "Finish this sentence: An aircraft going from ZMA airspace to MUFH airspace through the fix TANIA, must be at an _____ altitude?",
+      "definition": "Even. Ref ZMA MUFH LOA page 3.",
       "image": ""
     },
     {
@@ -377,8 +377,8 @@
     },
     {
       "id": 1778021187397.4753,
-      "term": "True or false",
-      "definition": "when you issue a descend instructions, you are required to update the data block to reflect the change?,True. Keeping the data blocks updated is required for all aspects of center.",
+      "term": "True or false: when you issue a descend instructions, you are required to update the data block to reflect the change?",
+      "definition": "True. Keeping the data blocks updated is required for all aspects of center.",
       "image": ""
     },
     {
@@ -395,8 +395,8 @@
     },
     {
       "id": 1778021187397.6667,
-      "term": "True or false",
-      "definition": "when you hand an aircraft off to the next controller, you may minimize that data block.,False. You are required to display the full data block until the aircraft has fully left your airspace.",
+      "term": "True or false: when you hand an aircraft off to the next controller, you may minimize that data block.",
+      "definition": "False. You are required to display the full data block until the aircraft has fully left your airspace.",
       "image": ""
     },
     {
