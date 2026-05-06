@@ -17,8 +17,8 @@
     },
     {
       "id": 1778021611326.9285,
-      "term": "When issuing a clearance to KLAX",
-      "definition": "what is required to be stated after the airport name?,\"Airport\" (ex: AAL311 cleared to the Los Angeles AIRPORT...) 7110.65 4-2-1",
+      "term": "When issuing a clearance to KLAX, what is required to be stated after the airport name?ex. Cleared to Los Angles XXX",
+      "definition": "\"Airport\" (ex: AAL311 cleared to the Los Angeles AIRPORT...) 7110.65 4-2-1",
       "image": ""
     },
     {
@@ -47,8 +47,8 @@
     },
     {
       "id": 1778021611326.7275,
-      "term": "Which airways are low-altitude airways (AOB 17",
-      "definition": "500ft MSL)? Are they pronounced phonetically or normally?,V (pronounced victor) and T (pronounced tango) airways are the low altitude airways.",
+      "term": "Which airways are low-altitude airways (AOB 17500ft MSL)?",
+      "definition": " Are they pronounced phonetically or normally?,V (pronounced victor) and T (pronounced tango) airways are the low altitude airways.",
       "image": ""
     },
     {
@@ -59,8 +59,8 @@
     },
     {
       "id": 1778021611326.0369,
-      "term": "Which airways are high-altitude airways (AOA 18",
-      "definition": "000ft MSL) Are they pronounced phonetically or normally?,Q and J (pronounced normally: \"cue\" and \"jay\")",
+      "term": "Which airways are high-altitude airways (AOA 18000ft MSL) Are they pronounced phonetically or normally?",
+      "definition": "Q and J (pronounced normally: \"cue\" and \"jay\")",
       "image": ""
     },
     {
@@ -71,8 +71,8 @@
     },
     {
       "id": 1778021611326.4675,
-      "term": "In aviation",
-      "definition": "how are the numbers 3 5 and 9 supposed to be pronounced?,Tree, fife, and niner",
+      "term": "In aviationhow are the numbers 3 5 and 9 supposed to be pronounced?",
+      "definition": "Tree, fife, and niner",
       "image": ""
     },
     {
@@ -143,14 +143,14 @@
     },
     {
       "id": 1778021611326.5103,
-      "term": "If the altimeter setting is 29.65",
-      "definition": "what is the lowest usable flight level?,FL190 7110.65 4-5-4",
+      "term": "If the altimeter setting is 29.65, what is the lowest usable flight level?",
+      "definition": "FL190 7110.65 4-5-4",
       "image": ""
     },
     {
       "id": 1778021611326.1191,
-      "term": "If the altimeter setting is 30.02",
-      "definition": "what is the lowest usable flight level?,FL180 7110.65 4-5-4",
+      "term": "If the altimeter setting is 30.02, what is the lowest usable flight level?",
+      "definition": "FL180 7110.65 4-5-4",
       "image": ""
     },
     {
@@ -239,8 +239,8 @@
     },
     {
       "id": 1778021611326.7412,
-      "term": "In a METAR",
-      "definition": "is visibility reported in nautical miles or statute miles?,Statute miles (SM)",
+      "term": "In a METAR, is visibility reported in nautical miles or statute miles?",
+      "definition": "Statute miles (SM)",
       "image": ""
     },
     {
@@ -275,8 +275,8 @@
     },
     {
       "id": 1778021611326.518,
-      "term": "Generally",
-      "definition": "what altitude does class D airspace extend to?,Surface to 2,500ft",
+      "term": "Generally, what altitude does class D airspace extend to?",
+      "definition": "Surface to 2,500ft",
       "image": ""
     },
     {
@@ -293,8 +293,8 @@
     },
     {
       "id": 1778021611326.9006,
-      "term": "If you didn't get a piece of information you need from a VFR aircraft",
-      "definition": "what do you do?,\"N123AB, say aircraft type/destination field/direction of flight/intended altitude/flight following status\"",
+      "term": "If you didn't get a piece of information you need from a VFR aircraftwhat do you do?",
+      "definition": "\"N123AB, say aircraft type/destination field/direction of flight/intended altitude/flight following status\"",
       "image": ""
     },
     {
@@ -425,8 +425,8 @@
     },
     {
       "id": 1778021611326.3796,
-      "term": "True or False: You are working TPA DEL and Miami center and TPA APP are closed. If Jacksonville center is online",
-      "definition": "you should utilize their frequency as the departure frequency.,False. If TPA APP and Miami center are closed, the departure frequency is advisory or unicom. Jacksonville center does not control TPA APP airspace.",
+      "term": "True or False: You are working TPA DEL and Miami center and TPA APP are closed. If Jacksonville center is online, you should utilize their frequency as the departure frequency.",
+      "definition": "False. If TPA APP and Miami center are closed, the departure frequency is advisory or unicom. Jacksonville center does not control TPA APP airspace.",
       "image": ""
     },
     {
@@ -485,9 +485,9 @@
     },
     {
       "id": 1778021611326.5427,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_D_DEP is your departure frequency)\n\nhttps://gyazo.com/e3b847d99d5fb9e65bbab07956a1694d,AAL1448, Fort Lauderdale ground, cleared to the Charleston international airport via the AGERS1 departure, DUCEN transition, then as filed. Climb via the SID. Departure frequency 124.850, squawk 7676.",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_D_DEP is your departure frequency)",
+      "definition": "AAL1448, Fort Lauderdale ground, cleared to the Charleston international airport via the AGERS1 departure, DUCEN transition, then as filed. Climb via the SID. Departure frequency 124.850, squawk 7676.",
+      "image": "https://i.gyazo.com/e3b847d99d5fb9e65bbab07956a1694d.png"
     },
     {
       "id": 1778021611326.5596,
@@ -497,51 +497,51 @@
     },
     {
       "id": 1778021611326.723,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_V_APP is your departure frequency)\n\nhttps://gyazo.com/b8ace974d1a7bb529291496c52890913,JBU372, Fort Lauderdale ground, cleared to the LaGuardia airport via the HROCK2 departure, KPASA transition, then as filed. Climb via the SID. Departure frequency 124.850, squawk 6064.",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_V_APP is your departure frequency)",
+      "definition": "JBU372, Fort Lauderdale ground, cleared to the LaGuardia airport via the HROCK2 departure, KPASA transition, then as filed. Climb via the SID. Departure frequency 124.850, squawk 6064.",
+      "image": "https://i.gyazo.com/b8ace974d1a7bb529291496c52890913.png"
     },
     {
       "id": 1778021611326.4639,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)\n\nhttps://gyazo.com/7c99eaabda882cf9bc0ff41d840dd765,AAL2391, Tampa ground, cleared to the Austin international airport via the DORMR2 departure, FROOT transition, then as filed. Maintain 6,000, expect FL360 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 6623.\n\nNote: TPA does not use climb via the SID. Reference N02.",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)",
+      "definition": "AAL2391, Tampa ground, cleared to the Austin international airport via the DORMR2 departure, FROOT transition, then as filed. Maintain 6,000, expect FL 360 10 minutes after departure. Departure frequency 118.150, squawk 6623.",
+      "image": "https://i.gyazo.com/7c99eaabda882cf9bc0ff41d840dd765.png"
     },
     {
       "id": 1778021611326.171,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)\n\nhttps://gyazo.com/4844372c5538707b51935c61329b92b7,SWA380, Tampa ground, cleared to the New Orleans international airport via the DORMR2 departure, FROOT transition, then as filed. Maintain 6,000, expect FL350 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 6623.",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)",
+      "definition": "SWA380, Tampa ground, cleared to the New Orleans international airport via the DORMR2 departure, FROOT transition, then as filed. Maintain 6,000 expect FL350 10 minutes after departure. Departure frequency 118.150, squawk 6623.",
+      "image": "https://i.gyazo.com/4844372c5538707b51935c61329b92b7.png"
     },
     {
       "id": 1778021611326.7922,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)\n\nhttps://gyazo.com/ef529e581e9065c9ba957d37384d63a1,DAL1227, Tampa ground, cleared to the Atlanta international airport via the BAYPO1 departure, CAMJO transition, then as filed. Maintain 6,000, expect FL380 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 6023.\n\nNotes: Since the aircraft did not file an RNAV SID or any SID for that matter, we needed to assign the appropriate SID. Since CAMJO is a transition on the BAYPO1 departure, that is the easiest and best SID to assign. Before issuing the clearance, it is best practice to contact the pilot and ask if they are able to accept the BAYPO1 departure. If they are, you may amend the flight plan and issue the clearance. If they are not, coordinate with the departure controller to find a suitable alternative.",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency)",
+      "definition": "DAL1227, Tampa ground, cleared to the Atlanta international airport via the BAYPO1 departure, CAMJO transition, then as filed. maintain 6,000, Expect FL 380 10 minutes after departure. Departure frequency 118.150, squawk 6023.\n\nNotes: Since the aircraft did not file an RNAV SID or any SID for that matter, we needed to assign the appropriate SID. Since CAMJO is a transition on the BAYPO1 departure, that is the easiest and best SID to assign. Before issuing the clearance, it is best practice to contact the pilot and ask if they are able to accept the BAYPO1 departure. If they are, you may amend the flight plan and issue the clearance. If they are not, coordinate with the departure controller to find a suitable alternative.",
+      "image": "c"
     },
     {
       "id": 1778021611326.349,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency and TPA is in NORTH operations)\n\nhttps://gyazo.com/ef906317080aa2618491a53f328a5d13,N4725G, Tampa ground, expect a full route clearance, advise ready to copy.\n\nN4725G: ready to copy.\n\nN4725G, cleared to the ocean reef club airport via the Tampa 7 departure, radar vectors PAIRS (papa, alpha, india, romeo, sierra) V35 CURVE (charlie, uniform, romeo, victor, echo) direct ocean reef club. Maintain 1,600, expect 5,000 10 (one zero) minutes after departure. Departure frequency 118.150, squawk 0013.\n\nNotes: The filed route has many issues including the SID and STAR are jet only, and there are many RNAV waypoints which /A aircraft are unable to navigate to. Given this information, we need to issue a full route clearance. The route issue was found on skyvector using their routes feature. Other routes may work in this case, as long as there are no RNAV waypoints. Before we can issue the clearance, we must ask the pilot if they are ready to copy the full route clearance. Once they are ready, you may issue the clearance. Pay close attention to the phraseology used. After a waypoint is said, you then provide the nato phonetic spelling of the fix. Also, when there is a WAYPOINT AIRWAY WAYPOINT, we do not say anything in between. However, when we have WAYPOINT WAYPOINT, we say direct in between. See example below. Lastly, notice the change in the initial altitude. Per the TPA SOP, 3,000 feet is to be issued to prop aircraft. \n\nex.\nWAYPOINT AIRWAY WAYPOINT\n- PAIRS V35 CURVE \nPhraseology: PAIRS V thirty five CURVE\n\nWAYPOINT WAYPOINT\n- PAIRS DCT CURVE\nPhraseology: PARIS direct CURVE",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper IFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency and TPA is in NORTH operations)",
+      "definition": "N4725G, Tampa ground, expect a full route clearance, advise ready to copy.\n\nN4725G: ready to copy.\n\nN4725G, cleared to the ocean reef club airport via the Tampa 7 departure, radar vectors PAIRS (papa, alpha, india, romeo, sierra) V35 CURVE (charlie, uniform, romeo, victor, echo) direct ocean reef club. Maintain 1,600, expect 5,000 10 minutes after departure. Departure frequency 118.150, squawk 0013.\n\nNotes: The filed route has many issues including the SID and STAR are jet only, and there are many RNAV waypoints which /A aircraft are unable to navigate to. Given this information, we need to issue a full route clearance. The route issue was found on skyvector using their routes feature. Other routes may work in this case, as long as there are no RNAV waypoints. Before we can issue the clearance, we must ask the pilot if they are ready to copy the full route clearance. Once they are ready, you may issue the clearance. Pay close attention to the phraseology used. After a waypoint is said, you then provide the nato phonetic spelling of the fix. Also, when there is a WAYPOINT AIRWAY WAYPOINT, we do not say anything in between. However, when we have WAYPOINT WAYPOINT, we say direct in between. See example below. \n\nex.\nWAYPOINT AIRWAY WAYPOINT\n- PAIRS V35 CURVE \nPhraseology: PAIRS V thirty five CURVE\n\nWAYPOINT WAYPOINT\n- PAIRS DCT CURVE\nPhraseology: PARIS direct CURVE",
+      "image": "https://i.gyazo.com/ef906317080aa2618491a53f328a5d13.png"
     },
     {
       "id": 1778021611326.8655,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper VFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency and TPA is in north operations)\n\nhttps://gyazo.com/c878798cbe5ba6edfa156b62a410fcc5,N77MN, Tampa ground, cleared out of the Tampa class bravo airspace to the south. Maintain VFR at or below 1,600. departure frequency 118.150. Squawk 0014. \n\nNotes: Since TPA is a bravo airspace, we must clear them out of the bravo and it is preferred that you clear them in a specific direction (to the south in this case). Also, regardless if the aircraft is or is not requesting flight following, a departure frequency and squawk code are always provided at class B and class C airports.",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper VFR clearance to this aircraft. Make sure to double-check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (TPA_E_APP is your departure frequency and TPA is in north operations)\n",
+      "definition": "N77MN, Tampa ground, cleared out of the Tampa class bravo airspace to the south. Maintain VFR at or below 1,600. departure frequency 118.150. Squawk 0014. \n\nNotes: Since TPA is a bravo airspace, we must clear them out of the bravo and it is preferred that you clear them in a specific direction (to the south in this case). Also, regardless if the aircraft is or is not requesting flight following, a departure frequency and squawk code are always provided at class B and class C airports.",
+      "image": "https://i.gyazo.com/c878798cbe5ba6edfa156b62a410fcc5.png"
     },
     {
       "id": 1778021611326.4722,
-      "term": "A VFR aircraft calls you and gives you all the information you need",
-      "definition": "EXCEPT their equipment suffix. Do you need to ask the aircraft for their equipment suffix?,No. Equipment suffix does not matter for VFR aircraft.",
+      "term": "A VFR aircraft calls you and gives you all the information you need, EXCEPT their equipment suffix. Do you need to ask the aircraft for their equipment suffix?",
+      "definition": "No. Equipment suffix does not matter for VFR aircraft.",
       "image": ""
     },
     {
       "id": 1778021611326.1135,
-      "term": "Using proper phraseology",
-      "definition": "issue a proper VFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_V_APP is your departure frequency)\n\nhttps://gyazo.com/412df516d11811105e8ee47f211cb627,N533AP, Fort Lauderdale ground, Maintain VFR at or below 2,000. Departure frequency 124.850. Squawk 4726.\n\nNotes: Because this is a charlie airspace, we always issue a departure frequency and squawk code even if they are not requesting flight following.",
-      "image": ""
+      "term": "Using proper phraseology, issue a proper VFR clearance to this aircraft. Make sure to double check for correctness and make any necessary amendments to the flight plan before issuing the clearance. (MIA_V_APP is your departure frequency)",
+      "definition": "N533AP, Fort Lauderdale ground, Maintain VFR at or below 2,000. Departure frequency 124.850. Squawk 4726.\n\nNotes: Because this is a charlie airspace, we always issue a departure frequency and squawk code even if they are not requesting flight following.",
+      "image": "https://i.gyazo.com/412df516d11811105e8ee47f211cb627.png"
     },
     {
       "id": 1778021611326.7334,
@@ -575,21 +575,21 @@
     },
     {
       "id": 1778021611326.4995,
-      "term": "Which of the following is proper phraseology:\n\n1. Taxi to runway 10L via T5 B\n2. Taxi T5 B 10L\n3. Runway 10L",
-      "definition": "taxi via T5 B\n4. Runway 10L via T5 B,Option 3 is correct. (Runway 10L, taxi via T5 B)",
+      "term": "Which of the following is proper phraseology:\n\n1. Taxi to runway 10L via T5 B\n2. Taxi T5 B 10L\n3. Runway 10L taxi via T5 B\n4. Runway 10L via T5 B,",
+      "definition": "Option 3 is correct. (Runway 10L, taxi via T5 B)",
       "image": ""
     },
     {
       "id": 1778021611326.0664,
-      "term": "Which of the following is proper phraseology:\n\n1. Ramp",
-      "definition": "taxi via J Q T8\n2. Taxi to the ramp via J Q T8\n3. Ramp via J Q T8\n4. Taxi J Q T8,Option 2 is correct. (Taxi to the ramp via J Q T8)",
+      "term": "Which of the following is proper phraseology:\n\n1. Ramp taxi via J Q T8\n2. Taxi to the ramp via J Q T8\n3. Ramp via J Q T8\n4. Taxi J Q T8,",
+      "definition": "Option 2 is correct. (Taxi to the ramp via J Q T8)",
       "image": ""
     },
     {
       "id": 1778021611326.0972,
       "term": "What is the system called depicted in the image?\n\nhttps://gyazo.com/92f4259d11d363919a0c2b2c292cdeed",
       "definition": "ASDE-x system",
-      "image": ""
+      "image": "https://i.gyazo.com/92f4259d11d363919a0c2b2c292cdeed.png"
     },
     {
       "id": 1778021611326.1614,
@@ -599,14 +599,14 @@
     },
     {
       "id": 1778021611326.2004,
-      "term": "In the following image",
-      "definition": "NKS1340 is pushed back and ready for taxi. They call you with the following request: \"Fort Lauderdale ground, NKS1340 with information alpha, requesting taxi 10R\". How do you respond?\n\nhttps://gyazo.com/59b98db129a509b01b12454696d4829e,Your response should be similar to: \"NKS1340, Fort Lauderdale ground, runway 10R taxi via T8 Q J\"\n\nNotes: remember, if you have already established 2-way radio communication, you should not identify yourself again.",
-      "image": ""
+      "term": "In the following image NKS1340 is pushed back and ready for taxi. They call you with the following request: \"Fort Lauderdale ground, NKS1340 with information alpha, requesting taxi 10R\". How do you respond?\n",
+      "definition": "Your response should be similar to: \"NKS1340, Fort Lauderdale ground, runway 10R taxi via T8 Q J\"\n\nNotes: remember, if you have already established 2-way radio communication, you should not identify yourself again.",
+      "image": "https://i.gyazo.com/59b98db129a509b01b12454696d4829e.png"
     },
     {
       "id": 1778021611326.9104,
-      "term": "When issuing a taxi clearance that requires an aircraft to hold short of a runway",
-      "definition": "are you permitted to issue the whole taxi clearance or only the taxi clearance up to the hold short point?,If the aircraft is instructed to hold short of the runway, you are only permitted to issue the taxi clearance up to the runway hold short point. 7110.65 3-7-2 a 1\n\nTPA Ex: \nFDX311 is at the cargo ramp and is taxing to runway 1L via J W. \n\n\nCorrect: FDX311, runway 1L taxi via J, hold short runway 1R.\n\nIncorrect: FDX311, runway 1L taxi via J W, hold short runway 1R.",
+      "term": "When issuing a taxi clearance that requires an aircraft to hold short of a runway are you permitted to issue the whole taxi clearance or only the taxi clearance up to the hold short point?",
+      "definition": "If the aircraft is instructed to hold short of the runway, you are only permitted to issue the taxi clearance up to the runway hold short point. 7110.65 3-7-2 a 1\n\nTPA Ex: \nFDX311 is at the cargo ramp and is taxing to runway 1L via J W. \n\n\nCorrect: FDX311, runway 1L taxi via J, hold short runway 1R.\n\nIncorrect: FDX311, runway 1L taxi via J W, hold short runway 1R.",
       "image": ""
     },
     {
@@ -635,14 +635,14 @@
     },
     {
       "id": 1778021611326.6133,
-      "term": "Utilizing proper phraseology",
-      "definition": "issue a crossing clearance to AAL2391. You do not have blankets.\n\nhttps://gyazo.com/921fda2ea0767259c2f62fdd7b2eb3a2,GND: local, ground\nTWR: local\nGND: Cross runway 10 at charlie\nTWR: Cross runway 10 at charlie\nGND: [operating initials]\n\nGND: AAL2391, cross runway 10 at charlie.\nAAL2391: Cross runway 10 at charlie AAL2391.\n\n**once the aircraft has crossed the runway**\n\nGND: Runway 10 crossing complete\nTWR: [operating initials]",
-      "image": ""
+      "term": "Utilizing proper phraseology, issue a crossing clearance to AAL2391. You do not have blankets.",
+      "definition": "GND: local, ground\nTWR: local\nGND: Cross runway 10 at charlie\nTWR: Cross runway 10 at charlie\nGND: [operating initials]\n\nGND: AAL2391, cross runway 10 at charlie.\nAAL2391: Cross runway 10 at charlie AAL2391.\n\n**once the aircraft has crossed the runway**\n\nGND: Runway 10 crossing complete\nTWR: [operating initials]",
+      "image": "https://i.gyazo.com/921fda2ea0767259c2f62fdd7b2eb3a2.jpg"
     },
     {
       "id": 1778021611326.745,
-      "term": "If during a runway crossing instruction",
-      "definition": "tower says, \"crossing observed\", must you still announce to tower when the crossing is complete?,No. If the tower controller says \"crossing observed\" it is understood that the tower controller is aware that the crossing is complete.",
+      "term": "If during a runway crossing instruction, tower says, \"crossing observed\", must you still announce to tower when the crossing is complete?",
+      "definition": "No. If the tower controller says \"crossing observed\" it is understood that the tower controller is aware that the crossing is complete.",
       "image": ""
     },
     {
@@ -659,14 +659,14 @@
     },
     {
       "id": 1778021611326.7283,
-      "term": "Utilizing proper phraseology",
-      "definition": "issue a crossing clearance to SWA380 and NKS8633. You do not have blankets.\n\nhttps://gyazo.com/f8ca5ac34237c5de5c7a87a343e19e26,GND: local, ground\nTWR: local\nGND: Cross runway 10 at charlie with 2\nTWR: Cross runway 10 at charlie with 2\nGND: [operating initials]\n\nGND: SWA380, cross runway 10 at charlie.\nSWA380: Cross runway 10 at charlie SWA380\n\nGND: NKS9633, cross runway 10 at charlie.\nNKS9633: cross runway 10 at charlie NKS9633\n\n\n**once both aircraft have crossed the runway**\n\nGND: Runway 10 crossing complete\nTWR: [operating initials]",
-      "image": ""
+      "term": "Utilizing proper phraseology, issue a crossing clearance to SWA380 and NKS8633. You do not have blankets.",
+      "definition": "GND: local, ground\nTWR: local\nGND: Cross runway 10 at charlie with 2\nTWR: Cross runway 10 at charlie with 2\nGND: [operating initials]\n\nGND: SWA380, cross runway 10 at charlie.\nSWA380: Cross runway 10 at charlie SWA380\n\nGND: NKS9633, cross runway 10 at charlie.\nNKS9633: cross runway 10 at charlie NKS9633\n\n\n**once both aircraft have crossed the runway**\n\nGND: Runway 10 crossing complete\nTWR: [operating initials]",
+      "image": "https://i.gyazo.com/f8ca5ac34237c5de5c7a87a343e19e26.jpg"
     },
     {
       "id": 1778021611326.116,
-      "term": "During a runway crossing",
-      "definition": "are you allowed to tell an aircraft, \"behind the landing 737, cross runway 10 at charlie\"?,No. Conditional instructions may not be used. 7110.65 3-7-1",
+      "term": "During a runway crossing are you allowed to tell an aircraft, \"behind the landing 737, cross runway 10 at charlie\"?",
+      "definition": "No. Conditional instructions may not be used. 7110.65 3-7-1",
       "image": ""
     },
     {
@@ -677,14 +677,8 @@
     },
     {
       "id": 1778021611326.058,
-      "term": "True to False: Aircraft can call for pushback at KFLL and if they do",
-      "definition": "you are to issue them a pushback clearance.,False. Push and start is always at the discretion of the pilot (unless stated otherwise [review SOPs]).",
-      "image": ""
-    },
-    {
-      "id": 1778021611326.348,
-      "term": "Tower has provided you with blankets for runway 10. Issue the crossing coordination for NKS8633 using proper phraseology.",
-      "definition": "GND: Local, ground, crossing runway 28 at charlie.\n\nGND: NKS8633, cross runway 28 at charlie. Traffic on a 2 mile final for runway 28. \nNKS8633: Cross runway 28 at charlie. , NKS8633.",
+      "term": "True to False: Aircraft can call for pushback at KFLL and if they do, you are to issue them a pushback clearance.",
+      "definition": "False. Push and start is always at the discretion of the pilot (unless stated otherwise [review SOPs]).",
       "image": ""
     },
     {
@@ -732,7 +726,7 @@
     {
       "id": 1778021611326.7478,
       "term": "Further studying/practicing/useful documents:",
-      "definition": "Useful documents:\n- SOP (for applicable airport)\n- N02 Utilization of Climb via SID\n- R02 Departure Reference Sheet\n- R07 ZMA Route Tables\n- 7110.65\n\nFurther practice/studying:\n- S1 Theory 1 Google Slides (ZMA ARTCC Training Academy)\n- Clearance Practice (ZMA ARTCC Training Academy)\n- VATUSA Academy",
+      "definition": "Useful documents:\n- SOP (for applicable airport)\n- N02 Utilization of Climb via SID\n- R02 Departure Reference Sheet\n- R07 ZMA Route Tables\n- 7110.65\n\nFurther practice/studying:\n- S1 Theory 1 Google Slides (ZMA ARTCC Training Academy)\n- Clearance Practice (ZMA ARTCC Training Academy)\n- VATUSA Academy\n- ZMA Observer Exams",
       "image": ""
     }
   ]
