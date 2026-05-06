@@ -29,20 +29,20 @@
     },
     {
       "id": 1778021440255.1443,
-      "term": "Based on the following wind",
-      "definition": "what operation would KFLL be in?\n\n06016,East operations (landing and departing 10L/10R)",
+      "term": "Based on the following wind, what operation would KFLL be in? 06016",
+      "definition": "East operations (landing and departing 10L/10R)",
       "image": ""
     },
     {
       "id": 1778021440255.5994,
-      "term": "Based on the following wind",
-      "definition": "what operation would KTPA be in?\n\n160008,South operations (landing and departing 19L/19R)",
+      "term": "Based on the following wind, what operation would KTPA be in? 160008",
+      "definition": "South operations (landing and departing 19L/19R)",
       "image": ""
     },
     {
       "id": 1778021440255.247,
-      "term": "Based on the following wind",
-      "definition": "what operation would KFLL be in?\n\n010019G23,East operations (landing and departing 10L/10R)",
+      "term": "Based on the following wind what operation would KFLL be in?\n\n010019G23",
+      "definition": "East operations (landing and departing 10L/10R)",
       "image": ""
     },
     {
@@ -71,8 +71,8 @@
     },
     {
       "id": 1778021440255.5127,
-      "term": "If an aircraft is holding short of the runway on your frequency from ground control",
-      "definition": "and you notice the aircraft is not in compliance with an SOP altitude. Is it your responsibility to amend the aircrafts flight plan before issuing a takeoff clearance?,Yes",
+      "term": "If an aircraft is holding short of the runway on your frequency from ground control and you notice the aircraft is not in compliance with an SOP altitude. Is it your responsibility to amend the aircrafts flight plan before issuing a takeoff clearance?",
+      "definition": "Yes",
       "image": ""
     },
     {
@@ -161,33 +161,33 @@
     },
     {
       "id": 1778021440255.1184,
-      "term": "What segment of the VFR traffic pattern is N535PT depicted? https://gyazo.com/599cf35ca639c28258d97f0a3aede564",
+      "term": "What segment of the VFR traffic pattern is N535PT depicted? ",
       "definition": "Downwind",
-      "image": ""
+      "image": "https://i.gyazo.com/599cf35ca639c28258d97f0a3aede564.jpg"
     },
     {
       "id": 1778021440255.5696,
-      "term": "What segment of the VFR traffic pattern is N535PT depicted? https://gyazo.com/112e209efcb30acc074afeab7a67c336",
+      "term": "What segment of the VFR traffic pattern is N535PT depicted? ",
       "definition": "Base",
-      "image": ""
+      "image": "https://i.gyazo.com/112e209efcb30acc074afeab7a67c336.jpg"
     },
     {
       "id": 1778021440255.562,
-      "term": "What segment of the VFR traffic pattern is N535PT depicted? https://gyazo.com/0128a83adab795b5f59811af60a14a4b",
+      "term": "What segment of the VFR traffic pattern is N535PT depicted? ",
       "definition": "Crosswind",
-      "image": ""
+      "image": "https://i.gyazo.com/0128a83adab795b5f59811af60a14a4b.jpg"
     },
     {
       "id": 1778021440255.458,
-      "term": "What segment of the VFR traffic pattern is N535PT depicted? https://gyazo.com/b6d783257985b78082d944a9d3ec5ce7",
+      "term": "What segment of the VFR traffic pattern is N535PT depicted? ",
       "definition": "Final",
-      "image": ""
+      "image": "https://i.gyazo.com/b6d783257985b78082d944a9d3ec5ce7.jpg"
     },
     {
       "id": 1778021440255.6711,
-      "term": "What segment of the VFR traffic pattern is N535PT depicted? https://gyazo.com/ad57326f360a1d6a5f68c717861abddd",
+      "term": "What segment of the VFR traffic pattern is N535PT depicted? ",
       "definition": "Departure leg",
-      "image": ""
+      "image": "https://i.gyazo.com/ad57326f360a1d6a5f68c717861abddd.jpg"
     },
     {
       "id": 1778021440255.7812,
@@ -203,8 +203,8 @@
     },
     {
       "id": 1778021440255.9219,
-      "term": "How would you tell a plane that you want to clear them for the option",
-      "definition": "but you do not want them to preform a stop and go?,\"N123AB, wind 120 @ 5, runway 10L cleared for the option, unable stop and go\"",
+      "term": "How would you tell a plane that you want to clear them for the option, but you do not want them to preform a stop and go?",
+      "definition": "\"N123AB, wind 120 @ 5, runway 10L cleared for the option, unable stop and go\"",
       "image": ""
     },
     {
@@ -371,8 +371,8 @@
     },
     {
       "id": 1778021440255.6572,
-      "term": "Anytime a CAT 3 aircraft is involved",
-      "definition": "SRS is always _____ft?,6,000ft and airborne",
+      "term": "Anytime a CAT 3 aircraft is involved, SRS is always _____ft?",
+      "definition": "6,000ft and airborne",
       "image": ""
     },
     {
@@ -455,9 +455,9 @@
     },
     {
       "id": 1778021440255.478,
-      "term": "Can LAHSO be used in this case? https://gyazo.com/384b929edaac1262dcdaaeb42bb6078a",
+      "term": "Can LAHSO be used in this case? ",
       "definition": "Yes",
-      "image": ""
+      "image": "https://i.gyazo.com/384b929edaac1262dcdaaeb42bb6078a.png"
     },
     {
       "id": 1778021440255.7258,
@@ -479,8 +479,8 @@
     },
     {
       "id": 1778021440255.861,
-      "term": "What would the phraseology be to instruct someone to join the Fort Lauderdale overhead transition southbound at 2",
-      "definition": "500ft?,\"N123AB, join the Fort Lauderdale overhead transition southbound at 2,500ft\"",
+      "term": "What would the phraseology be to instruct someone to join the Fort Lauderdale overhead transition southbound at 2,500ft?,",
+      "definition": "\"N123AB, join the Fort Lauderdale overhead transition southbound at 2,500ft\"",
       "image": ""
     },
     {
@@ -497,8 +497,8 @@
     },
     {
       "id": 1778021440255.4224,
-      "term": "In the event of a go around",
-      "definition": "what are the general procedures a TWR controller should follow (non SOP specific)?,Provide control instructions to the aircraft (fly heading 090, climb and maintain 3,000ft) \n\nCoordinate with the appropriate TRACON controller (typically departure)",
+      "term": "In the event of a go around, what are the general procedures a TWR controller should follow (non SOP specific)?",
+      "definition": "Provide control instructions to the aircraft (fly heading 090, climb and maintain 3,000ft) \n\nCoordinate with the appropriate TRACON controller (typically departure)",
       "image": ""
     },
     {
@@ -515,14 +515,14 @@
     },
     {
       "id": 1778021440255.3884,
-      "term": "If a VFR aircraft calls EYW TWR and requests to make a full stop landing",
-      "definition": "and EYW TWR responds with \"Aircraft calling, standby\", can the aircraft proceed into the delta airspace?,No. 2 way radio communication has not been established.",
+      "term": "If a VFR aircraft calls EYW TWR and requests to make a full stop landing, and EYW TWR responds with \"Aircraft calling, standby\", can the aircraft proceed into the delta airspace?",
+      "definition": "No. 2 way radio communication has not been established.",
       "image": ""
     },
     {
       "id": 1778021440255.2102,
-      "term": "A B737 calls TPA TWR 7 miles out on the visual approach 1R. TPA TWR has a 2 VFR aircraft in a right pattern for 1R currently. Assuming no other traffic in the area or on final",
-      "definition": "what could TPA TWR do with the B737 to prevent having to sequence the pattern work aircraft around the B737?,Side step the B737 to runway 1L.",
+      "term": "A B737 calls TPA TWR 7 miles out on the visual approach 1R. TPA TWR has a 2 VFR aircraft in a right pattern for 1R currently. Assuming no other traffic in the area or on final, what could TPA TWR do with the B737 to prevent having to sequence the pattern work aircraft around the B737?",
+      "definition": "Side step the B737 to runway 1L.",
       "image": ""
     },
     {
@@ -533,44 +533,44 @@
     },
     {
       "id": 1778021440255.703,
-      "term": "A B787 is on a 2 mile final and a B737 is on a 7 mile final for the same runway (1L). The B787 is already cleared to land. The B737 calls TWR with the following call: \"Tampa Tower",
-      "definition": "N123AB ILS 1L\". What should the response be assuming so other aircraft are in the area?,N123AB, Tampa Tower, number 2 following a B787 on a 2 mile final, caution wake turbulence, wind 010 @ 9 , runway 1L cleared to land. 7110.65 3-10-3",
+      "term": "A B787 is on a 2 mile final and a B737 is on a 7 mile final for the same runway (1L). The B787 is already cleared to land. The B737 calls TWR with the following call: \"Tampa Tower, N123AB ILS 1L\". What should the response be assuming so other aircraft are in the area?",
+      "definition": "N123AB, Tampa Tower, number 2 following a B787 on a 2 mile final, caution wake turbulence, wind 010 @ 9 , runway 1L cleared to land. 7110.65 3-10-3",
       "image": ""
     },
     {
       "id": 1778021440255.3044,
-      "term": "Based on the following metar",
-      "definition": "what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKFLL 211453Z 16024G34KT 10SM BKN055 16/12 A3012,10L / 10R",
+      "term": "Based on the following metar, what is the active runway(s).  Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKFLL 211453Z 16024G34KT 10SM BKN055 16/12 A3012",
+      "definition": "10L / 10R",
       "image": ""
     },
     {
       "id": 1778021440255.0051,
-      "term": "Based on the following metar",
-      "definition": "what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKBCE 211504Z AUTO 14015G24KT 3SM -RA BR OVC002 13/13 A3038,21",
+      "term": "Based on the following metar what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKBCE 211504Z AUTO 14015G24KT 3SM -RA BR OVC002 13/13 A3038",
+      "definition": "21",
       "image": ""
     },
     {
       "id": 1778021440255.9646,
-      "term": "Based on the following metar",
-      "definition": "what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKBCT 161853Z 08016KT 10SM SCT020 BKN032 27/21 A3009,5",
+      "term": "Based on the following metar, what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKBCT 161853Z 08016KT 10SM SCT020 BKN032 27/21 A3009",
+      "definition": "5",
       "image": ""
     },
     {
       "id": 1778021440255.8083,
-      "term": "Based on the following metar",
-      "definition": "what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKTMB 161853Z 07015G25KT 10SM FEW028 SCT043 28/21 A3005 RMK AO2 SLP176 T02830211 $,9L / 9R",
+      "term": "Based on the following metar, what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKTMB 161853Z 07015G25KT 10SM FEW028 SCT043 28/21 A3005 RMK AO2 SLP176 T02830211 $",
+      "definition": "9L / 9R",
       "image": ""
     },
     {
       "id": 1778021440255.5227,
-      "term": "KRSW 161853Z 06002KT 10SM FEW035 FEW055 27/21 A3008 RMK AO1 SLP182 T02720206",
+      "term": "Based on the following metar, what is the active runway(s). Select the runway(s) with the least crosswind component. (no SOPs necessary): \n\nKRSW 161853Z 06002KT 10SM FEW035 FEW055 27/21 A3008 RMK AO1 SLP182 T02720206",
       "definition": "winds are calm. Without looking at an SOP (or real-world operations), we are unable to determine what the active runway is.",
       "image": ""
     },
     {
       "id": 1778021440255.5535,
-      "term": "Is landing sequence (e.g.",
-      "definition": "\"Number 2\") required to be issued to an aircraft in a landing clearance.,No, issuing the landing sequence to an aircraft is optional at airports where arrivals are sequenced in by an approach controller.",
+      "term": "Is landing sequence (e.g.\"Number 2\") required to be issued to an aircraft in a landing clearance?",
+      "definition": "No, issuing the landing sequence to an aircraft is optional at airports where arrivals are sequenced in by an approach controller.",
       "image": ""
     }
   ]
