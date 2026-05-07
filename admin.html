@@ -1654,7 +1654,27 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         tbody.innerHTML = '<tr><td colspan="9" class="text-muted" style="text-align:center;padding:20px;">No students in queue</td></tr>';
         return;
       }
-      tbody.innerHTML = entries.map((e, i) => `
+      tbody.innerHTML = entries.map((e, i) => {
+        // Thread status
+        let threadStatus = '';
+        if (e.trainer_name) {
+          if (e.thread_claimed_at) {
+            threadStatus = `<span title="Thread created" style="color:#16a34a;font-size:1rem;">✓</span>`;
+          } else if (e.trainer_assigned_at) {
+            const assignedAt = new Date(e.trainer_assigned_at).getTime();
+            const expiresAt = assignedAt + (96 * 60 * 60 * 1000);
+            const now = Date.now();
+            const hoursLeft = Math.max(0, Math.floor((expiresAt - now) / 3600000));
+            const minsLeft = Math.max(0, Math.floor(((expiresAt - now) % 3600000) / 60000));
+            if (now > expiresAt) {
+              threadStatus = `<span title="Link expired — no thread created" style="color:#dc2626;font-size:1rem;">✗</span> <span style="font-size:.72rem;color:#dc2626;">Expired</span>`;
+            } else {
+              const urgent = hoursLeft < 24;
+              threadStatus = `<span title="Thread not yet created" style="color:#dc2626;font-size:1rem;">✗</span> <span style="font-size:.72rem;color:${urgent?'#dc2626':'#f59e0b'};">${hoursLeft}h ${minsLeft}m left</span>`;
+            }
+          }
+        }
+        return `
         <tr draggable="true" data-id="${e.id}" data-queue="${queueType}" data-idx="${i}">
           <td class="drag-handle">&#8597;</td>
           <td>${e.first_name} ${e.last_name}</td>
@@ -1674,6 +1694,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
               : '—'}
             <button class="btn btn-ghost btn-sm" onclick="openTrainerModal('${e.id}','${e.cid}','${e.first_name} ${e.last_name}','${e.training_type}')">Assign</button>
           </td>
+          <td style="white-space:nowrap;">${threadStatus || '—'}</td>
           <td>
             <div class="action-row">
               <button class="btn btn-success btn-sm" onclick="markComplete('${e.id}','${e.cid}','${e.first_name}','${e.last_name}','${e.training_type}','${e.trainer_name || ''}','${e.requested_at}','${e.email || ''}')">Complete</button>
@@ -1685,8 +1706,8 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
               </select>
             </div>
           </td>
-        </tr>
-      `).join('');
+        </tr>`;
+      }).join('');
       initDragDrop(bodyId, queueType);
     }
 
@@ -1760,7 +1781,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       const trainerCid = sel.options[sel.selectedIndex].dataset.cid;
       if (!trainerId) { toast('Select a trainer.', 'error'); return; }
       await SB.update('training_queue', `id=eq.${state.currentTrainerQueueId}`, {
-        trainer_id: trainerId, trainer_name: trainerName, status: 'training', training_started_at: new Date().toISOString()
+        trainer_id: trainerId, trainer_name: trainerName, status: 'training',
+        training_started_at: new Date().toISOString(),
+        trainer_assigned_at: new Date().toISOString()
       });
       if (!silent) {
         try {
