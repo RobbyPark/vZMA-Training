@@ -826,7 +826,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
           <!-- Home Queue -->
           <div class="queue-section">
-            <div class="queue-title">Home Controller Queue</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div class="queue-title" style="margin-bottom:0;">Home Controller Queue</div>
+              <select class="form-select" id="homeFilter" onchange="applyQueueFilter('home')" style="width:auto;max-width:220px;font-size:.82rem;padding:5px 10px;">
+                <option value="">All Training Types</option>
+              </select>
+            </div>
             <div class="card" style="padding:0;">
               <div class="table-wrap">
                 <table>
@@ -845,7 +850,12 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
           <!-- Visitor Queue -->
           <div class="queue-section">
-            <div class="queue-title">Visitor Queue</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div class="queue-title" style="margin-bottom:0;">Visitor Queue</div>
+              <select class="form-select" id="visitorFilter" onchange="applyQueueFilter('visitor')" style="width:auto;max-width:220px;font-size:.82rem;padding:5px 10px;">
+                <option value="">All Training Types</option>
+              </select>
+            </div>
             <div class="card" style="padding:0;">
               <div class="table-wrap">
                 <table>
@@ -1402,6 +1412,24 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
     // ===================== QUEUES =====================
+    function populateQueueFilters() {
+      const homeTypes = [...new Set(state.home.map(e => e.training_type).filter(Boolean))].sort();
+      const visitorTypes = [...new Set(state.visitor.map(e => e.training_type).filter(Boolean))].sort();
+      const homeFilter = document.getElementById('homeFilter');
+      const visitorFilter = document.getElementById('visitorFilter');
+      const homeVal = homeFilter.value;
+      const visitorVal = visitorFilter.value;
+      homeFilter.innerHTML = '<option value="">All Training Types</option>' + homeTypes.map(t => `<option value="${t}" ${homeVal===t?'selected':''}>${t}</option>`).join('');
+      visitorFilter.innerHTML = '<option value="">All Training Types</option>' + visitorTypes.map(t => `<option value="${t}" ${visitorVal===t?'selected':''}>${t}</option>`).join('');
+    }
+
+    function applyQueueFilter(queueType) {
+      const filter = document.getElementById(`${queueType}Filter`).value;
+      const entries = queueType === 'home' ? state.home : state.visitor;
+      const filtered = filter ? entries.filter(e => e.training_type === filter) : entries;
+      renderQueueTable(`${queueType}Body`, filtered, queueType);
+    }
+
     async function loadQueues() {
       try {
         state.pending = await SB.query('training_requests', '?status=eq.pending&order=created_at.asc');
@@ -1411,6 +1439,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         renderPending();
         renderQueueTable('homeBody', state.home, 'home');
         renderQueueTable('visitorBody', state.visitor, 'visitor');
+        populateQueueFilters();
       } catch (e) { console.error(e); toast('Failed to load queues', 'error'); }
     }
 
