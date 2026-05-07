@@ -1412,21 +1412,42 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
     // ===================== QUEUES =====================
+    const TRAINING_FILTER_GROUPS = [
+      { label: 'S1 Training', match: ['S1'] },
+      { label: 'S2 Training', match: ['S2'] },
+      { label: 'S3 Training', match: ['S3'] },
+      { label: 'C1 Training', match: ['C1'] },
+      { label: 'Tier 1 — MIA GND/DEL', match: ['GND/DEL', 'GND\\DEL', 'GND&DEL', 'Tier 1 MIA GND'] },
+      { label: 'Tier 1 — MIA TWR', match: ['MIA LCL', 'MIA TWR', 'Tier 1 MIA LCL'] },
+      { label: 'Tier 1 — MIA TRACON', match: ['MIA TRACON', 'Tier 1 MIA TRACON'] },
+      { label: 'Visitor/Transfer — Miami CAB', match: ['Miami CAB', 'MIA CAB'] },
+      { label: 'Center & Oceanic', match: ['Center', 'Oceanic'] },
+      { label: 'Visitor / Transfer', match: ['Visitor', 'Transfer'] },
+    ];
+
+    function getFilterGroup(trainingType) {
+      for (const g of TRAINING_FILTER_GROUPS) {
+        if (g.match.some(m => trainingType.includes(m))) return g.label;
+      }
+      return trainingType;
+    }
+
     function populateQueueFilters() {
-      const homeTypes = [...new Set(state.home.map(e => e.training_type).filter(Boolean))].sort();
-      const visitorTypes = [...new Set(state.visitor.map(e => e.training_type).filter(Boolean))].sort();
-      const homeFilter = document.getElementById('homeFilter');
-      const visitorFilter = document.getElementById('visitorFilter');
-      const homeVal = homeFilter.value;
-      const visitorVal = visitorFilter.value;
-      homeFilter.innerHTML = '<option value="">All Training Types</option>' + homeTypes.map(t => `<option value="${t}" ${homeVal===t?'selected':''}>${t}</option>`).join('');
-      visitorFilter.innerHTML = '<option value="">All Training Types</option>' + visitorTypes.map(t => `<option value="${t}" ${visitorVal===t?'selected':''}>${t}</option>`).join('');
+      ['home', 'visitor'].forEach(qt => {
+        const entries = qt === 'home' ? state.home : state.visitor;
+        const filter = document.getElementById(`${qt}Filter`);
+        const currentVal = filter.value; // preserve current selection
+        const groups = [...new Set(entries.map(e => getFilterGroup(e.training_type)).filter(Boolean))].sort();
+        filter.innerHTML = '<option value="">All Training Types</option>' + groups.map(g => `<option value="${g}" ${currentVal === g ? 'selected' : ''}>${g}</option>`).join('');
+      });
     }
 
     function applyQueueFilter(queueType) {
-      const filter = document.getElementById(`${queueType}Filter`).value;
+      const filterVal = document.getElementById(`${queueType}Filter`).value;
       const entries = queueType === 'home' ? state.home : state.visitor;
-      const filtered = filter ? entries.filter(e => e.training_type === filter) : entries;
+      const filtered = filterVal
+        ? entries.filter(e => getFilterGroup(e.training_type) === filterVal)
+        : entries;
       renderQueueTable(`${queueType}Body`, filtered, queueType);
     }
 
@@ -1437,9 +1458,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         state.visitor = await SB.query('training_queue', '?queue_type=eq.visitor&status=not.in.(completed,removed)&order=sort_order.asc,requested_at.asc');
         renderQueueStats();
         renderPending();
-        renderQueueTable('homeBody', state.home, 'home');
-        renderQueueTable('visitorBody', state.visitor, 'visitor');
         populateQueueFilters();
+        applyQueueFilter('home');
+        applyQueueFilter('visitor');
       } catch (e) { console.error(e); toast('Failed to load queues', 'error'); }
     }
 
