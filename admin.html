@@ -784,6 +784,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <div class="sidebar-section" style="margin-top:16px;">
           <div class="sidebar-label">Academy</div>
           <button class="sidebar-btn" onclick="switchTab('flashcards')">Flashcards</button>
+          <button class="sidebar-btn" onclick="switchTab('lesson-plans')">Lesson Plans</button>
         </div>
         <div class="sidebar-section" style="margin-top:16px;">
           <div class="sidebar-label">Settings</div>
@@ -1050,11 +1051,60 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div id="flashcardSetList"></div>
         </div>
 
+        <!-- ======================== LESSON PLANS TAB ======================== -->
+        <div class="tab-content" id="tab-lesson-plans">
+          <div class="page-header" style="margin-bottom:16px;">
+            <div class="flex items-center gap-3">
+              <h1>Lesson Plans</h1>
+              <button class="btn btn-primary btn-sm" onclick="openLessonPlanModal()">+ New Lesson Plan</button>
+            </div>
+          </div>
+          <div id="lessonPlanList"></div>
+        </div>
+
       </div><!-- /admin-content -->
     </div><!-- /admin-layout -->
   </div>
 
   <!-- =================== MODALS =================== -->
+
+  <!-- Lesson Plan Modal -->
+  <div class="modal-backdrop" id="lessonPlanModal">
+    <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+      <div class="modal-header">
+        <span class="modal-title" id="lessonPlanModalTitle">New Lesson Plan</span>
+        <button class="modal-close" onclick="closeModal('lessonPlanModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lesson Title</label>
+        <input class="form-input" id="lp_title" placeholder="e.g. IFR Clearance Delivery Basics" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assign to Ratings</label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;" id="lp_ratings">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;">
+            <input type="checkbox" value="S1" style="accent-color:var(--blue-600);width:15px;height:15px;"> S1
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;">
+            <input type="checkbox" value="S2" style="accent-color:var(--blue-600);width:15px;height:15px;"> S2
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;">
+            <input type="checkbox" value="S3" style="accent-color:var(--blue-600);width:15px;height:15px;"> S3
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;">
+            <input type="checkbox" value="C1" style="accent-color:var(--blue-600);width:15px;height:15px;"> C1
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;">
+            <input type="checkbox" value="T1" style="accent-color:var(--blue-600);width:15px;height:15px;"> T1
+          </label>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" onclick="saveLessonPlan()">Save</button>
+        <button class="btn btn-secondary" onclick="closeModal('lessonPlanModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Reject Modal -->
   <div class="modal-backdrop" id="rejectModal">
@@ -1411,6 +1461,7 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       if (name === 'exam-center') loadAdminExams();
       if (name === 'admin') loadAdmin();
       if (name === 'flashcards') renderFlashcardSetList();
+      if (name === 'lesson-plans') loadLessonPlans();
     }
 
     // ===================== MODAL HELPERS =====================
@@ -3708,6 +3759,71 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       }
     }
     setInterval(checkExamNotif, 15000);
+
+    // ===================== LESSON PLANS =====================
+    let editingLessonPlanId = null;
+
+    function openLessonPlanModal(plan) {
+      editingLessonPlanId = plan ? plan.id : null;
+      document.getElementById('lessonPlanModalTitle').textContent = plan ? 'Edit Lesson Plan' : 'New Lesson Plan';
+      document.getElementById('lp_title').value = plan ? plan.title : '';
+      // Reset checkboxes
+      document.querySelectorAll('#lp_ratings input[type="checkbox"]').forEach(cb => {
+        cb.checked = plan ? (plan.ratings || []).includes(cb.value) : false;
+      });
+      openModal('lessonPlanModal');
+    }
+
+    async function saveLessonPlan() {
+      const title = document.getElementById('lp_title').value.trim();
+      if (!title) { toast('Please enter a lesson title.', 'error'); return; }
+      const ratings = [...document.querySelectorAll('#lp_ratings input[type="checkbox"]:checked')].map(cb => cb.value);
+      if (!ratings.length) { toast('Please assign this lesson to at least one rating.', 'error'); return; }
+
+      try {
+        if (editingLessonPlanId) {
+          await SB.update('lesson_plans', `id=eq.${editingLessonPlanId}`, { title, ratings });
+          toast('Lesson plan updated.');
+        } else {
+          await SB.insert('lesson_plans', { title, ratings, created_at: new Date().toISOString() });
+          toast('Lesson plan created.');
+        }
+        closeModal('lessonPlanModal');
+        loadLessonPlans();
+      } catch(e) { toast('Error saving lesson plan.', 'error'); console.error(e); }
+    }
+
+    async function deleteLessonPlan(id) {
+      if (!confirm('Delete this lesson plan? This cannot be undone.')) return;
+      await SB.delete('lesson_plans', `id=eq.${id}`);
+      toast('Lesson plan deleted.');
+      loadLessonPlans();
+    }
+
+    async function loadLessonPlans() {
+      const list = document.getElementById('lessonPlanList');
+      list.innerHTML = '<div style="color:var(--gray-400);padding:16px;font-size:.875rem;">Loading…</div>';
+      try {
+        const plans = await SB.query('lesson_plans', '?order=created_at.asc');
+        if (!plans || !plans.length) {
+          list.innerHTML = '<div style="color:var(--gray-400);padding:16px;font-size:.875rem;">No lesson plans yet. Click "+ New Lesson Plan" to create one.</div>';
+          return;
+        }
+        list.innerHTML = plans.map(p => `
+          <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+            <div>
+              <div style="font-weight:700;font-size:.95rem;color:var(--blue-900);margin-bottom:6px;">${p.title}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${(p.ratings||[]).map(r => `<span style="background:var(--blue-100);color:var(--blue-700);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;">${r}</span>`).join('')}
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-shrink:0;">
+              <button class="btn btn-ghost btn-sm" onclick='openLessonPlanModal(${JSON.stringify(p)})'>Edit</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--red-500);" onclick="deleteLessonPlan('${p.id}')">Delete</button>
+            </div>
+          </div>`).join('');
+      } catch(e) { list.innerHTML = '<div style="color:var(--red-500);padding:16px;font-size:.875rem;">Error loading lesson plans.</div>'; }
+    }
 
     // ===================== INIT =====================
     loadQueues();

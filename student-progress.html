@@ -123,6 +123,12 @@
     .notes-input:focus{border-color:var(--blue-400);background:var(--white)}
     .save-indicator{font-size:.72rem;color:var(--gray-400);margin-left:8px;transition:opacity .3s}
 
+    /* DETAIL TAB BAR */
+    .detail-tab-bar{display:flex;gap:4px;border-bottom:2px solid var(--gray-200);margin-bottom:24px;flex-wrap:wrap}
+    .detail-tab{padding:10px 20px;border:none;background:none;font-family:var(--font-main);font-size:.875rem;font-weight:600;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:color .15s,border-color .15s,background .15s}
+    .detail-tab:hover{color:var(--blue-600);background:var(--blue-50)}
+    .detail-tab.active{color:var(--blue-600);border-bottom-color:var(--blue-600)}
+
     /* Progress bar */
     .progress-bar-wrap{display:flex;align-items:center;gap:12px;margin-bottom:6px}
     .progress-bar-track{flex:1;height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden}
@@ -209,7 +215,19 @@
         </div>
       </div>
 
-      <div id="progressTablesContainer"></div>
+      <!-- TAB BAR -->
+      <div class="detail-tab-bar" id="detailTabBar">
+        <button class="detail-tab active" id="dtab-competencies" onclick="switchDetailTab('competencies')">Competencies</button>
+        <div id="lessonPlanTabs" style="display:contents;"></div>
+      </div>
+
+      <!-- COMPETENCIES PANEL -->
+      <div id="panel-competencies">
+        <div id="progressTablesContainer"></div>
+      </div>
+
+      <!-- LESSON PLAN PANELS (rendered dynamically) -->
+      <div id="lessonPanelsContainer"></div>
     </div>
 
   </main>
@@ -532,6 +550,10 @@
     renderProgressTables(rubricKey);
     updateProgressBar();
 
+    // Reset to competencies tab and load lesson plans
+    switchDetailTab('competencies');
+    loadLessonPlansForStudent(s);
+
     document.getElementById('selectorView').style.display = 'none';
     document.getElementById('detailView').style.display   = 'block';
     window.scrollTo({ top:0, behavior:'smooth' });
@@ -541,6 +563,8 @@
     currentStudent = null;
     progressData   = {};
     rowIdCache     = {};
+    document.getElementById('lessonPlanTabs').innerHTML = '';
+    document.getElementById('lessonPanelsContainer').innerHTML = '';
     document.getElementById('detailView').style.display   = 'none';
     document.getElementById('selectorView').style.display = 'block';
     window.scrollTo({ top:0, behavior:'smooth' });
@@ -677,12 +701,73 @@
   // PROGRESS BAR
   // ─────────────────────────────────────────────────────────
   function updateProgressBar() {
-    const checkboxes = document.querySelectorAll('.progress-check');
+    const checkboxes = document.querySelectorAll('#panel-competencies .progress-check');
     const total   = checkboxes.length;
     const checked = [...checkboxes].filter(c => c.checked).length;
     const pct     = total ? Math.round((checked / total) * 100) : 0;
     document.getElementById('progressBarFill').style.width  = pct + '%';
     document.getElementById('progressLabel').textContent    = `${checked} / ${total}`;
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // DETAIL TAB SWITCHING
+  // ─────────────────────────────────────────────────────────
+  let activeDetailTab = 'competencies';
+
+  function switchDetailTab(tabId) {
+    activeDetailTab = tabId;
+    // Update tab button states
+    document.querySelectorAll('.detail-tab').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.getElementById(`dtab-${tabId}`);
+    if (activeBtn) activeBtn.classList.add('active');
+    // Show/hide panels
+    document.getElementById('panel-competencies').style.display = tabId === 'competencies' ? 'block' : 'none';
+    document.querySelectorAll('.lesson-panel').forEach(p => {
+      p.style.display = p.dataset.lessonId === tabId ? 'block' : 'none';
+    });
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // LESSON PLANS
+  // ─────────────────────────────────────────────────────────
+  async function loadLessonPlansForStudent(student) {
+    const rubricKey = getRubricKey(student.training_type);
+    if (!rubricKey) return;
+
+    try {
+      // Fetch all lesson plans, then filter to ones that include this student's rating
+      const plans = await SB.query('lesson_plans', '?order=created_at.asc');
+      const relevant = (plans || []).filter(p => (p.ratings || []).includes(rubricKey));
+
+      const tabsEl   = document.getElementById('lessonPlanTabs');
+      const panelsEl = document.getElementById('lessonPanelsContainer');
+      tabsEl.innerHTML   = '';
+      panelsEl.innerHTML = '';
+
+      relevant.forEach(plan => {
+        // Tab button
+        const btn = document.createElement('button');
+        btn.className = 'detail-tab';
+        btn.id = `dtab-${plan.id}`;
+        btn.textContent = plan.title;
+        btn.onclick = () => switchDetailTab(plan.id);
+        tabsEl.appendChild(btn);
+
+        // Panel (empty for now — content to be defined later)
+        const panel = document.createElement('div');
+        panel.className = 'lesson-panel';
+        panel.dataset.lessonId = plan.id;
+        panel.style.display = 'none';
+        panel.innerHTML = `
+          <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:40px;text-align:center;color:var(--gray-400);box-shadow:var(--shadow-sm);">
+            <div style="font-size:1rem;font-weight:600;color:var(--gray-600);margin-bottom:8px;">${plan.title}</div>
+            <div style="font-size:.875rem;">Lesson content coming soon.</div>
+          </div>`;
+        panelsEl.appendChild(panel);
+      });
+    } catch(e) {
+      console.warn('Could not load lesson plans:', e);
+    }
   }
   </script>
 </body>
