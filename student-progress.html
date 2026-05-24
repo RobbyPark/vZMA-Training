@@ -119,7 +119,7 @@
     .progress-check{width:18px;height:18px;cursor:pointer;accent-color:var(--blue-600)}
 
     /* Notes input */
-    .notes-input{width:100%;padding:5px 8px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:.78rem;color:var(--gray-700);resize:none;outline:none;min-height:32px;transition:border-color .15s;background:transparent}
+    .notes-input{width:100%;padding:6px 8px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:.82rem;color:var(--gray-700);resize:none;outline:none;min-height:60px;overflow:hidden;line-height:1.5;transition:border-color .15s;background:transparent;display:block}
     .notes-input:focus{border-color:var(--blue-400);background:var(--white)}
     .save-indicator{font-size:.72rem;color:var(--gray-400);margin-left:8px;transition:opacity .3s}
 
@@ -562,6 +562,7 @@
     });
     container.querySelectorAll('.notes-input').forEach(ta => {
       ta.addEventListener('input', onNotesChange);
+      autoResize(ta);
     });
   }
 
@@ -604,6 +605,11 @@
   // ─────────────────────────────────────────────────────────
   // CHANGE HANDLERS + SAVE
   // ─────────────────────────────────────────────────────────
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
   function onCheckChange(e) {
     const key = e.target.dataset.key;
     if (!progressData[key]) progressData[key] = { checked: false, notes: '' };
@@ -613,6 +619,7 @@
   }
 
   function onNotesChange(e) {
+    autoResize(e.target);
     const key = e.target.dataset.key;
     if (!progressData[key]) progressData[key] = { checked: false, notes: '' };
     progressData[key].notes = e.target.value;
