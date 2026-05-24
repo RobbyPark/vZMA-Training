@@ -6,375 +6,132 @@
   <title>Student Progress — ZMA ARTCC</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
     :root {
-      --blue-900: #0a1628;
-      --blue-800: #0e2044;
-      --blue-700: #1a3a6b;
-      --blue-600: #1e4d8c;
-      --blue-500: #2563a8;
-      --blue-400: #3b82c4;
-      --blue-300: #60a5d8;
-      --blue-200: #bfdbf7;
-      --blue-100: #dbeafe;
-      --blue-50:  #eff6ff;
-      --white:    #ffffff;
-      --gray-50:  #f8fafc;
-      --gray-100: #f1f5f9;
-      --gray-200: #e2e8f0;
-      --gray-300: #cbd5e1;
-      --gray-400: #94a3b8;
-      --gray-500: #64748b;
-      --gray-600: #475569;
-      --gray-700: #334155;
-      --gray-800: #1e293b;
-      --red-600:  #dc2626;
-      --red-100:  #fee2e2;
-      --green-600:#16a34a;
-      --green-100:#dcfce7;
-      --yellow-600:#ca8a04;
-      --yellow-100:#fef9c3;
-      --font-main: 'DM Sans', sans-serif;
-      --font-mono: 'DM Mono', monospace;
-      --radius-sm: 6px;
-      --radius:    10px;
-      --radius-lg: 16px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-      --shadow:    0 4px 12px rgba(0,0,0,.08);
-      --shadow-lg: 0 10px 30px rgba(0,0,0,.12);
-      --nav-height: 64px;
+      --blue-900:#0a1628;--blue-800:#0e2044;--blue-700:#1a3a6b;--blue-600:#1e4d8c;
+      --blue-500:#2563a8;--blue-400:#3b82c4;--blue-300:#60a5d8;--blue-200:#bfdbf7;
+      --blue-100:#dbeafe;--blue-50:#eff6ff;--white:#ffffff;--gray-50:#f8fafc;
+      --gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-300:#cbd5e1;--gray-400:#94a3b8;
+      --gray-500:#64748b;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;
+      --red-600:#dc2626;--red-100:#fee2e2;--green-600:#16a34a;--green-100:#dcfce7;
+      --yellow-600:#ca8a04;--yellow-100:#fef9c3;
+      --font-main:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;
+      --radius-sm:6px;--radius:10px;--radius-lg:16px;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+      --shadow:0 4px 12px rgba(0,0,0,.08);--nav-height:64px;
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:15px}
+    body{font-family:var(--font-main);background:var(--gray-50);color:var(--gray-800);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 15px; }
-    body {
-      font-family: var(--font-main);
-      background: var(--gray-50);
-      color: var(--gray-800);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-    }
+    /* NAV */
+    .top-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-height);background:var(--white);border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:100;box-shadow:var(--shadow-sm)}
+    .nav-brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:1.05rem;color:var(--blue-800);text-decoration:none}
+    .nav-brand-badge{background:var(--blue-700);color:var(--white);font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px}
+    .nav-page-title{font-size:.82rem;font-weight:600;color:var(--gray-500);letter-spacing:.04em;text-transform:uppercase}
 
-    /* ── NAV ── */
-    .top-nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      height: var(--nav-height);
-      background: var(--white);
-      border-bottom: 1px solid var(--gray-200);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 32px;
-      z-index: 100;
-      box-shadow: var(--shadow-sm);
-    }
-    .nav-brand {
-      display: flex; align-items: center; gap: 12px;
-      font-weight: 700; font-size: 1.05rem;
-      color: var(--blue-800);
-      text-decoration: none;
-    }
-    .nav-brand-badge {
-      background: var(--blue-700);
-      color: var(--white);
-      font-size: .65rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      padding: 2px 8px;
-      border-radius: 4px;
-    }
-    .nav-page-title {
-      font-size: .82rem;
-      font-weight: 600;
-      color: var(--gray-500);
-      letter-spacing: .04em;
-      text-transform: uppercase;
-    }
+    /* MAIN */
+    .main{padding-top:calc(var(--nav-height) + 40px);padding-bottom:60px;max-width:1100px;margin:0 auto;padding-left:24px;padding-right:24px}
+    .page-header{margin-bottom:32px}
+    .page-header h1{font-size:1.6rem;font-weight:700;color:var(--blue-900);margin-bottom:4px}
+    .page-header p{color:var(--gray-500);font-size:.9rem}
 
-    /* ── MAIN ── */
-    .main {
-      padding-top: calc(var(--nav-height) + 40px);
-      padding-bottom: 60px;
-      max-width: 900px;
-      margin: 0 auto;
-      padding-left: 24px;
-      padding-right: 24px;
-    }
+    /* MODAL */
+    .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+    .modal-backdrop.open{display:flex}
+    .modal{background:var(--white);border-radius:var(--radius-lg);padding:32px;max-width:440px;width:100%;box-shadow:var(--shadow)}
+    .modal h2{font-size:1.1rem;font-weight:700;color:var(--blue-900);margin-bottom:8px}
+    .modal p{color:var(--gray-500);font-size:.875rem;margin-bottom:20px}
+    .modal-input{width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.95rem;outline:none;transition:border-color .15s;margin-bottom:14px}
+    .modal-input:focus{border-color:var(--blue-400)}
+    .modal-error{color:var(--red-600);font-size:.8rem;margin-bottom:10px;display:none}
 
-    /* ── PAGE HEADER ── */
-    .page-header {
-      margin-bottom: 32px;
-    }
-    .page-header h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--blue-900);
-      margin-bottom: 4px;
-    }
-    .page-header p {
-      color: var(--gray-500);
-      font-size: .9rem;
-    }
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-family:var(--font-main);font-size:.875rem;font-weight:600;cursor:pointer;border:none;transition:background .15s,color .15s}
+    .btn-primary{background:var(--blue-600);color:var(--white)}
+    .btn-primary:hover{background:var(--blue-700)}
+    .btn-secondary{background:var(--gray-100);color:var(--gray-700)}
+    .btn-secondary:hover{background:var(--gray-200)}
+    .btn-sm{padding:6px 12px;font-size:.8rem}
 
-    /* ── SELECTOR VIEW ── */
-    #selectorView {}
-    .selector-card {
-      background: var(--white);
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      box-shadow: var(--shadow-sm);
-    }
-    .selector-label {
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--gray-500);
-      margin-bottom: 10px;
-    }
-    .student-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px;
-      margin-top: 8px;
-    }
-    .student-card {
-      border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: border-color .15s, box-shadow .15s, background .15s;
-      background: var(--white);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .student-card:hover {
-      border-color: var(--blue-400);
-      box-shadow: var(--shadow);
-      background: var(--blue-50);
-    }
-    .student-card-name {
-      font-weight: 700;
-      font-size: .95rem;
-      color: var(--blue-900);
-    }
-    .student-card-cid {
-      font-family: var(--font-mono);
-      font-size: .78rem;
-      color: var(--gray-500);
-    }
-    .student-card-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: .7rem;
-      font-weight: 700;
-      letter-spacing: .03em;
-    }
-    .badge-blue { background: var(--blue-100); color: var(--blue-700); }
-    .badge-gray { background: var(--gray-100); color: var(--gray-600); }
-    .badge-green { background: var(--green-100); color: var(--green-600); }
+    /* LOADER / ERROR */
+    .loader{display:flex;align-items:center;justify-content:center;gap:10px;padding:48px;color:var(--gray-400);font-size:.875rem}
+    .spinner{width:20px;height:20px;border:2px solid var(--gray-200);border-top-color:var(--blue-500);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .error-msg{background:var(--red-100);color:var(--red-600);padding:14px 18px;border-radius:var(--radius);font-size:.875rem;margin-bottom:20px}
 
-    .filter-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .filter-input {
-      flex: 1;
-      min-width: 180px;
-      padding: 8px 12px;
-      border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius-sm);
-      font-family: var(--font-main);
-      font-size: .875rem;
-      color: var(--gray-800);
-      background: var(--white);
-      outline: none;
-      transition: border-color .15s;
-    }
-    .filter-input:focus { border-color: var(--blue-400); }
-    .filter-select {
-      padding: 8px 12px;
-      border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius-sm);
-      font-family: var(--font-main);
-      font-size: .875rem;
-      color: var(--gray-700);
-      background: var(--white);
-      outline: none;
-      cursor: pointer;
-      transition: border-color .15s;
-    }
-    .filter-select:focus { border-color: var(--blue-400); }
+    /* SELECTOR */
+    .selector-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-sm)}
+    .filter-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+    .filter-input{flex:1;min-width:180px;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:.875rem;color:var(--gray-800);background:var(--white);outline:none;transition:border-color .15s}
+    .filter-input:focus{border-color:var(--blue-400)}
+    .filter-select{padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:.875rem;color:var(--gray-700);background:var(--white);outline:none;cursor:pointer;transition:border-color .15s}
+    .filter-select:focus{border-color:var(--blue-400)}
+    .selector-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:10px}
+    .count-chip{background:var(--gray-100);color:var(--gray-600);font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:20px}
+    .student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:8px}
+    .student-card{border:1.5px solid var(--gray-200);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s;background:var(--white);display:flex;flex-direction:column;gap:4px}
+    .student-card:hover{border-color:var(--blue-400);box-shadow:var(--shadow);background:var(--blue-50)}
+    .student-card-name{font-weight:700;font-size:.95rem;color:var(--blue-900)}
+    .student-card-cid{font-family:var(--font-mono);font-size:.78rem;color:var(--gray-500)}
+    .student-card-meta{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
+    .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.03em}
+    .badge-blue{background:var(--blue-100);color:var(--blue-700)}
+    .badge-gray{background:var(--gray-100);color:var(--gray-600)}
+    .badge-green{background:var(--green-100);color:var(--green-600)}
+    .empty-state{text-align:center;padding:48px 24px;color:var(--gray-400)}
+    .empty-state p{font-size:.9rem}
 
-    .empty-state {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--gray-400);
-    }
-    .empty-state svg { margin-bottom: 12px; opacity: .4; }
-    .empty-state p { font-size: .9rem; }
+    /* DETAIL */
+    #detailView{display:none}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--blue-600);cursor:pointer;border:none;background:none;padding:0;margin-bottom:20px;transition:color .15s}
+    .back-btn:hover{color:var(--blue-800)}
+    .detail-header{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:24px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .detail-name{font-size:1.4rem;font-weight:700;color:var(--blue-900)}
+    .detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center}
+    .cid-link{color:var(--blue-600);text-decoration:none;font-family:var(--font-mono);font-size:.8rem}
+    .cid-link:hover{text-decoration:underline}
+    .viewer-chip{display:flex;align-items:center;gap:6px;background:var(--gray-100);border-radius:var(--radius-sm);padding:6px 12px;font-size:.8rem;color:var(--gray-600)}
+    .viewer-chip strong{color:var(--gray-800)}
 
-    /* ── STUDENT DETAIL VIEW ── */
-    #detailView { display: none; }
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: .82rem;
-      font-weight: 600;
-      color: var(--blue-600);
-      cursor: pointer;
-      border: none;
-      background: none;
-      padding: 0;
-      margin-bottom: 20px;
-      transition: color .15s;
-    }
-    .back-btn:hover { color: var(--blue-800); }
+    /* TABLE */
+    .table-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:24px}
+    .table-card-header{padding:16px 24px;border-bottom:2px solid var(--gray-200);background:var(--blue-900);display:flex;align-items:center;justify-content:space-between}
+    .table-card-title{font-weight:700;font-size:.95rem;color:var(--white);letter-spacing:.04em;text-transform:uppercase}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    thead th{padding:9px 14px;text-align:left;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);background:var(--gray-50);border-bottom:1px solid var(--gray-200);white-space:nowrap}
+    thead th.th-check{width:44px;text-align:center}
+    thead th.th-notes{min-width:200px}
+    tbody tr{border-bottom:1px solid var(--gray-100);transition:background .1s}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:var(--blue-50)}
+    tbody td{padding:11px 14px;font-size:.85rem;color:var(--gray-700);vertical-align:middle}
+    td.td-id{font-family:var(--font-mono);font-size:.78rem;color:var(--gray-500);white-space:nowrap}
+    td.td-domain{font-weight:600;color:var(--gray-800)}
+    td.td-standard{color:var(--gray-600);font-size:.82rem;line-height:1.5}
+    td.td-check{text-align:center}
+    td.td-notes{}
 
-    .detail-header {
-      background: var(--white);
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      padding: 24px 28px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    .detail-name {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--blue-900);
-    }
-    .detail-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 6px;
-      align-items: center;
-    }
-    .detail-cid {
-      font-family: var(--font-mono);
-      font-size: .8rem;
-      color: var(--gray-500);
-    }
-    .cid-link {
-      color: var(--blue-600);
-      text-decoration: none;
-      font-family: var(--font-mono);
-      font-size: .8rem;
-    }
-    .cid-link:hover { text-decoration: underline; }
+    /* Section header row */
+    tr.section-header td{background:var(--blue-800);color:var(--white);font-weight:700;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;border-bottom:none}
 
-    /* ── PROGRESS TABLE ── */
-    .table-card {
-      background: var(--white);
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-    }
-    .table-card-header {
-      padding: 18px 24px;
-      border-bottom: 1px solid var(--gray-200);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .table-card-title {
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--blue-900);
-    }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; }
-    thead th {
-      padding: 10px 20px;
-      text-align: left;
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--gray-500);
-      background: var(--gray-50);
-      border-bottom: 1px solid var(--gray-200);
-      white-space: nowrap;
-    }
-    tbody tr {
-      border-bottom: 1px solid var(--gray-100);
-      transition: background .1s;
-    }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: var(--blue-50); }
-    tbody td {
-      padding: 14px 20px;
-      font-size: .875rem;
-      color: var(--gray-700);
-      vertical-align: middle;
-    }
-    .placeholder-row td {
-      text-align: center;
-      color: var(--gray-400);
-      padding: 32px 20px;
-      font-style: italic;
-    }
+    /* Checkbox */
+    .progress-check{width:18px;height:18px;cursor:pointer;accent-color:var(--blue-600)}
 
-    /* ── LOADER ── */
-    .loader {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 48px;
-      color: var(--gray-400);
-      font-size: .875rem;
-    }
-    .spinner {
-      width: 20px; height: 20px;
-      border: 2px solid var(--gray-200);
-      border-top-color: var(--blue-500);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Notes input */
+    .notes-input{width:100%;padding:5px 8px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:.78rem;color:var(--gray-700);resize:none;outline:none;min-height:32px;transition:border-color .15s;background:transparent}
+    .notes-input:focus{border-color:var(--blue-400);background:var(--white)}
+    .save-indicator{font-size:.72rem;color:var(--gray-400);margin-left:8px;transition:opacity .3s}
 
-    .error-msg {
-      background: var(--red-100);
-      color: var(--red-600);
-      padding: 14px 18px;
-      border-radius: var(--radius);
-      font-size: .875rem;
-      margin-bottom: 20px;
-    }
-    .count-chip {
-      background: var(--gray-100);
-      color: var(--gray-600);
-      font-size: .72rem;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 20px;
-    }
+    /* Progress bar */
+    .progress-bar-wrap{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+    .progress-bar-track{flex:1;height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden}
+    .progress-bar-fill{height:100%;background:var(--blue-500);border-radius:4px;transition:width .4s}
+    .progress-label{font-size:.75rem;font-weight:700;color:var(--gray-600);white-space:nowrap}
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
   <nav class="top-nav">
     <div class="nav-brand">
       <span>ZMA ARTCC</span>
@@ -385,43 +142,44 @@
 
   <main class="main">
 
-    <!-- ══════════ SELECTOR VIEW ══════════ -->
-    <div id="selectorView">
+    <!-- CID PROMPT MODAL -->
+    <div class="modal-backdrop open" id="cidModal">
+      <div class="modal">
+        <h2>Trainer Identification</h2>
+        <p>Enter your CID to continue. This will be used to log activity on this page.</p>
+        <input class="modal-input" id="cidInput" placeholder="Enter your CID" maxlength="10" />
+        <div class="modal-error" id="cidError">Please enter a valid CID.</div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="submitCid()">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELECTOR VIEW -->
+    <div id="selectorView" style="display:none">
       <div class="page-header">
         <h1>Student Progress</h1>
-        <p>Select a student to view their training progress.</p>
+        <p>Showing students currently in training with an assigned trainer.</p>
       </div>
-
       <div class="selector-card">
-        <div id="selectorLoader" class="loader">
-          <div class="spinner"></div> Loading students…
-        </div>
-        <div id="selectorError" class="error-msg" style="display:none;"></div>
-
-        <div id="selectorContent" style="display:none;">
+        <div id="selectorLoader" class="loader"><div class="spinner"></div> Loading students…</div>
+        <div id="selectorError" class="error-msg" style="display:none"></div>
+        <div id="selectorContent" style="display:none">
           <div class="filter-row">
             <input class="filter-input" id="searchInput" placeholder="Search by name or CID…" oninput="filterStudents()" />
-            <select class="filter-select" id="trainerFilter" onchange="filterStudents()">
-              <option value="">All Trainers</option>
-            </select>
-            <select class="filter-select" id="typeFilter" onchange="filterStudents()">
-              <option value="">All Training Types</option>
-            </select>
+            <select class="filter-select" id="trainerFilter" onchange="filterStudents()"><option value="">All Trainers</option></select>
+            <select class="filter-select" id="typeFilter" onchange="filterStudents()"><option value="">All Training Types</option></select>
           </div>
-
-          <div class="selector-label">
-            Students in Queue <span class="count-chip" id="studentCount">0</span>
-          </div>
+          <div class="selector-label">Students In Training <span class="count-chip" id="studentCount">0</span></div>
           <div class="student-grid" id="studentGrid"></div>
-          <div id="noResults" class="empty-state" style="display:none;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <div id="noResults" class="empty-state" style="display:none">
             <p>No students match your search.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ══════════ DETAIL VIEW ══════════ -->
+    <!-- DETAIL VIEW -->
     <div id="detailView">
       <button class="back-btn" onclick="showSelector()">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
@@ -437,158 +195,484 @@
             <span id="detailTrainer" class="badge badge-gray">—</span>
           </div>
         </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="viewer-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Viewing as CID <strong id="viewerCidLabel">—</strong>
+          </div>
+          <div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div></div>
+              <span class="progress-label" id="progressLabel">0 / 0</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="table-card">
-        <div class="table-card-header">
-          <span class="table-card-title">Training Progress</span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr id="progressTableHead">
-                <!-- columns added here once you define them -->
-              </tr>
-            </thead>
-            <tbody id="progressTableBody">
-              <tr class="placeholder-row">
-                <td colspan="10">Table columns coming soon — select a student to see their data here.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <div id="progressTablesContainer"></div>
     </div>
 
   </main>
 
-  <!-- Supabase via config.js -->
   <script src="js/config.js"></script>
   <script>
-    // ── State ──────────────────────────────────────────────
-    let allStudents = [];
-    let currentStudent = null;
-
-    // ── Boot ──────────────────────────────────────────────
-    (async function init() {
-      try {
-        const data = await SB.query(
-          'training_queue',
-          '?status=not.in.(completed,removed)&trainer_name=not.is.null&order=first_name.asc'
-        );
-        allStudents = data || [];
-        buildFilters();
-        renderGrid(allStudents);
-        document.getElementById('selectorLoader').style.display = 'none';
-        document.getElementById('selectorContent').style.display = 'block';
-      } catch(err) {
-        document.getElementById('selectorLoader').style.display = 'none';
-        const errEl = document.getElementById('selectorError');
-        errEl.textContent = 'Could not load students: ' + (err.message || err);
-        errEl.style.display = 'block';
-      }
-    })();
-
-    // ── Build filter dropdowns ─────────────────────────────
-    function buildFilters() {
-      const trainers = [...new Set(allStudents.map(s => s.trainer_name).filter(Boolean))].sort();
-      const types    = [...new Set(allStudents.map(s => s.training_type).filter(Boolean))].sort();
-
-      const tSel = document.getElementById('trainerFilter');
-      trainers.forEach(t => {
-        const o = document.createElement('option');
-        o.value = t; o.textContent = t;
-        tSel.appendChild(o);
-      });
-
-      const typeSel = document.getElementById('typeFilter');
-      types.forEach(t => {
-        const o = document.createElement('option');
-        o.value = t; o.textContent = t;
-        typeSel.appendChild(o);
-      });
+  // ─────────────────────────────────────────────────────────
+  // RUBRIC DATA
+  // ─────────────────────────────────────────────────────────
+  const RUBRICS = {
+    S1: {
+      theory: [
+        { id:'1.2.1',  domain:'Discussion of FAA 7110.65',          standard:'Accesses and can locate relevant topics in the 7110.65 when prompted.' },
+        { id:'1.2.3a', domain:'Airspace Classes',                    standard:'Describes G, E, D, C, B, A, and TRSA airspace including operating requirements, and airspace dimensions. Identifies airspace class for subdivision airports.' },
+        { id:'1.2.4a', domain:'METAR',                               standard:'Fully decodes a provided METAR to include, at least: Station identification, time of observation, wind (including variable, gusts), visibility, identified cloud types (including what constitutes a ceiling), temperature, dewpoint, and altimeter setting. Given a METAR, identifies if the airport meets VFR minimums.' },
+        { id:'1.2.4b', domain:'Terminal Aerodrome Forecast (TAF)',    standard:'Fully decodes a provided TAF to include, at least: Overall period of validity, and expected conditions for a specified time frame.' },
+        { id:'1.2.6',  domain:'Aircraft Type Designators',           standard:'Given an aircraft type designator, correctly identifies make/model, and number and type of engines.' },
+        { id:'2.1.1a', domain:'Route of Flight',                     standard:'Identifies components of an IFR route, including fixes, intersections, RNAV waypoints, VORs, DMEs, airways, and radials.' },
+        { id:'2.1.1b', domain:'IFR Altitude Assignment',             standard:'Explains requirements for usage of "Climb Via SID" phraseology.' },
+        { id:'2.1.2',  domain:'VFR Clearances',                      standard:'Identifies when a VFR clearance is required.' },
+        { id:'2.1.3',  domain:'Special VFR',                         standard:'Explains Special VFR requirements.' },
+        { id:'2.2.1',  domain:'Airport Layout',                      standard:'Defines movement and non-movement areas and identifies at local airport(s).' },
+        { id:'2.2.2e', domain:'Helicopter Ground Movement',          standard:'Identifies and defines the three movement types available to helicopters.' },
+        { id:'2.2.3',  domain:'Mode C',                              standard:'Explains when Mode C is required to be on.' },
+        { id:'3.1.1',  domain:'Transfer of Communication',           standard:'Explains expectations for aircraft when approaching the departure runway.' },
+      ],
+      practical: [
+        { id:'1.1.1',  domain:'Setting Up ATC Client',               standard:'Connects to and activates on an appropriate sweatbox position.' },
+        { id:'1.2.4d', domain:'Issuance of Weather Information',     standard:'Verifies aircraft receipt of appropriate weather (altimeter setting) and airport information (ATIS).' },
+        { id:'1.2.5a', domain:'Two-Way Radio Communication',         standard:'Properly establishes two-way radio communication with all aircraft.' },
+        { id:'1.2.5b', domain:'NATO Phonetic',                       standard:'Pronounces letters in accordance with NATO phonetic alphabet.' },
+        { id:'1.2.5c', domain:'Number Groupings',                    standard:'Pronounces numbers appropriately, including groups of numbers, in the following situations: Aircraft callsigns (both 3LD and registration), heading, speed, altitude, and runway assignments.' },
+        { id:'1.2.6',  domain:'Aircraft Type Designators',           standard:'Handles aircraft correctly based on type.' },
+        { id:'2.1.1',  domain:'IFR Flight Plans',                    standard:'Issues IFR clearances using prescribed phraseology.' },
+        { id:'2.1.1a', domain:'Route of Flight',                     standard:'Issues correct routing in accordance with local procedure.' },
+        { id:'2.1.1b', domain:'IFR Altitude Assignment',             standard:'Issues final (cruise) altitudes in accordance with direction of flight rules and/or local procedure. Issues initial altitudes in accordance with local procedure and Climb Via SID rules.' },
+        { id:'2.1.1d', domain:'Equipment Suffix',                    standard:'Ensures flight plans are in compliance with restrictions regarding navigation type by identifying, at least, /A, /G, /W, and /L equipment suffixes.' },
+        { id:'2.1.1e', domain:'Departure Procedures',                standard:'Assigns the correct departure procedure for both routing and altitude (including no departure procedure) to IFR aircraft.' },
+        { id:'2.1.1f', domain:'Arrival Procedures',                  standard:'Assigns the correct arrival procedure (including no arrival procedure) to IFR aircraft.' },
+        { id:'2.1.2',  domain:'VFR Clearances',                      standard:'Applies VFR class airspace entry requirements by issuing (or not issuing) appropriate VFR clearances and/or beacon codes when required.' },
+        { id:'2.2.2a', domain:'Taxi to Runway',                      standard:'Issues taxi instructions to an active runway using prescribed phraseology.' },
+        { id:'2.2.2b', domain:'Intersection Departures',             standard:'Issues taxi to a runway for an intersection departure using prescribed phraseology.' },
+        { id:'2.2.2c', domain:'Taxi to Ramp',                        standard:'Issues taxi instructions to a gate/ramp using prescribed phraseology.' },
+        { id:'2.2.2d', domain:'Progressive Taxi',                    standard:'Issues progressive taxi in a professional manner using prescribed phraseology.' },
+        { id:'2.2.2e', domain:'Helicopter Ground Movement',          standard:'Issues appropriate taxi instructions to helicopters.' },
+        { id:'2.2.2f', domain:'Hold Short',                          standard:'Issues hold short instructions using prescribed phraseology. Does not issue taxi instructions beyond a runway hold short point.' },
+        { id:'2.2.2g', domain:'Ground Sequencing',                   standard:'Sequences ground traffic including the proper use of "follow," "behind," and "without delay" instructions.' },
+        { id:'2.2.2h', domain:'Runway Crossings',                    standard:'Properly coordinates runway crossings using prescribed phraseology. Does not issue multiple runway crossings, unless permitted by local procedures.' },
+        { id:'2.2.3',  domain:'Mode C',                              standard:'Uses appropriate phraseology to ensure aircraft compliance with Mode C Requirements.' },
+        { id:'3.1.1',  domain:'Transfer of Communication',           standard:'When necessary, transfers communications using prescribed phraseology.' },
+        { id:'3.1.2',  domain:'Operational Requests',                standard:'Understands and acknowledges operational requests, and provides appropriate additional services.' },
+        { id:'3.1.3',  domain:'Position Relief Briefing',            standard:'Properly briefs relieving controller on relevant information.' },
+        { id:'3.1.4',  domain:'Readback/Hearback',                   standard:'Ensures readbacks are correct, and advises aircraft using prescribed phraseology.' },
+        { id:'3.1.5',  domain:'APREQ',                               standard:'Requests approval from all affected controllers prior to deviating from local procedures.' },
+        { id:'3.2',    domain:'Local Procedure',                     standard:'Adheres to local policies and procedures.' },
+      ]
+    },
+    S2: {
+      theory: [
+        { id:'4.1.2',  domain:'Selection of Active Runway',          standard:'Explains criteria for selection of active runway.' },
+        { id:'4.2.1',  domain:'Traffic Pattern',                     standard:'Identifies all segments of the VFR traffic pattern. Identifies which segments of the traffic pattern can be extended.' },
+        { id:'4.2.3',  domain:'Types of Option Approaches',          standard:'Explains all types of option approaches, including their effect on separation from preceding and following aircraft.' },
+        { id:'4.2.6a', domain:'Line-Up and Wait (LUAW)',             standard:'Explains criteria for LUAW.' },
+        { id:'4.2.7a', domain:'Land and Hold Short Operations (LAHSO)', standard:'Explains LAHSO.' },
+        { id:'4.2.8',  domain:'Same Runway Separation (SRS)',        standard:'Explains same runway separation standards.' },
+        { id:'4.2.9',  domain:'Intersecting Runway Separation',      standard:'Explains intersecting runway separation standards.' },
+        { id:'4.2.10', domain:'Wake Turbulence Separation',          standard:'Explains wake turbulence separation standards.' },
+        { id:'4.2.11', domain:'Anticipating Separation',             standard:'Explains procedure for anticipating separation for arriving and departing aircraft.' },
+        { id:'4.2.12a',domain:'Visual Separation',                   standard:'Explains requirements for tower-applied and pilot-applied visual separation.' },
+        { id:'4.2.12b',domain:'Radar Separation of Departures',      standard:'Explains radar separation standards for departing aircraft.' },
+      ],
+      practical: [
+        { id:'4.1.2',  domain:'Selection of Active Runway',          standard:'Identifies appropriate active runway(s).' },
+        { id:'4.2.1a', domain:'Entry Instructions',                  standard:'Issues pattern entry instructions using prescribed phraseology.' },
+        { id:'4.2.2',  domain:'Sequencing',                          standard:'Sequences aircraft in the traffic pattern by applying methods including S-Turns, 270s, 360s, Follow, and Visual Holding, while using prescribed phraseology.' },
+        { id:'4.2.3',  domain:'Types of Option Approaches',          standard:'Clears aircraft for appropriate types of option approaches using prescribed phraseology.' },
+        { id:'4.2.4',  domain:'Transitioning',                       standard:'Approves transitions of the airspace using prescribed phraseology.' },
+        { id:'4.2.6',  domain:'Takeoff Clearance',                   standard:'Issues take-off clearance with prescribed phraseology.' },
+        { id:'4.2.6a', domain:'Line-Up and Wait (LUAW)',             standard:'Issues LUAW instructions to aircraft using prescribed phraseology.' },
+        { id:'4.2.6b', domain:'Intersection Departure',              standard:'When necessary, issues take-off clearances from intersections using prescribed phraseology.' },
+        { id:'4.2.6c', domain:'Cancellation of Take-off Clearance',  standard:'Cancels takeoff clearances using prescribed phraseology.' },
+        { id:'4.2.6d', domain:'Departure Instructions',              standard:'Issues appropriate departure instructions using prescribed phraseology.' },
+        { id:'4.2.7',  domain:'Landing Clearance',                   standard:'Issues landing clearances using prescribed phraseology.' },
+        { id:'4.2.7a', domain:'Land and Hold Short Operations (LAHSO)', standard:'When necessary, issues LAHSO clearances.' },
+        { id:'4.2.7b', domain:'Go-Arounds',                          standard:'When necessary, issues go-arounds using prescribed phraseology. When necessary, coordinates to determine appropriate departure instructions.' },
+        { id:'4.2.7c', domain:'Change Runway',                       standard:'When necessary, changes aircraft\'s landing runway.' },
+        { id:'4.2.7d', domain:'Circle-to-Land',                      standard:'When necessary, issues circle-to-land instructions.' },
+        { id:'4.2.8',  domain:'Same Runway Separation (SRS)',        standard:'Applies same runway separation standards.' },
+        { id:'4.2.9',  domain:'Intersecting Runway Separation',      standard:'When necessary, applies intersecting runway separation standards.' },
+        { id:'4.2.10', domain:'Wake Turbulence Separation',          standard:'Applies wake turbulence separation standards.' },
+        { id:'4.2.11', domain:'Anticipating Separation',             standard:'Does not unnecessarily withhold takeoff or landing clearances.' },
+        { id:'4.2.12', domain:'Airborne Separation',                 standard:'Separates airborne aircraft as necessary.' },
+        { id:'4.3.1',  domain:'Transfer of Communications',          standard:'Transfers communications using prescribed phraseology.' },
+        { id:'4.3.2',  domain:'Rolling Calls',                       standard:'When necessary, issues rolling calls.' },
+        { id:'4.3.3',  domain:'APREQ',                               standard:'Requests approval from all affected controllers prior to deviating from local procedures.' },
+        { id:'4.4',    domain:'Local Procedure',                     standard:'Adheres to local policies and procedures.' },
+        { id:'4.5',    domain:'S1 Competencies',                     standard:'Meets all established standards for S1.' },
+      ]
+    },
+    S3: {
+      theory: [
+        { id:'5.3.1',  domain:'Radar Identification',                standard:'Explains all primary and secondary methods of radar identification.' },
+        { id:'5.3.5a', domain:'Speed Limits',                        standard:'Identifies regulatory speed limits for aircraft.' },
+        { id:'5.4',    domain:'Holds',                               standard:'Explains the difference between published and unpublished holds.' },
+        { id:'5.5',    domain:'Non-Towered Airport Operations',      standard:'Explains the "one-in/one-out" rule.' },
+        { id:'5.6',    domain:'Approaches',                          standard:'Explains the difference between precision and non-precision approaches.' },
+      ],
+      practical: [
+        { id:'5.1.3',  domain:'Safety Alerts',                       standard:'When necessary, issues safety alerts using prescribed phraseology.' },
+        { id:'5.2',    domain:'Coordination',                        standard:'Coordinates as necessary.' },
+        { id:'5.2.1',  domain:'Handoffs',                            standard:'Hands off traffic before entering another controller\'s airspace via automated and/or manual means.' },
+        { id:'5.2.2',  domain:'Point Outs',                          standard:'Uses prescribed phraseology for a point out. When necessary, uses STARS automation to issue and acknowledge point outs.' },
+        { id:'5.2.3',  domain:'APREQ',                               standard:'Requests approval from all affected controllers prior to deviating from local procedures.' },
+        { id:'5.2.4',  domain:'Transfer of Communication',           standard:'Transfers aircraft to other facilities using prescribed phraseology. When necessary, delays transfer of aircraft until after an appropriate transfer of radar identification has been completed.' },
+        { id:'5.3.1',  domain:'Radar Identification',                standard:'Radar identifies aircraft using prescribed phraseology.' },
+        { id:'5.3.2',  domain:'Separation',                          standard:'Maintains required separation.' },
+        { id:'5.3.2a', domain:'Merging Targets',                     standard:'When necessary, applies merging target procedures.' },
+        { id:'5.3.2b', domain:'Traffic Advisories',                  standard:'Issues traffic advisories using prescribed phraseology.' },
+        { id:'5.3.2c', domain:'Visual Separation',                   standard:'When necessary, applies visual separation. Ensures other approved separation is assured before and after the application of visual separation.' },
+        { id:'5.3.2d', domain:'Sequencing',                          standard:'Sequences aircraft in a manner that maintains positive separation and is orderly and expeditious for the flow of traffic.' },
+        { id:'5.3.3a', domain:'Heading Adjustment',                  standard:'Adjusts aircraft heading using prescribed phraseology.' },
+        { id:'5.3.3b', domain:'Purpose of Vector',                   standard:'Advises aircraft of the purpose of all vectors.' },
+        { id:'5.3.4',  domain:'Altitude Assignment',                 standard:'Adjusts aircraft altitude using prescribed phraseology.' },
+        { id:'5.3.4a', domain:'Mode C Altitude Verification',        standard:'Verifies mode C altitude of aircraft prior to using altitude for separation.' },
+        { id:'5.3.4b', domain:'Minimum Vectoring Altitude (MVA)',    standard:'Vectors aircraft at or above the MVA at all times.' },
+        { id:'5.3.4c', domain:'Off-Route Altitude Assignment',       standard:'When necessary, issues altitude assignments to aircraft being vectored off-route.' },
+        { id:'5.3.5',  domain:'Speed Adjustment',                    standard:'Adjusts aircraft speed using prescribed phraseology.' },
+        { id:'5.3.6',  domain:'Pop-Up IFR',                          standard:'Clears pop-up IFR traffic using prescribed phraseology. Does not issue pop-up IFR clearances below the specified minimum altitude, except when accepted by an aircraft.' },
+        { id:'5.3.7',  domain:'Flight Following',                    standard:'Establishes aircraft on flight following using prescribed phraseology.' },
+        { id:'5.3.8',  domain:'Radar Termination',                   standard:'Terminates radar service using prescribed phraseology.' },
+        { id:'5.4',    domain:'Holds',                               standard:'Issues holding instructions using prescribed phraseology. Provides appropriate clearances to aircraft exiting holding.' },
+        { id:'5.5',    domain:'Non-Towered Airport Operations',      standard:'Adheres to the "one-in/one-out" rule for non-towered airports.' },
+        { id:'5.5.1',  domain:'Release',                             standard:'Issues aircraft releases using prescribed phraseology.' },
+        { id:'5.5.2',  domain:'Traffic in Vicinity',                 standard:'Informs arriving IFR aircraft of any traffic in the vicinity using prescribed phraseology.' },
+        { id:'5.5.3',  domain:'Climb-out',                           standard:'When necessary, issues climb-out or climbing instructions using prescribed phraseology.' },
+        { id:'5.6.1',  domain:'Approach Clearances',                 standard:'Clears aircraft for approaches using prescribed phraseology.' },
+        { id:'5.6.1a', domain:'Cancel Approach Clearance',          standard:'Cancels approach clearances using prescribed phraseology.' },
+        { id:'5.6.1b', domain:'Practice Approach',                   standard:'Approves practice approaches using prescribed phraseology.' },
+        { id:'5.6.1c', domain:'Circling Approaches / Side-Step',    standard:'When necessary, issues circling approach and side-step clearances using prescribed phraseology.' },
+        { id:'5.8',    domain:'STARS Data Block Management',         standard:'Manages STARS data blocks effectively. Displays STARS FDBs appropriately.' },
+        { id:'5.9',    domain:'Local Procedure',                     standard:'Adheres to local policies and procedures.' },
+        { id:'5.10',   domain:'S1 and S2 Competencies',             standard:'Meets all established standards for S1 and S2.' },
+      ]
+    },
+    C1: {
+      theory: [
+        { id:'6.1.2',  domain:'En-Route Separation',                 standard:'Explains IFR/IFR separation minima in Class A airspace.' },
+        { id:'6.1.3',  domain:'Hazardous Weather Information',       standard:'Explains controller responsibility to issue, and method of issuing, hazardous weather information.' },
+        { id:'6.3.2',  domain:'Basic Descent Math',                  standard:'Explains descent math used to estimate the distance from a position which is appropriate for an aircraft to begin descent.' },
+      ],
+      practical: [
+        { id:'6.1.2',  domain:'En-Route Separation',                 standard:'Maintains required separation.' },
+        { id:'6.1.2a', domain:'Positive Control',                    standard:'Maintains positive control.' },
+        { id:'6.1.2b', domain:'Airspace Utilization',                standard:'Manages and uses airspace effectively. Does not violate airspace without coordination.' },
+        { id:'6.2',    domain:'Coordination',                        standard:'When necessary, coordinates appropriately.' },
+        { id:'6.2.1',  domain:'Handoffs',                            standard:'Hands off traffic before entering another controller\'s airspace via automated and/or manual means.' },
+        { id:'6.2.2',  domain:'Point Outs',                          standard:'Uses prescribed phraseology for a point out. When necessary, uses ERAM automation to issue and acknowledge point outs.' },
+        { id:'6.2.3',  domain:'APREQ',                               standard:'Requests approval from all affected controllers prior to deviating from local procedures.' },
+        { id:'6.2.4',  domain:'Transfer of Communication',           standard:'Transfers aircraft to other facilities using prescribed phraseology. When necessary, delays transfer of aircraft until after an appropriate transfer of radar identification has been completed.' },
+        { id:'6.3',    domain:'Altitude Changes',                    standard:'Issues altitude changes as necessary using prescribed phraseology.' },
+        { id:'6.3.1',  domain:'Crossing Restrictions',               standard:'Issues descent instructions to cross/meet an altitude as necessary using prescribed phraseology.' },
+        { id:'6.3.2',  domain:'Basic Descent Math',                  standard:'Issues non-crossing restriction altitude changes at an appropriate time to allow aircraft sufficient time to descend, without leveling excessively early.' },
+        { id:'6.3.3',  domain:'Minimum IFR Altitude (MIA)',          standard:'Vectors aircraft at or above the MIA at all times.' },
+        { id:'6.4.1',  domain:'Crossing Traffic',                    standard:'When necessary, alerts aircraft of crossing traffic using prescribed phraseology.' },
+        { id:'6.4.4',  domain:'ERAM Data Block Management',          standard:'Manages ERAM data blocks effectively. When necessary, uses ERAM fourth line data to forward control information.' },
+        { id:'6.5.1',  domain:'Radar Identification',                standard:'Radar identifies aircraft using prescribed phraseology.' },
+        { id:'6.5.2',  domain:'Separation',                          standard:'Maintains required separation.' },
+        { id:'6.5.2a', domain:'Merging Targets',                     standard:'When necessary, applies merging target procedures.' },
+        { id:'6.5.2b', domain:'Traffic Advisories',                  standard:'Issues traffic advisories using prescribed phraseology.' },
+        { id:'6.5.2c', domain:'Visual Separation',                   standard:'When necessary, applies visual separation. Ensures other approved separation is assured before and after the application of visual separation.' },
+        { id:'6.5.2d', domain:'Sequencing',                          standard:'Sequences aircraft in a manner that maintains positive separation and is orderly and expeditious for the flow of traffic.' },
+        { id:'6.5.3',  domain:'Pop-Up IFR',                          standard:'Clears pop-up IFR traffic using prescribed phraseology. Does not issue pop-up IFR clearances below the specified minimum altitude, except when accepted by an aircraft.' },
+        { id:'6.5.4',  domain:'Flight Following',                    standard:'Establishes aircraft on flight following using prescribed phraseology.' },
+        { id:'6.5.5',  domain:'Radar Termination',                   standard:'Terminates radar service using prescribed phraseology.' },
+        { id:'6.6',    domain:'Holds',                               standard:'Issues holding instructions using prescribed phraseology. Provides appropriate clearances to aircraft exiting holding.' },
+        { id:'6.7',    domain:'Non-Towered Airport Operations',      standard:'Adheres to the "one-in/one-out" rule for non-towered airports.' },
+        { id:'6.7.1',  domain:'Release',                             standard:'Issues aircraft releases using prescribed phraseology.' },
+        { id:'6.7.2',  domain:'Traffic in Vicinity',                 standard:'Informs arriving IFR aircraft of any traffic in the vicinity using prescribed phraseology.' },
+        { id:'6.7.3',  domain:'Climb-out',                           standard:'When necessary, issues climb-out or climbing instructions using prescribed phraseology.' },
+        { id:'6.8.1',  domain:'Approach Clearances',                 standard:'Clears aircraft for approaches using prescribed phraseology.' },
+        { id:'6.8.2',  domain:'Cancel Approach Clearance',          standard:'Cancels approach clearances using prescribed phraseology.' },
+        { id:'6.8.3',  domain:'Practice Approach',                   standard:'Approves practice approaches using prescribed phraseology.' },
+        { id:'6.9',    domain:'Local Procedure',                     standard:'Adheres to local policies and procedures.' },
+        { id:'6.10',   domain:'S1, S2, and S3 Competencies',        standard:'Meets all established standards for S1, S2, and S3.' },
+      ]
     }
+  };
 
-    // ── Filter ────────────────────────────────────────────
-    function filterStudents() {
-      const search  = document.getElementById('searchInput').value.toLowerCase().trim();
-      const trainer = document.getElementById('trainerFilter').value;
-      const type    = document.getElementById('typeFilter').value;
+  // Map training_type values → rubric key
+  // Adjust these if your training_type strings differ
+  function getRubricKey(trainingType) {
+    if (!trainingType) return null;
+    const t = trainingType.toUpperCase();
+    if (t.includes('S1')) return 'S1';
+    if (t.includes('S2')) return 'S2';
+    if (t.includes('S3')) return 'S3';
+    if (t.includes('C1')) return 'C1';
+    // T1 → skip
+    return null;
+  }
 
-      const filtered = allStudents.filter(s => {
-        const name = `${s.first_name || ''} ${s.last_name || ''}`.toLowerCase();
-        const cid  = String(s.cid || '');
-        const matchSearch  = !search  || name.includes(search) || cid.includes(search);
-        const matchTrainer = !trainer || s.trainer_name === trainer;
-        const matchType    = !type    || s.training_type === type;
-        return matchSearch && matchTrainer && matchType;
-      });
+  // ─────────────────────────────────────────────────────────
+  // STATE
+  // ─────────────────────────────────────────────────────────
+  let viewerCid = null;
+  let allStudents = [];
+  let currentStudent = null;
+  let progressData = {};   // { rowKey: { checked: bool, notes: string } }
+  let saveTimer = null;
 
-      renderGrid(filtered);
+  // ─────────────────────────────────────────────────────────
+  // CID MODAL
+  // ─────────────────────────────────────────────────────────
+  document.getElementById('cidInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitCid();
+  });
+
+  function submitCid() {
+    const val = document.getElementById('cidInput').value.trim();
+    if (!val || !/^\d+$/.test(val)) {
+      document.getElementById('cidError').style.display = 'block';
+      return;
     }
+    viewerCid = val;
+    document.getElementById('viewerCidLabel').textContent = viewerCid;
+    document.getElementById('cidModal').classList.remove('open');
+    document.getElementById('selectorView').style.display = 'block';
+    loadStudents();
+  }
 
-    // ── Render student grid ────────────────────────────────
-    function renderGrid(students) {
-      const grid    = document.getElementById('studentGrid');
-      const noRes   = document.getElementById('noResults');
-      const counter = document.getElementById('studentCount');
+  // ─────────────────────────────────────────────────────────
+  // LOAD STUDENTS
+  // ─────────────────────────────────────────────────────────
+  async function loadStudents() {
+    try {
+      const data = await SB.query(
+        'training_queue',
+        '?status=eq.training&trainer_name=not.is.null&order=first_name.asc'
+      );
+      allStudents = data || [];
+      buildFilters();
+      renderGrid(allStudents);
+      document.getElementById('selectorLoader').style.display = 'none';
+      document.getElementById('selectorContent').style.display = 'block';
+    } catch(err) {
+      document.getElementById('selectorLoader').style.display = 'none';
+      const errEl = document.getElementById('selectorError');
+      errEl.textContent = 'Could not load students: ' + (err.message || err);
+      errEl.style.display = 'block';
+    }
+  }
 
-      counter.textContent = students.length;
+  function buildFilters() {
+    const trainers = [...new Set(allStudents.map(s => s.trainer_name).filter(Boolean))].sort();
+    const types    = [...new Set(allStudents.map(s => s.training_type).filter(Boolean))].sort();
+    const tSel = document.getElementById('trainerFilter');
+    trainers.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; tSel.appendChild(o); });
+    const typeSel = document.getElementById('typeFilter');
+    types.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; typeSel.appendChild(o); });
+  }
 
-      if (!students.length) {
-        grid.innerHTML = '';
-        noRes.style.display = 'block';
-        return;
-      }
-      noRes.style.display = 'none';
+  function filterStudents() {
+    const search  = document.getElementById('searchInput').value.toLowerCase().trim();
+    const trainer = document.getElementById('trainerFilter').value;
+    const type    = document.getElementById('typeFilter').value;
+    const filtered = allStudents.filter(s => {
+      const name = `${s.first_name||''} ${s.last_name||''}`.toLowerCase();
+      const cid  = String(s.cid||'');
+      return (!search || name.includes(search) || cid.includes(search))
+          && (!trainer || s.trainer_name === trainer)
+          && (!type    || s.training_type === type);
+    });
+    renderGrid(filtered);
+  }
 
-      grid.innerHTML = students.map(s => `
-        <div class="student-card" onclick="openStudent(${s.id})">
-          <div class="student-card-name">${s.first_name || ''} ${s.last_name || ''}</div>
-          <div class="student-card-cid">${s.cid || '—'}</div>
-          <div class="student-card-meta">
-            ${s.training_type ? `<span class="badge badge-blue">${s.training_type}</span>` : ''}
-            ${s.trainer_name  ? `<span class="badge badge-gray">${s.trainer_name}</span>`  : '<span class="badge badge-gray">Unassigned</span>'}
-          </div>
+  function renderGrid(students) {
+    const grid  = document.getElementById('studentGrid');
+    const noRes = document.getElementById('noResults');
+    document.getElementById('studentCount').textContent = students.length;
+    if (!students.length) { grid.innerHTML=''; noRes.style.display='block'; return; }
+    noRes.style.display = 'none';
+    grid.innerHTML = students.map(s => `
+      <div class="student-card" onclick="openStudent(${s.id})">
+        <div class="student-card-name">${s.first_name||''} ${s.last_name||''}</div>
+        <div class="student-card-cid">${s.cid||'—'}</div>
+        <div class="student-card-meta">
+          ${s.training_type ? `<span class="badge badge-blue">${s.training_type}</span>` : ''}
+          ${s.trainer_name  ? `<span class="badge badge-gray">${s.trainer_name}</span>`  : ''}
         </div>
-      `).join('');
+      </div>`).join('');
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // OPEN STUDENT
+  // ─────────────────────────────────────────────────────────
+  async function openStudent(id) {
+    const s = allStudents.find(x => x.id === id);
+    if (!s) return;
+    currentStudent = s;
+
+    document.getElementById('detailName').textContent = `${s.first_name||''} ${s.last_name||''}`.trim() || '—';
+    const cidLink = document.getElementById('detailCid');
+    cidLink.textContent = s.cid||'—';
+    cidLink.href = `https://stats.vatsim.net/stats/${s.cid}`;
+    document.getElementById('detailType').textContent    = s.training_type||'—';
+    document.getElementById('detailTrainer').textContent = s.trainer_name ? `Trainer: ${s.trainer_name}` : 'No Trainer Assigned';
+
+    // Load saved progress from Supabase
+    progressData = {};
+    try {
+      const rows = await SB.query('student_progress', `?student_queue_id=eq.${s.id}`);
+      (rows||[]).forEach(r => {
+        progressData[r.row_key] = { checked: r.checked, notes: r.notes||'' };
+      });
+    } catch(e) { console.warn('Could not load progress:', e); }
+
+    const rubricKey = getRubricKey(s.training_type);
+    renderProgressTables(rubricKey);
+    updateProgressBar();
+
+    document.getElementById('selectorView').style.display = 'none';
+    document.getElementById('detailView').style.display   = 'block';
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  function showSelector() {
+    currentStudent = null;
+    progressData   = {};
+    document.getElementById('detailView').style.display   = 'none';
+    document.getElementById('selectorView').style.display = 'block';
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // RENDER TABLES
+  // ─────────────────────────────────────────────────────────
+  function renderProgressTables(rubricKey) {
+    const container = document.getElementById('progressTablesContainer');
+    if (!rubricKey || !RUBRICS[rubricKey]) {
+      container.innerHTML = `<div class="error-msg">No rubric available for training type "${currentStudent.training_type}". (T1 training is managed separately.)</div>`;
+      return;
     }
+    const rubric = RUBRICS[rubricKey];
+    container.innerHTML = renderSection('Theory', 'theory', rubric.theory)
+                        + renderSection('Practical', 'practical', rubric.practical);
 
-    // ── Open student detail ────────────────────────────────
-    function openStudent(id) {
-      const s = allStudents.find(x => x.id === id);
-      if (!s) return;
-      currentStudent = s;
+    // Attach listeners
+    container.querySelectorAll('.progress-check').forEach(cb => {
+      cb.addEventListener('change', onCheckChange);
+    });
+    container.querySelectorAll('.notes-input').forEach(ta => {
+      ta.addEventListener('input', onNotesChange);
+    });
+  }
 
-      document.getElementById('detailName').textContent =
-        `${s.first_name || ''} ${s.last_name || ''}`.trim() || '—';
+  function renderSection(label, sectionKey, rows) {
+    const rowsHtml = rows.map(row => {
+      const key     = `${sectionKey}__${row.id}`;
+      const saved   = progressData[key] || {};
+      const checked = saved.checked ? 'checked' : '';
+      const notes   = (saved.notes||'').replace(/"/g,'&quot;');
+      return `<tr>
+        <td class="td-id">${row.id}</td>
+        <td class="td-domain">${row.domain}</td>
+        <td class="td-standard">${row.standard}</td>
+        <td class="td-check"><input type="checkbox" class="progress-check" data-key="${key}" ${checked}></td>
+        <td class="td-notes"><textarea class="notes-input" data-key="${key}" rows="1" placeholder="Notes…">${notes}</textarea></td>
+      </tr>`;
+    }).join('');
 
-      const cidLink = document.getElementById('detailCid');
-      cidLink.textContent = s.cid || '—';
-      cidLink.href = `https://stats.vatsim.net/stats/${s.cid}`;
+    return `
+      <div class="table-card">
+        <div class="table-card-header">
+          <span class="table-card-title">${label}</span>
+          <span id="save-indicator-${sectionKey}" class="save-indicator"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:80px">USA ID</th>
+              <th style="width:220px">Domain</th>
+              <th class="th-standard">Completion Standard</th>
+              <th class="th-check">✓</th>
+              <th class="th-notes">Notes</th>
+            </tr></thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
 
-      document.getElementById('detailType').textContent    = s.training_type || '—';
-      document.getElementById('detailTrainer').textContent = s.trainer_name  ? `Trainer: ${s.trainer_name}` : 'No Trainer Assigned';
+  // ─────────────────────────────────────────────────────────
+  // CHANGE HANDLERS + SAVE
+  // ─────────────────────────────────────────────────────────
+  function onCheckChange(e) {
+    const key = e.target.dataset.key;
+    if (!progressData[key]) progressData[key] = { checked: false, notes: '' };
+    progressData[key].checked = e.target.checked;
+    updateProgressBar();
+    scheduleSave(key);
+  }
 
-      // Table body — placeholder until columns are defined
-      document.getElementById('progressTableBody').innerHTML = `
-        <tr class="placeholder-row">
-          <td colspan="10">Progress data columns coming soon.</td>
-        </tr>
-      `;
+  function onNotesChange(e) {
+    const key = e.target.dataset.key;
+    if (!progressData[key]) progressData[key] = { checked: false, notes: '' };
+    progressData[key].notes = e.target.value;
+    scheduleSave(key);
+  }
 
-      document.getElementById('selectorView').style.display = 'none';
-      document.getElementById('detailView').style.display   = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  function scheduleSave(key) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => saveRow(key), 800);
+  }
+
+  async function saveRow(key) {
+    if (!currentStudent) return;
+    const d = progressData[key] || { checked: false, notes: '' };
+    try {
+      // Try update first, then insert
+      const existing = await SB.query('student_progress',
+        `?student_queue_id=eq.${currentStudent.id}&row_key=eq.${encodeURIComponent(key)}`);
+      if (existing && existing.length > 0) {
+        await SB.update('student_progress', `id=eq.${existing[0].id}`, {
+          checked: d.checked, notes: d.notes,
+          updated_by_cid: viewerCid, updated_at: new Date().toISOString()
+        });
+      } else {
+        await SB.insert('student_progress', {
+          student_queue_id: currentStudent.id,
+          student_cid: String(currentStudent.cid),
+          row_key: key,
+          checked: d.checked,
+          notes: d.notes,
+          updated_by_cid: viewerCid,
+          updated_at: new Date().toISOString()
+        });
+      }
+      flashSave(key);
+    } catch(err) {
+      console.error('Save error:', err);
     }
+  }
 
-    // ── Back to selector ──────────────────────────────────
-    function showSelector() {
-      currentStudent = null;
-      document.getElementById('detailView').style.display   = 'none';
-      document.getElementById('selectorView').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  function flashSave(key) {
+    const section = key.startsWith('theory') ? 'theory' : 'practical';
+    const el = document.getElementById(`save-indicator-${section}`);
+    if (!el) return;
+    el.textContent = 'Saved ✓';
+    el.style.opacity = '1';
+    setTimeout(() => { el.style.opacity = '0'; }, 2000);
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // PROGRESS BAR
+  // ─────────────────────────────────────────────────────────
+  function updateProgressBar() {
+    const checkboxes = document.querySelectorAll('.progress-check');
+    const total   = checkboxes.length;
+    const checked = [...checkboxes].filter(c => c.checked).length;
+    const pct     = total ? Math.round((checked / total) * 100) : 0;
+    document.getElementById('progressBarFill').style.width  = pct + '%';
+    document.getElementById('progressLabel').textContent    = `${checked} / ${total}`;
+  }
   </script>
 </body>
 </html>
