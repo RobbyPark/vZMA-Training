@@ -418,7 +418,8 @@
   let allStudents = [];
   let currentStudent = null;
   let progressData = {};   // { rowKey: { checked: bool, notes: string } }
-  let saveTimer = null;
+  let saveTimers = {};     // per-key debounce timers
+  let rowIdCache = {};     // cache of row_key 2192 supabase row id
 
   // ─────────────────────────────────────────────────────────
   // CID MODAL
@@ -523,6 +524,7 @@
       const rows = await SB.query('student_progress', `?student_queue_id=eq.${s.id}`);
       (rows||[]).forEach(r => {
         progressData[r.row_key] = { checked: r.checked, notes: r.notes||'' };
+        rowIdCache[r.row_key] = r.id;
       });
     } catch(e) { console.warn('Could not load progress:', e); }
 
@@ -538,6 +540,7 @@
   function showSelector() {
     currentStudent = null;
     progressData   = {};
+    rowIdCache     = {};
     document.getElementById('detailView').style.display   = 'none';
     document.getElementById('selectorView').style.display = 'block';
     window.scrollTo({ top:0, behavior:'smooth' });
@@ -627,24 +630,23 @@
   }
 
   function scheduleSave(key) {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => saveRow(key), 800);
+    clearTimeout(saveTimers[key]);
+    saveTimers[key] = setTimeout(() => saveRow(key), 600);
   }
 
   async function saveRow(key) {
     if (!currentStudent) return;
     const d = progressData[key] || { checked: false, notes: '' };
     try {
-      // Try update first, then insert
-      const existing = await SB.query('student_progress',
-        `?student_queue_id=eq.${currentStudent.id}&row_key=eq.${encodeURIComponent(key)}`);
-      if (existing && existing.length > 0) {
-        await SB.update('student_progress', `id=eq.${existing[0].id}`, {
+      if (rowIdCache[key]) {
+        // We already know the Supabase row id — just update directly
+        await SB.update('student_progress', `id=eq.${rowIdCache[key]}`, {
           checked: d.checked, notes: d.notes,
           updated_by_cid: viewerCid, updated_at: new Date().toISOString()
         });
       } else {
-        await SB.insert('student_progress', {
+        // First time saving this row — insert and cache the returned id
+        const result = await SB.insert('student_progress', {
           student_queue_id: currentStudent.id,
           student_cid: String(currentStudent.cid),
           row_key: key,
@@ -653,10 +655,12 @@
           updated_by_cid: viewerCid,
           updated_at: new Date().toISOString()
         });
+        // Cache the new row id if returned
+        if (result && result[0] && result[0].id) rowIdCache[key] = result[0].id;
       }
       flashSave(key);
     } catch(err) {
-      console.error('Save error:', err);
+      console.error('Save error for key', key, err);
     }
   }
 
