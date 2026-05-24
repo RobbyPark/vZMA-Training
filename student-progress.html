@@ -474,7 +474,7 @@
       try {
         const data = await SB.query(
           'training_queue',
-          '?status=not.in.(completed,removed)&order=first_name.asc'
+          '?status=not.in.(completed,removed)&trainer_name=not.is.null&order=first_name.asc'
         );
         allStudents = data || [];
         buildFilters();
