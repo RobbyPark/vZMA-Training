@@ -492,7 +492,7 @@
     if (!students.length) { grid.innerHTML=''; noRes.style.display='block'; return; }
     noRes.style.display = 'none';
     grid.innerHTML = students.map(s => `
-      <div class="student-card" onclick="openStudent(${s.id})">
+      <div class="student-card" data-id="${s.id}" onclick="openStudent(this.dataset.id)">
         <div class="student-card-name">${s.first_name||''} ${s.last_name||''}</div>
         <div class="student-card-cid">${s.cid||'—'}</div>
         <div class="student-card-meta">
@@ -506,7 +506,7 @@
   // OPEN STUDENT
   // ─────────────────────────────────────────────────────────
   async function openStudent(id) {
-    const s = allStudents.find(x => x.id === id);
+    const s = allStudents.find(x => String(x.id) === String(id));
     if (!s) return;
     currentStudent = s;
 
