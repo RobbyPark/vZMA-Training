@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Progress — ZMA ARTCC</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --blue-900: #0a1628;
+      --blue-800: #0e2044;
+      --blue-700: #1a3a6b;
+      --blue-600: #1e4d8c;
+      --blue-500: #2563a8;
+      --blue-400: #3b82c4;
+      --blue-300: #60a5d8;
+      --blue-200: #bfdbf7;
+      --blue-100: #dbeafe;
+      --blue-50:  #eff6ff;
+      --white:    #ffffff;
+      --gray-50:  #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --red-600:  #dc2626;
+      --red-100:  #fee2e2;
+      --green-600:#16a34a;
+      --green-100:#dcfce7;
+      --yellow-600:#ca8a04;
+      --yellow-100:#fef9c3;
+      --font-main: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+      --radius-sm: 6px;
+      --radius:    10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow:    0 4px 12px rgba(0,0,0,.08);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,.12);
+      --nav-height: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: var(--font-main);
+      background: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    .top-nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-height);
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px;
+      font-weight: 700; font-size: 1.05rem;
+      color: var(--blue-800);
+      text-decoration: none;
+    }
+    .nav-brand-badge {
+      background: var(--blue-700);
+      color: var(--white);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .nav-page-title {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      padding-top: calc(var(--nav-height) + 40px);
+      padding-bottom: 60px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      margin-bottom: 32px;
+    }
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--blue-900);
+      margin-bottom: 4px;
+    }
+    .page-header p {
+      color: var(--gray-500);
+      font-size: .9rem;
+    }
+
+    /* ── SELECTOR VIEW ── */
+    #selectorView {}
+    .selector-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .selector-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 10px;
+    }
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .student-card {
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s, background .15s;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .student-card:hover {
+      border-color: var(--blue-400);
+      box-shadow: var(--shadow);
+      background: var(--blue-50);
+    }
+    .student-card-name {
+      font-weight: 700;
+      font-size: .95rem;
+      color: var(--blue-900);
+    }
+    .student-card-cid {
+      font-family: var(--font-mono);
+      font-size: .78rem;
+      color: var(--gray-500);
+    }
+    .student-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .badge-blue { background: var(--blue-100); color: var(--blue-700); }
+    .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+    .badge-green { background: var(--green-100); color: var(--green-600); }
+
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 8px 12px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-main);
+      font-size: .875rem;
+      color: var(--gray-800);
+      background: var(--white);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .filter-input:focus { border-color: var(--blue-400); }
+    .filter-select {
+      padding: 8px 12px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-main);
+      font-size: .875rem;
+      color: var(--gray-700);
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .filter-select:focus { border-color: var(--blue-400); }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--gray-400);
+    }
+    .empty-state svg { margin-bottom: 12px; opacity: .4; }
+    .empty-state p { font-size: .9rem; }
+
+    /* ── STUDENT DETAIL VIEW ── */
+    #detailView { display: none; }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--blue-600);
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      margin-bottom: 20px;
+      transition: color .15s;
+    }
+    .back-btn:hover { color: var(--blue-800); }
+
+    .detail-header {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .detail-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--blue-900);
+    }
+    .detail-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      align-items: center;
+    }
+    .detail-cid {
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--gray-500);
+    }
+    .cid-link {
+      color: var(--blue-600);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: .8rem;
+    }
+    .cid-link:hover { text-decoration: underline; }
+
+    /* ── PROGRESS TABLE ── */
+    .table-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .table-card-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-card-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--blue-900);
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 10px 20px;
+      text-align: left;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--gray-100);
+      transition: background .1s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--blue-50); }
+    tbody td {
+      padding: 14px 20px;
+      font-size: .875rem;
+      color: var(--gray-700);
+      vertical-align: middle;
+    }
+    .placeholder-row td {
+      text-align: center;
+      color: var(--gray-400);
+      padding: 32px 20px;
+      font-style: italic;
+    }
+
+    /* ── LOADER ── */
+    .loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 48px;
+      color: var(--gray-400);
+      font-size: .875rem;
+    }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid var(--gray-200);
+      border-top-color: var(--blue-500);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: var(--red-100);
+      color: var(--red-600);
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      font-size: .875rem;
+      margin-bottom: 20px;
+    }
+    .count-chip {
+      background: var(--gray-100);
+      color: var(--gray-600);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>ZMA ARTCC</span>
+      <span class="nav-brand-badge">TRAINING</span>
+    </div>
+    <span class="nav-page-title">Student Progress</span>
+  </nav>
+
+  <main class="main">
+
+    <!-- ══════════ SELECTOR VIEW ══════════ -->
+    <div id="selectorView">
+      <div class="page-header">
+        <h1>Student Progress</h1>
+        <p>Select a student to view their training progress.</p>
+      </div>
+
+      <div class="selector-card">
+        <div id="selectorLoader" class="loader">
+          <div class="spinner"></div> Loading students…
+        </div>
+        <div id="selectorError" class="error-msg" style="display:none;"></div>
+
+        <div id="selectorContent" style="display:none;">
+          <div class="filter-row">
+            <input class="filter-input" id="searchInput" placeholder="Search by name or CID…" oninput="filterStudents()" />
+            <select class="filter-select" id="trainerFilter" onchange="filterStudents()">
+              <option value="">All Trainers</option>
+            </select>
+            <select class="filter-select" id="typeFilter" onchange="filterStudents()">
+              <option value="">All Training Types</option>
+            </select>
+          </div>
+
+          <div class="selector-label">
+            Students in Queue <span class="count-chip" id="studentCount">0</span>
+          </div>
+          <div class="student-grid" id="studentGrid"></div>
+          <div id="noResults" class="empty-state" style="display:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <p>No students match your search.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ DETAIL VIEW ══════════ -->
+    <div id="detailView">
+      <button class="back-btn" onclick="showSelector()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        Back to Students
+      </button>
+
+      <div class="detail-header">
+        <div>
+          <div class="detail-name" id="detailName">—</div>
+          <div class="detail-meta">
+            <a id="detailCid" href="#" target="_blank" class="cid-link">—</a>
+            <span id="detailType" class="badge badge-blue">—</span>
+            <span id="detailTrainer" class="badge badge-gray">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-card-header">
+          <span class="table-card-title">Training Progress</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr id="progressTableHead">
+                <!-- columns added here once you define them -->
+              </tr>
+            </thead>
+            <tbody id="progressTableBody">
+              <tr class="placeholder-row">
+                <td colspan="10">Table columns coming soon — select a student to see their data here.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Supabase via config.js -->
+  <script src="js/config.js"></script>
+  <script>
+    // ── State ──────────────────────────────────────────────
+    let allStudents = [];
+    let currentStudent = null;
+
+    // ── Boot ──────────────────────────────────────────────
+    (async function init() {
+      try {
+        const data = await SB.query(
+          'training_queue',
+          '?status=not.in.(completed,removed)&order=first_name.asc'
+        );
+        allStudents = data || [];
+        buildFilters();
+        renderGrid(allStudents);
+        document.getElementById('selectorLoader').style.display = 'none';
+        document.getElementById('selectorContent').style.display = 'block';
+      } catch(err) {
+        document.getElementById('selectorLoader').style.display = 'none';
+        const errEl = document.getElementById('selectorError');
+        errEl.textContent = 'Could not load students: ' + (err.message || err);
+        errEl.style.display = 'block';
+      }
+    })();
+
+    // ── Build filter dropdowns ─────────────────────────────
+    function buildFilters() {
+      const trainers = [...new Set(allStudents.map(s => s.trainer_name).filter(Boolean))].sort();
+      const types    = [...new Set(allStudents.map(s => s.training_type).filter(Boolean))].sort();
+
+      const tSel = document.getElementById('trainerFilter');
+      trainers.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t; o.textContent = t;
+        tSel.appendChild(o);
+      });
+
+      const typeSel = document.getElementById('typeFilter');
+      types.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t; o.textContent = t;
+        typeSel.appendChild(o);
+      });
+    }
+
+    // ── Filter ────────────────────────────────────────────
+    function filterStudents() {
+      const search  = document.getElementById('searchInput').value.toLowerCase().trim();
+      const trainer = document.getElementById('trainerFilter').value;
+      const type    = document.getElementById('typeFilter').value;
+
+      const filtered = allStudents.filter(s => {
+        const name = `${s.first_name || ''} ${s.last_name || ''}`.toLowerCase();
+        const cid  = String(s.cid || '');
+        const matchSearch  = !search  || name.includes(search) || cid.includes(search);
+        const matchTrainer = !trainer || s.trainer_name === trainer;
+        const matchType    = !type    || s.training_type === type;
+        return matchSearch && matchTrainer && matchType;
+      });
+
+      renderGrid(filtered);
+    }
+
+    // ── Render student grid ────────────────────────────────
+    function renderGrid(students) {
+      const grid    = document.getElementById('studentGrid');
+      const noRes   = document.getElementById('noResults');
+      const counter = document.getElementById('studentCount');
+
+      counter.textContent = students.length;
+
+      if (!students.length) {
+        grid.innerHTML = '';
+        noRes.style.display = 'block';
+        return;
+      }
+      noRes.style.display = 'none';
+
+      grid.innerHTML = students.map(s => `
+        <div class="student-card" onclick="openStudent(${s.id})">
+          <div class="student-card-name">${s.first_name || ''} ${s.last_name || ''}</div>
+          <div class="student-card-cid">${s.cid || '—'}</div>
+          <div class="student-card-meta">
+            ${s.training_type ? `<span class="badge badge-blue">${s.training_type}</span>` : ''}
+            ${s.trainer_name  ? `<span class="badge badge-gray">${s.trainer_name}</span>`  : '<span class="badge badge-gray">Unassigned</span>'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Open student detail ────────────────────────────────
+    function openStudent(id) {
+      const s = allStudents.find(x => x.id === id);
+      if (!s) return;
+      currentStudent = s;
+
+      document.getElementById('detailName').textContent =
+        `${s.first_name || ''} ${s.last_name || ''}`.trim() || '—';
+
+      const cidLink = document.getElementById('detailCid');
+      cidLink.textContent = s.cid || '—';
+      cidLink.href = `https://stats.vatsim.net/stats/${s.cid}`;
+
+      document.getElementById('detailType').textContent    = s.training_type || '—';
+      document.getElementById('detailTrainer').textContent = s.trainer_name  ? `Trainer: ${s.trainer_name}` : 'No Trainer Assigned';
+
+      // Table body — placeholder until columns are defined
+      document.getElementById('progressTableBody').innerHTML = `
+        <tr class="placeholder-row">
+          <td colspan="10">Progress data columns coming soon.</td>
+        </tr>
+      `;
+
+      document.getElementById('selectorView').style.display = 'none';
+      document.getElementById('detailView').style.display   = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Back to selector ──────────────────────────────────
+    function showSelector() {
+      currentStudent = null;
+      document.getElementById('detailView').style.display   = 'none';
+      document.getElementById('selectorView').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
