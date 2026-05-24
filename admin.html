@@ -784,7 +784,6 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
         <div class="sidebar-section" style="margin-top:16px;">
           <div class="sidebar-label">Academy</div>
           <button class="sidebar-btn" onclick="switchTab('flashcards')">Flashcards</button>
-          <button class="sidebar-btn" onclick="switchTab('lesson-plans')">Lesson Plans</button>
         </div>
         <div class="sidebar-section" style="margin-top:16px;">
           <div class="sidebar-label">Settings</div>
@@ -794,6 +793,10 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <a href="student-progress.html" target="_blank" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:.82rem;font-weight:600;color:var(--blue-600);text-decoration:none;transition:background .15s;" onmouseover="this.style.background='var(--blue-50)'" onmouseout="this.style.background='transparent'">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             Student Progress
+          </a>
+          <a href="#" onclick="switchTabFromLink('lesson-plans'); return false;" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:.82rem;font-weight:600;color:var(--blue-600);text-decoration:none;transition:background .15s;" onmouseover="this.style.background='var(--blue-50)'" onmouseout="this.style.background='transparent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Lesson Plans
           </a>
         </div>
       </nav>
@@ -1445,6 +1448,13 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
     };
 
     // ===================== TAB SWITCHING =====================
+    function switchTabFromLink(name) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${name}`).classList.add('active');
+      loadTab(name);
+    }
+
     function switchTab(name) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
