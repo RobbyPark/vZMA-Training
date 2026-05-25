@@ -1065,37 +1065,37 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
           <div id="lessonPlanList"></div>
 
           <!-- OTS FORMS -->
-          <div style="margin-top:40px;padding-top:28px;border-top:2px solid var(--gray-200);">
-            <div class="page-header" style="margin-bottom:16px;">
-              <h1 style="font-size:1.3rem;">OTS Forms</h1>
-              <p style="color:var(--gray-500);font-size:.875rem;margin-top:4px;">Edit the OTS evaluation form for each rating. These are password-protected on the student progress page.</p>
+          <div style="margin-top:40px;padding-top:28px;border-top:2px solid var(--gray-200);" id="otsSectionWrapper">
+
+            <!-- OTS Password Gate -->
+            <div id="otsAdminGate">
+              <div class="page-header" style="margin-bottom:16px;">
+                <h1 style="font-size:1.3rem;">OTS Forms</h1>
+                <p style="color:var(--gray-500);font-size:.875rem;margin-top:4px;">Password required to edit OTS forms.</p>
+              </div>
+              <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:32px;max-width:400px;box-shadow:var(--shadow-sm);">
+                <div style="font-weight:700;font-size:.95rem;color:var(--blue-900);margin-bottom:12px;">Enter OTS Password</div>
+                <input id="otsAdminPasswordInput" type="password" placeholder="Password"
+                  style="width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.95rem;outline:none;margin-bottom:10px;transition:border-color .15s;"
+                  onkeydown="if(event.key==='Enter')submitOtsAdminPassword()" />
+                <div id="otsAdminPasswordError" style="color:var(--red-600);font-size:.8rem;margin-bottom:10px;display:none;">Incorrect password.</div>
+                <button onclick="submitOtsAdminPassword()"
+                  style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:var(--radius-sm);font-weight:700;font-size:.875rem;cursor:pointer;">
+                  Unlock OTS Forms
+                </button>
+              </div>
             </div>
-            <!-- OTS Rating Tabs -->
-            <div style="display:flex;gap:4px;border-bottom:2px solid var(--gray-200);margin-bottom:20px;flex-wrap:wrap;" id="otsAdminTabBar">
-              ${['S1','S2','S3','C1','T1S1','T1S2','T1S3'].map((r,i) =>
-                `<button class="sidebar-btn${i===0?' active':''}" id="ots-admin-tab-${r}"
-                  onclick="switchOtsAdminTab('${r}')"
-                  style="border-radius:var(--radius-sm) var(--radius-sm) 0 0;margin-bottom:-2px;border-bottom:2px solid ${i===0?'var(--blue-600)':'transparent'};">
-                  ${r}
-                </button>`).join('')}
+
+            <!-- OTS Editor (shown after password) -->
+            <div id="otsAdminEditor" style="display:none;">
+              <div class="page-header" style="margin-bottom:16px;">
+                <h1 style="font-size:1.3rem;">OTS Forms</h1>
+                <p style="color:var(--gray-500);font-size:.875rem;margin-top:4px;">Edit the OTS evaluation form for each rating. Displayed on the student progress page.</p>
+              </div>
+              <div style="display:flex;gap:4px;border-bottom:2px solid var(--gray-200);margin-bottom:20px;flex-wrap:wrap;" id="otsAdminTabBar"></div>
+              <div id="otsAdminPanels"></div>
             </div>
-            <div id="otsAdminPanels">
-              ${['S1','S2','S3','C1','T1S1','T1S2','T1S3'].map((r,i) =>
-                `<div id="ots-admin-panel-${r}" style="display:${i===0?'block':'none'};">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                    <span style="font-size:.82rem;color:var(--gray-500);">Editing OTS form for <strong>${r}</strong></span>
-                    <div style="display:flex;gap:6px;">
-                      <button class="btn btn-secondary btn-sm" onclick="addOtsBlock('${r}','text')">+ Text</button>
-                      <button class="btn btn-secondary btn-sm" onclick="addOtsBlock('${r}','image')">+ Image</button>
-                      <button class="btn btn-secondary btn-sm" onclick="addOtsBlock('${r}','table')">+ Table</button>
-                      <button class="btn btn-primary btn-sm" onclick="saveOtsForm('${r}')">Save ${r} Form</button>
-                    </div>
-                  </div>
-                  <div id="ots-blocks-${r}" style="display:flex;flex-direction:column;gap:10px;min-height:60px;padding:12px;background:var(--gray-50);border:1.5px dashed var(--gray-300);border-radius:var(--radius);">
-                    <div style="text-align:center;color:var(--gray-400);font-size:.85rem;padding:16px;">Add content using the buttons above.</div>
-                  </div>
-                </div>`).join('')}
-            </div>
+
           </div>
         </div>
 
@@ -4108,9 +4108,61 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
 
     // ===================== OTS FORMS (ADMIN) =====================
     const OTS_RATINGS = ['S1','S2','S3','C1','T1S1','T1S2','T1S3'];
-    let otsBlocks = {};        // { rating: [blocks] }
-    let otsFormIds = {};       // { rating: supabase row id }
-    let otsAdminLoaded = false;
+    let otsBlocks    = {};
+    let otsFormIds   = {};
+    let otsAdminLoaded   = false;
+    let otsAdminUnlocked = false;
+
+    function submitOtsAdminPassword() {
+      const val = document.getElementById('otsAdminPasswordInput').value;
+      if (val === 'ZMAOTS') {
+        otsAdminUnlocked = true;
+        document.getElementById('otsAdminGate').style.display   = 'none';
+        document.getElementById('otsAdminEditor').style.display = 'block';
+        buildOtsAdminTabs();
+        if (!otsAdminLoaded) { loadAllOtsForms(); otsAdminLoaded = true; }
+      } else {
+        document.getElementById('otsAdminPasswordError').style.display = 'block';
+        document.getElementById('otsAdminPasswordInput').value = '';
+        document.getElementById('otsAdminPasswordInput').focus();
+      }
+    }
+
+    function buildOtsAdminTabs() {
+      const tabBar = document.getElementById('otsAdminTabBar');
+      const panels = document.getElementById('otsAdminPanels');
+      if (tabBar.children.length) return; // already built
+      tabBar.innerHTML = '';
+      panels.innerHTML = '';
+      OTS_RATINGS.forEach((r, i) => {
+        // Tab button
+        const btn = document.createElement('button');
+        btn.className = 'sidebar-btn' + (i === 0 ? ' active' : '');
+        btn.id = `ots-admin-tab-${r}`;
+        btn.textContent = r;
+        btn.style.cssText = `border-radius:var(--radius-sm) var(--radius-sm) 0 0;margin-bottom:-2px;border-bottom:2px solid ${i===0?'var(--blue-600)':'transparent'};`;
+        btn.onclick = () => switchOtsAdminTab(r);
+        tabBar.appendChild(btn);
+        // Panel
+        const panel = document.createElement('div');
+        panel.id = `ots-admin-panel-${r}`;
+        panel.style.display = i === 0 ? 'block' : 'none';
+        panel.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <span style="font-size:.82rem;color:var(--gray-500);">Editing OTS form for <strong>${r}</strong></span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" onclick="addOtsBlock('${r}','text')">+ Text</button>
+              <button class="btn btn-secondary btn-sm" onclick="addOtsBlock('${r}','image')">+ Image</button>
+              <button class="btn btn-secondary btn-sm" onclick="addOtsBlock('${r}','table')">+ Table</button>
+              <button class="btn btn-primary btn-sm" onclick="saveOtsForm('${r}')">Save ${r} Form</button>
+            </div>
+          </div>
+          <div id="ots-blocks-${r}" style="display:flex;flex-direction:column;gap:10px;min-height:60px;padding:12px;background:var(--gray-50);border:1.5px dashed var(--gray-300);border-radius:var(--radius);">
+            <div style="text-align:center;color:var(--gray-400);font-size:.85rem;padding:16px;">Loading…</div>
+          </div>`;
+        panels.appendChild(panel);
+      });
+    }
 
     function switchOtsAdminTab(rating) {
       OTS_RATINGS.forEach(r => {
@@ -4302,19 +4354,9 @@ tr.drag-over td { border-top: 2px solid var(--blue-400); }
       } catch(e) { toast('Error saving OTS form.', 'error'); console.error(e); }
     }
 
-    // Load OTS forms when lesson-plans tab opens
-    const _origLoadTab = typeof loadTab === 'function' ? loadTab : null;
-
     // ===================== INIT =====================
     loadQueues();
     checkExamNotif();
-    // Hook into lesson-plans tab load
-    document.querySelectorAll('.sidebar-btn').forEach(btn => {
-      if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('lesson-plans')) {
-        const orig = btn.onclick;
-        btn.onclick = function(e) { if(orig) orig.call(this,e); if(!otsAdminLoaded){loadAllOtsForms();otsAdminLoaded=true;} };
-      }
-    });
   </script>
 
   <!-- Add Completed Modal -->
