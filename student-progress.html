@@ -129,6 +129,9 @@
     .detail-tab:hover{color:var(--blue-600);background:var(--blue-50)}
     .detail-tab.active{color:var(--blue-600);border-bottom-color:var(--blue-600)}
 
+    .detail-tab.completed{color:var(--green-600);border-bottom-color:var(--green-600);background:var(--green-100);}
+    .detail-tab.completed:hover{background:var(--green-100);color:var(--green-600);}
+
     /* Progress bar */
     .progress-bar-wrap{display:flex;align-items:center;gap:12px;margin-bottom:6px}
     .progress-bar-track{flex:1;height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden}
@@ -735,9 +738,15 @@
     if (!rubricKey) return;
 
     try {
-      // Fetch all lesson plans, then filter to ones that include this student's rating
       const plans = await SB.query('lesson_plans', '?order=created_at.asc');
       const relevant = (plans || []).filter(p => (p.ratings || []).includes(rubricKey));
+
+      // Load existing lesson completions for this student
+      let completions = {};
+      try {
+        const rows = await SB.query('lesson_completions', `?student_queue_id=eq.${student.id}`);
+        (rows || []).forEach(r => { completions[r.lesson_plan_id] = r; });
+      } catch(e) { console.warn('Could not load lesson completions:', e); }
 
       const tabsEl   = document.getElementById('lessonPlanTabs');
       const panelsEl = document.getElementById('lessonPanelsContainer');
@@ -745,9 +754,11 @@
       panelsEl.innerHTML = '';
 
       relevant.forEach(plan => {
+        const isComplete = !!(completions[plan.id]);
+
         // Tab button
         const btn = document.createElement('button');
-        btn.className = 'detail-tab';
+        btn.className = 'detail-tab' + (isComplete ? ' completed' : '');
         btn.id = `dtab-${plan.id}`;
         btn.textContent = plan.title;
         btn.onclick = () => switchDetailTab(plan.id);
@@ -792,7 +803,7 @@
 
         // Aircraft Issues section
         if (plan.aircraft_issues && plan.aircraft_issues.length) {
-          html += `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);">
+          html += `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:16px;">
             <div style="padding:16px 24px;border-bottom:2px solid var(--gray-200);background:var(--blue-900);">
               <span style="font-weight:700;font-size:.95rem;color:var(--white);letter-spacing:.04em;text-transform:uppercase;">Aircraft Issues</span>
             </div>
@@ -819,11 +830,55 @@
           </div>`;
         }
 
+        // Lesson Complete checkbox
+        html += `<div style="background:var(--white);border:2px solid ${isComplete ? 'var(--green-600)' : 'var(--gray-200)'};border-radius:var(--radius-lg);padding:20px 24px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);" id="lesson-complete-bar-${plan.id}">
+          <input type="checkbox" id="lesson-complete-cb-${plan.id}" ${isComplete ? 'checked' : ''}
+            style="width:20px;height:20px;cursor:pointer;accent-color:var(--green-600);flex-shrink:0;"
+            onchange="toggleLessonComplete('${plan.id}', '${completions[plan.id] ? completions[plan.id].id : ''}', this.checked)">
+          <label for="lesson-complete-cb-${plan.id}" style="font-weight:700;font-size:.95rem;cursor:pointer;color:${isComplete ? 'var(--green-600)' : 'var(--gray-700)'};" id="lesson-complete-label-${plan.id}">
+            ${isComplete ? '✓ Lesson Complete' : 'Lesson Complete'}
+          </label>
+        </div>`;
+
         panel.innerHTML = html;
         panelsEl.appendChild(panel);
       });
     } catch(e) {
       console.warn('Could not load lesson plans:', e);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // LESSON COMPLETION TOGGLE
+  // ─────────────────────────────────────────────────────────
+  async function toggleLessonComplete(planId, existingRowId, checked) {
+    if (!currentStudent) return;
+    const tab   = document.getElementById(`dtab-${planId}`);
+    const bar   = document.getElementById(`lesson-complete-bar-${planId}`);
+    const label = document.getElementById(`lesson-complete-label-${planId}`);
+
+    // Optimistic UI update
+    if (tab)   { tab.classList.toggle('completed', checked); }
+    if (bar)   { bar.style.borderColor = checked ? 'var(--green-600)' : 'var(--gray-200)'; }
+    if (label) { label.style.color = checked ? 'var(--green-600)' : 'var(--gray-700)'; label.textContent = checked ? '✓ Lesson Complete' : 'Lesson Complete'; }
+
+    try {
+      if (checked) {
+        const result = await SB.insert('lesson_completions', {
+          student_queue_id: currentStudent.id,
+          student_cid: String(currentStudent.cid),
+          lesson_plan_id: planId,
+          completed_by_cid: viewerCid,
+          completed_at: new Date().toISOString()
+        });
+        // Store new row id on the checkbox for future unchecks
+        const cb = document.getElementById(`lesson-complete-cb-${planId}`);
+        if (cb && result && result[0]) cb.setAttribute('onchange', `toggleLessonComplete('${planId}','${result[0].id}',this.checked)`);
+      } else if (existingRowId) {
+        await SB.delete('lesson_completions', `id=eq.${existingRowId}`);
+      }
+    } catch(e) {
+      console.error('Error saving lesson completion:', e);
     }
   }
   </script>
