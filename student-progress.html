@@ -219,9 +219,38 @@
       </div>
 
       <!-- TAB BAR -->
-      <div class="detail-tab-bar" id="detailTabBar">
-        <button class="detail-tab active" id="dtab-competencies" onclick="switchDetailTab('competencies')">Competencies</button>
-        <div id="lessonPlanTabs" style="display:contents;"></div>
+      <div class="detail-tab-bar" id="detailTabBar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;flex-wrap:wrap;gap:0;">
+          <button class="detail-tab active" id="dtab-competencies" onclick="switchDetailTab('competencies')">Competencies</button>
+          <div id="lessonPlanTabs" style="display:contents;"></div>
+        </div>
+        <button class="btn" id="otsBtn" onclick="openOtsModal()"
+          style="background:#dc2626;color:#fff;font-weight:700;letter-spacing:.05em;padding:8px 20px;border-radius:8px;font-size:.85rem;border:none;cursor:pointer;flex-shrink:0;transition:background .15s;"
+          onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">
+          OTS
+        </button>
+      </div>
+
+      <!-- OTS PASSWORD MODAL -->
+      <div id="otsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;">
+        <div style="background:var(--white);border-radius:var(--radius-lg);padding:32px;max-width:400px;width:94%;box-shadow:var(--shadow-lg);">
+          <div style="font-size:1.1rem;font-weight:700;color:var(--blue-900);margin-bottom:6px;">OTS Access</div>
+          <div style="font-size:.875rem;color:var(--gray-500);margin-bottom:18px;">Enter the OTS password to continue.</div>
+          <input id="otsPasswordInput" type="password" placeholder="Password"
+            style="width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.95rem;outline:none;margin-bottom:10px;"
+            onkeydown="if(event.key==='Enter')submitOtsPassword()" />
+          <div id="otsPasswordError" style="color:#dc2626;font-size:.8rem;margin-bottom:10px;display:none;">Incorrect password.</div>
+          <div style="display:flex;gap:10px;">
+            <button onclick="submitOtsPassword()"
+              style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:var(--radius-sm);font-weight:700;font-size:.875rem;cursor:pointer;">
+              Enter
+            </button>
+            <button onclick="closeOtsModal()"
+              style="background:var(--gray-100);color:var(--gray-700);border:none;padding:9px 20px;border-radius:var(--radius-sm);font-weight:600;font-size:.875rem;cursor:pointer;">
+              Cancel
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- COMPETENCIES PANEL -->
@@ -231,6 +260,11 @@
 
       <!-- LESSON PLAN PANELS (rendered dynamically) -->
       <div id="lessonPanelsContainer"></div>
+
+      <!-- OTS PANEL -->
+      <div id="panel-ots" style="display:none;">
+        <div id="otsPanelContent"></div>
+      </div>
     </div>
 
   </main>
@@ -549,6 +583,11 @@
       });
     } catch(e) { console.warn('Could not load progress:', e); }
 
+    // Reset OTS state for new student
+    otsUnlocked = false;
+    document.getElementById('panel-ots').style.display = 'none';
+    document.getElementById('otsPanelContent').innerHTML = '';
+
     const rubricKey = getRubricKey(s.training_type);
     renderProgressTables(rubricKey);
     updateProgressBar();
@@ -556,6 +595,7 @@
     // Reset to competencies tab and load lesson plans
     switchDetailTab('competencies');
     loadLessonPlansForStudent(s);
+    loadOtsForm(s);
 
     document.getElementById('selectorView').style.display = 'none';
     document.getElementById('detailView').style.display   = 'block';
@@ -716,18 +756,44 @@
   // DETAIL TAB SWITCHING
   // ─────────────────────────────────────────────────────────
   let activeDetailTab = 'competencies';
+  let otsUnlocked = false;
 
   function switchDetailTab(tabId) {
     activeDetailTab = tabId;
-    // Update tab button states
     document.querySelectorAll('.detail-tab').forEach(b => b.classList.remove('active'));
     const activeBtn = document.getElementById(`dtab-${tabId}`);
     if (activeBtn) activeBtn.classList.add('active');
-    // Show/hide panels
-    document.getElementById('panel-competencies').style.display = tabId === 'competencies' ? 'block' : 'none';
+    document.getElementById('panel-competencies').style.display  = tabId === 'competencies' ? 'block' : 'none';
+    document.getElementById('panel-ots').style.display           = tabId === 'ots'           ? 'block' : 'none';
     document.querySelectorAll('.lesson-panel').forEach(p => {
       p.style.display = p.dataset.lessonId === tabId ? 'block' : 'none';
     });
+  }
+
+  // ── OTS Modal ────────────────────────────────────────────
+  function openOtsModal() {
+    if (otsUnlocked) { switchDetailTab('ots'); return; }
+    document.getElementById('otsPasswordInput').value = '';
+    document.getElementById('otsPasswordError').style.display = 'none';
+    document.getElementById('otsModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('otsPasswordInput').focus(), 50);
+  }
+
+  function closeOtsModal() {
+    document.getElementById('otsModal').style.display = 'none';
+  }
+
+  function submitOtsPassword() {
+    const val = document.getElementById('otsPasswordInput').value;
+    if (val === 'ZMAOTS') {
+      otsUnlocked = true;
+      closeOtsModal();
+      switchDetailTab('ots');
+    } else {
+      document.getElementById('otsPasswordError').style.display = 'block';
+      document.getElementById('otsPasswordInput').value = '';
+      document.getElementById('otsPasswordInput').focus();
+    }
   }
 
   // ─────────────────────────────────────────────────────────
@@ -880,6 +946,68 @@
     } catch(e) {
       console.error('Error saving lesson completion:', e);
     }
+  }
+  // ─────────────────────────────────────────────────────────
+  // OTS FORM
+  // ─────────────────────────────────────────────────────────
+  function getOtsKey(trainingType) {
+    if (!trainingType) return null;
+    const t = trainingType.toUpperCase();
+    if (t.includes('T1') && t.includes('S3')) return 'T1S3';
+    if (t.includes('T1') && t.includes('S2')) return 'T1S2';
+    if (t.includes('T1') && t.includes('S1')) return 'T1S1';
+    if (t.includes('T1')) return 'T1S1';
+    if (t.includes('C1')) return 'C1';
+    if (t.includes('S3')) return 'S3';
+    if (t.includes('S2')) return 'S2';
+    if (t.includes('S1')) return 'S1';
+    return null;
+  }
+
+  async function loadOtsForm(student) {
+    const otsKey = getOtsKey(student.training_type);
+    const container = document.getElementById('otsPanelContent');
+    if (!otsKey) {
+      container.innerHTML = `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:40px;text-align:center;color:var(--gray-400);">No OTS form configured for this training type.</div>`;
+      return;
+    }
+    try {
+      const forms = await SB.query('ots_forms', `?rating=eq.${otsKey}`);
+      const form  = forms && forms[0];
+      if (!form || !form.blocks || !form.blocks.length) {
+        container.innerHTML = `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:40px;text-align:center;color:var(--gray-400);">No OTS content has been added for ${otsKey} yet.</div>`;
+        return;
+      }
+      container.innerHTML = renderOtsBlocks(form.blocks);
+    } catch(e) {
+      console.error('Error loading OTS form:', e);
+      container.innerHTML = `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:40px;text-align:center;color:#dc2626;">Error loading OTS form.</div>`;
+    }
+  }
+
+  function renderOtsBlocks(blocks) {
+    return blocks.map(b => {
+      if (b.type === 'text') {
+        return `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:16px;box-shadow:var(--shadow-sm);white-space:pre-wrap;font-size:.9rem;line-height:1.7;color:var(--gray-700);">${b.data.content||''}</div>`;
+      } else if (b.type === 'image') {
+        return `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm);text-align:center;">
+          <img src="${b.data.url||''}" style="max-width:100%;max-height:480px;object-fit:contain;border-radius:var(--radius-sm);" onerror="this.style.display='none'">
+          ${b.data.caption ? `<div style="margin-top:10px;font-size:.82rem;color:var(--gray-500);font-style:italic;">${b.data.caption}</div>` : ''}
+        </div>`;
+      } else if (b.type === 'table') {
+        const hdrs = b.data.headers || [];
+        const rows = b.data.rows || [];
+        return `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow-sm);">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;">
+              <thead><tr>${hdrs.map(h => `<th style="padding:10px 14px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);background:var(--gray-50);border-bottom:1px solid var(--gray-200);">${h}</th>`).join('')}</tr></thead>
+              <tbody>${rows.map((row,ri) => `<tr style="border-bottom:1px solid var(--gray-100);${ri%2===1?'background:var(--gray-50);':''}">${row.map(cell => `<td style="padding:10px 14px;font-size:.875rem;color:var(--gray-700);">${cell||''}</td>`).join('')}</tr>`).join('')}</tbody>
+            </table>
+          </div>
+        </div>`;
+      }
+      return '';
+    }).join('');
   }
   </script>
 </body>
