@@ -867,8 +867,9 @@
           </div>`;
         }
 
-        // Aircraft Issues section
+        // Aircraft Issues section — sorted by spawn time
         if (plan.aircraft_issues && plan.aircraft_issues.length) {
+          const sortedAircraft = [...plan.aircraft_issues].sort((a,b) => (parseInt(a.spawnSeconds)||0) - (parseInt(b.spawnSeconds)||0));
           html += `<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:16px;">
             <div style="padding:16px 24px;border-bottom:2px solid var(--gray-200);background:var(--blue-900);">
               <span style="font-weight:700;font-size:.95rem;color:var(--white);letter-spacing:.04em;text-transform:uppercase;">Aircraft Issues</span>
@@ -880,7 +881,7 @@
                   <th style="padding:9px 14px;text-align:left;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);background:var(--gray-50);border-bottom:1px solid var(--gray-200);">Spawn Time</th>
                   <th style="padding:9px 14px;text-align:left;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);background:var(--gray-50);border-bottom:1px solid var(--gray-200);">Issue</th>
                 </tr></thead>
-                <tbody>${plan.aircraft_issues.map((a,ri) => {
+                <tbody>${sortedAircraft.map((a,ri) => {
                   const secs = parseInt(a.spawnSeconds)||0;
                   const mins = Math.floor(secs/60);
                   const rem  = secs % 60;
